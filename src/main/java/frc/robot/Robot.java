@@ -4,7 +4,14 @@
 
 package frc.robot;
 
+import org.ejml.dense.row.factory.DecompositionFactory_MT_FDRM;
+
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -19,6 +26,11 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  Joystick leftJoystick;
+  Joystick rightJoystick;
+
+  DifferentialDrive drive;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -28,6 +40,26 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    leftJoystick = new Joystick(Constants.leftJoystickPort);
+    rightJoystick = new Joystick(Constants.rightJoystickPort);
+
+    int amountOfLeftMotors = Constants.Drive.leftMotorPorts.length;
+    int amountOfRightMotors = Constants.Drive.rightMotorPorts.length;
+    Talon[] leftMotors = new Talon[amountOfLeftMotors];
+    Talon[] rightMotors = new Talon[amountOfRightMotors];
+
+    // Make Left Talons from the ports
+    for(int i=0; i < amountOfLeftMotors; i++) leftMotors[i] = new Talon(Constants.Drive.leftMotorPorts[i]);
+    
+    // Make Right Talons from the ports
+    for(int i=0; i < amountOfRightMotors; i++) rightMotors[i] = new Talon(Constants.Drive.rightMotorPorts[i]);
+
+    // Put motors into their own groups
+    MotorControllerGroup leftMotorGroup = new MotorControllerGroup(leftMotors);
+    MotorControllerGroup rightMotorGroup = new MotorControllerGroup(rightMotors);
+
+    drive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
   }
 
   /**
@@ -81,7 +113,12 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    double leftSpeed = leftJoystick.getY() * 0.5;
+    double rightSpeed = rightJoystick.getY() * 0.5;
+
+    drive.tankDrive(leftSpeed, rightSpeed);
+  }
 
   @Override
   public void testInit() {
