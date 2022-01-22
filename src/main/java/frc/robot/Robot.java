@@ -4,14 +4,19 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import org.ejml.dense.row.factory.DecompositionFactory_MT_FDRM;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -26,8 +31,8 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
-  Joystick leftJoystick;
-  Joystick rightJoystick;
+  Joystick leftJoystick, rightJoystick;
+  SlewRateLimiter leftSlew, rightSlew;
 
   DifferentialDrive drive;
 
@@ -46,20 +51,27 @@ public class Robot extends TimedRobot {
 
     int amountOfLeftMotors = Constants.Drive.leftMotorPorts.length;
     int amountOfRightMotors = Constants.Drive.rightMotorPorts.length;
-    Talon[] leftMotors = new Talon[amountOfLeftMotors];
-    Talon[] rightMotors = new Talon[amountOfRightMotors];
+    WPI_TalonSRX[] leftMotors = new WPI_TalonSRX[amountOfLeftMotors];
+    WPI_TalonSRX[] rightMotors = new WPI_TalonSRX[amountOfRightMotors];
 
     // Make Left Talons from the ports
-    for(int i=0; i < amountOfLeftMotors; i++) leftMotors[i] = new Talon(Constants.Drive.leftMotorPorts[i]);
+    for(int i=0; i < amountOfLeftMotors; i++) leftMotors[i] = new WPI_TalonSRX(Constants.Drive.leftMotorPorts[i]);
     
     // Make Right Talons from the ports
-    for(int i=0; i < amountOfRightMotors; i++) rightMotors[i] = new Talon(Constants.Drive.rightMotorPorts[i]);
+    for(int i=0; i < amountOfRightMotors; i++) rightMotors[i] = new WPI_TalonSRX(Constants.Drive.rightMotorPorts[i]);
 
     // Put motors into their own groups
     MotorControllerGroup leftMotorGroup = new MotorControllerGroup(leftMotors);
     MotorControllerGroup rightMotorGroup = new MotorControllerGroup(rightMotors);
+    rightMotorGroup.setInverted(true);
 
+    // Create the Differential Drive to drive the robot
     drive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
+
+    // Set up the Slew Rate Limiters, used to dampen inputs
+    leftSlew = new SlewRateLimiter(10);
+    rightSlew = new SlewRateLimiter(10);
+
   }
 
   /**
@@ -114,10 +126,34 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    double leftSpeed = leftJoystick.getY() * 0.5;
-    double rightSpeed = rightJoystick.getY() * 0.5;
 
-    drive.tankDrive(leftSpeed, rightSpeed);
+    // TODO Get actually good drive train code that isn't this
+
+    // Get left and right triggers
+    boolean leftTrigger = leftJoystick.getRawButton(1);
+    boolean rightTrigger = rightJoystick.getRawButton(1);
+
+    // Create our modifier
+    double modifier = 0.5;
+
+    // If both are held, full speed
+    if(leftTrigger && rightTrigger) modifier = 1;
+
+    // Else, if exactly one is held, 75% speed
+    else if (leftTrigger || rightTrigger) modifier = 0.75;
+
+    // Else, don't change
+
+    // Calculating leftSpeed and rightSpeed using the slews
+    double leftSpeed = leftSlew.calculate(-leftJoystick.getY()) * modifier;
+    double rightSpeed = rightSlew.calculate(-rightJoystick.getY()) * modifier;
+
+    // Setting these speeds. Last parameter prevents squaring of inputs
+    drive.tankDrive(leftSpeed, rightSpeed, false);
+
+    // Putting leftSpeed and rightSpeed to SmartDashboard
+    SmartDashboard.putNumber("Left Speed", leftSpeed);
+    SmartDashboard.putNumber("Right Speed", rightSpeed);
   }
 
   @Override
