@@ -6,16 +6,10 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import org.ejml.dense.row.factory.DecompositionFactory_MT_FDRM;
-
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -32,9 +26,12 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
 
   Joystick leftJoystick, rightJoystick;
-  SlewRateLimiter leftSlew, rightSlew;
 
   DifferentialDrive drive;
+
+  boolean reverse = false;
+
+  boolean arcade = false;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -68,9 +65,6 @@ public class Robot extends TimedRobot {
     // Create the Differential Drive to drive the robot
     drive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
 
-    // Set up the Slew Rate Limiters, used to dampen inputs
-    leftSlew = new SlewRateLimiter(10);
-    rightSlew = new SlewRateLimiter(10);
 
   }
 
@@ -145,11 +139,25 @@ public class Robot extends TimedRobot {
     // Else, don't change
 
     // Calculating leftSpeed and rightSpeed using the slews
-    double leftSpeed = leftSlew.calculate(-leftJoystick.getY()) * modifier;
-    double rightSpeed = rightSlew.calculate(-rightJoystick.getY()) * modifier;
+    double leftSpeed = -leftJoystick.getY() * modifier;
+    double rightSpeed = -rightJoystick.getY() * modifier;
 
-    // Setting these speeds. Last parameter prevents squaring of inputs
-    drive.tankDrive(leftSpeed, rightSpeed, false);
+    // Getting left and right button 3's if pressed
+    boolean leftButton3 = leftJoystick.getRawButtonPressed(3);
+    boolean rightButton3 = rightJoystick.getRawButtonPressed(3);
+
+    // If pressed, switch reverse
+    if(leftButton3 || rightButton3) {
+      reverse = !reverse;
+    }
+
+    // Setting these speeds.  ? works. Last parameter prevents squaring of inputs
+    drive.tankDrive(
+      !reverse ? leftSpeed : -rightSpeed, 
+      !reverse ? rightSpeed : -leftSpeed, 
+      false
+    );
+    
 
     // Putting leftSpeed and rightSpeed to SmartDashboard
     SmartDashboard.putNumber("Left Speed", leftSpeed);
