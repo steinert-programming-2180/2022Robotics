@@ -157,7 +157,7 @@ public class Robot extends TimedRobot {
       reverse = !reverse;
     }
 
-    // Setting these speeds. ? works to change the direction of the robot. 
+    // Setting these speeds. ? works to change the direction of the robot
     // Last parameter prevents squaring of inputs
     drive.tankDrive(
       !reverse ? leftSpeed : -rightSpeed, 
