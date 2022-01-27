@@ -43,8 +43,12 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
+    // Create the Joysticks
+
     leftJoystick = new Joystick(Constants.leftJoystickPort);
     rightJoystick = new Joystick(Constants.rightJoystickPort);
+
+    // Create arrays for the left and right Talon sets
 
     int amountOfLeftMotors = Constants.Drive.leftMotorPorts.length;
     int amountOfRightMotors = Constants.Drive.rightMotorPorts.length;
@@ -60,6 +64,8 @@ public class Robot extends TimedRobot {
     // Put motors into their own groups
     MotorControllerGroup leftMotorGroup = new MotorControllerGroup(leftMotors);
     MotorControllerGroup rightMotorGroup = new MotorControllerGroup(rightMotors);
+    
+    // Invert to drive properly
     rightMotorGroup.setInverted(true);
 
     // Create the Differential Drive to drive the robot
@@ -130,7 +136,7 @@ public class Robot extends TimedRobot {
     // Create our modifier
     double modifier = 0.5;
 
-    // If both are held, full speed
+    // If both triggers are held, full speed
     if(leftTrigger && rightTrigger) modifier = 1;
 
     // Else, if exactly one is held, 75% speed
@@ -138,7 +144,7 @@ public class Robot extends TimedRobot {
 
     // Else, don't change
 
-    // Calculating leftSpeed and rightSpeed using the slews
+    // Calculating leftSpeed and rightSpeed
     double leftSpeed = -leftJoystick.getY() * modifier;
     double rightSpeed = -rightJoystick.getY() * modifier;
 
@@ -151,7 +157,8 @@ public class Robot extends TimedRobot {
       reverse = !reverse;
     }
 
-    // Setting these speeds.  ? works. Last parameter prevents squaring of inputs
+    // Setting these speeds. ? works to change the direction of the robot. 
+    // Last parameter prevents squaring of inputs
     drive.tankDrive(
       !reverse ? leftSpeed : -rightSpeed, 
       !reverse ? rightSpeed : -leftSpeed, 
