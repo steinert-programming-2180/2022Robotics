@@ -169,6 +169,15 @@ public class Robot extends TimedRobot {
     // Putting leftSpeed and rightSpeed to SmartDashboard
     SmartDashboard.putNumber("Left Speed", leftSpeed);
     SmartDashboard.putNumber("Right Speed", rightSpeed);
+
+    // Putting reverse to SmartDashboard
+    SmartDashboard.putBoolean("Foward", !reverse);
+
+    // Temporary BS code to drive straight
+    if(leftJoystick.getRawButton(7)) {
+      drive.tankDrive(1, 1, false);
+    }
+
   }
 
   @Override
