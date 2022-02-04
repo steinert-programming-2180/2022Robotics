@@ -134,13 +134,13 @@ public class Robot extends TimedRobot {
     boolean rightTrigger = rightJoystick.getRawButton(1);
 
     // Create our modifier
-    double modifier = 0.5;
+    double modifier = Constants.Drive.lowModifier;
 
     // If both triggers are held, full speed
-    if(leftTrigger && rightTrigger) modifier = 1;
+    if(leftTrigger && rightTrigger) modifier = Constants.Drive.highModifier;
 
-    // Else, if exactly one is held, 75% speed
-    else if (leftTrigger || rightTrigger) modifier = 0.75;
+    // Else, if exactly one is held, med speed
+    else if (leftTrigger || rightTrigger) modifier = Constants.Drive.medModifier;
 
     // Else, don't change
 
@@ -171,11 +171,14 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Right Speed", rightSpeed);
 
     // Putting reverse to SmartDashboard
-    SmartDashboard.putBoolean("Foward", !reverse);
+    SmartDashboard.putBoolean("Forward", !reverse);
 
     // Temporary BS code to drive straight
     if(leftJoystick.getRawButton(7)) {
-      drive.tankDrive(1, 1, false);
+      drive.tankDrive(
+        !reverse? 1 : -1, 
+        !reverse? 1 : -1, 
+        false);
     }
 
   }

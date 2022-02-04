@@ -18,7 +18,11 @@ public final class Constants {
     
     
     public static final class Drive{
-        static final int[] leftMotorPorts = {7, 15};
-        static final int[] rightMotorPorts = {1, 2};
+        static final int[] leftMotorPorts = {7, 12, 15};
+        static final int[] rightMotorPorts = {1, 2, 3};
+
+        static final double lowModifier = 0.75;
+        static final double medModifier = 0.85;
+        static final double highModifier = 1;
     }
 }
