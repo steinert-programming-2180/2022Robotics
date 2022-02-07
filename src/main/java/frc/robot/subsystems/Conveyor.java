@@ -4,19 +4,32 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ExampleSubsystem extends SubsystemBase {
+public class Conveyor extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  public ExampleSubsystem() {}
+  public Spark bottomC;
+  public Spark topC;
+
+  public Conveyor() {
+    bottomC = new Spark(0);
+    topC = new Spark(1);
+  }
+
+  public void Convey() {
+    bottomC.set(1);
+    topC.set(-1);
+  }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    // This method will be called once per scheduler 
+    
   }
 
   @Override
   public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
+    // This method will be called once per scheduler run during
   }
 }
