@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.DriveTrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -27,7 +28,7 @@ public class Robot extends TimedRobot {
 
   Joystick leftJoystick, rightJoystick;
 
-  DifferentialDrive drive;
+  DriveTrain driveTrainSubsystem;
 
   boolean reverse = false;
 
@@ -39,37 +40,16 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
+    driveTrainSubsystem = new DriveTrain();
     // Create the Joysticks
 
     leftJoystick = new Joystick(Constants.leftJoystickPort);
     rightJoystick = new Joystick(Constants.rightJoystickPort);
-
-    // Create arrays for the left and right Talon sets
-
-    int amountOfLeftMotors = Constants.Drive.leftMotorPorts.length;
-    int amountOfRightMotors = Constants.Drive.rightMotorPorts.length;
-    WPI_TalonSRX[] leftMotors = new WPI_TalonSRX[amountOfLeftMotors];
-    WPI_TalonSRX[] rightMotors = new WPI_TalonSRX[amountOfRightMotors];
-
-    // Make Left Talons from the ports
-    for(int i=0; i < amountOfLeftMotors; i++) leftMotors[i] = new WPI_TalonSRX(Constants.Drive.leftMotorPorts[i]);
-    
-    // Make Right Talons from the ports
-    for(int i=0; i < amountOfRightMotors; i++) rightMotors[i] = new WPI_TalonSRX(Constants.Drive.rightMotorPorts[i]);
-
-    // Put motors into their own groups
-    MotorControllerGroup leftMotorGroup = new MotorControllerGroup(leftMotors);
-    MotorControllerGroup rightMotorGroup = new MotorControllerGroup(rightMotors);
-    
-    // Invert to drive properly
-    rightMotorGroup.setInverted(true);
-
-    // Create the Differential Drive to drive the robot
-    drive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
 
 
   }
@@ -83,6 +63,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+
+
+
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -126,61 +109,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-
-    // TODO Get actually good drive train code that isn't this
-
-    // Get left and right triggers
-    boolean leftTrigger = leftJoystick.getRawButton(1);
-    boolean rightTrigger = rightJoystick.getRawButton(1);
-
-    // Create our modifier
-    double modifier = Constants.Drive.lowModifier;
-
-    // If both triggers are held, full speed
-    if(leftTrigger && rightTrigger) modifier = Constants.Drive.highModifier;
-
-    // Else, if exactly one is held, med speed
-    else if (leftTrigger || rightTrigger) modifier = Constants.Drive.medModifier;
-
-    // Else, don't change
-
-    // Calculating leftSpeed and rightSpeed
-    double leftSpeed = -leftJoystick.getY() * modifier;
-    double rightSpeed = -rightJoystick.getY() * modifier;
-
-    // Getting left and right button 3's if pressed
-    boolean leftButton3 = leftJoystick.getRawButtonPressed(3);
-    boolean rightButton3 = rightJoystick.getRawButtonPressed(3);
-
-    // If pressed, switch reverse
-    if(leftButton3 || rightButton3) {
-      reverse = !reverse;
-    }
-
-    // Setting these speeds. ? works to change the direction of the robot
-    // Last parameter prevents squaring of inputs
-    drive.tankDrive(
-      !reverse ? leftSpeed : -rightSpeed, 
-      !reverse ? rightSpeed : -leftSpeed, 
-      false
-    );
-    
-
-    // Putting leftSpeed and rightSpeed to SmartDashboard
-    SmartDashboard.putNumber("Left Speed", leftSpeed);
-    SmartDashboard.putNumber("Right Speed", rightSpeed);
-
-    // Putting reverse to SmartDashboard
-    SmartDashboard.putBoolean("Forward", !reverse);
-
-    // Temporary BS code to drive straight
-    if(leftJoystick.getRawButton(7)) {
-      drive.tankDrive(
-        !reverse? 1 : -1, 
-        !reverse? 1 : -1, 
-        false);
-    }
-
+    double leftspeed = leftJoystick.getY();
+    double rightspeed = rightJoystick.getY();
+    driveTrainSubsystem.drive(leftspeed, rightspeed);
   }
 
   @Override
