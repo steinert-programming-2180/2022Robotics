@@ -12,11 +12,8 @@ public class IntakeCom extends CommandBase {
    * @param subsystem The subsystem used by this command
     
    */
-  public void IntakeIn(Intake subsystem) {
-    
-   
+  public IntakeCom(Intake subsystem) {
     m_Intake = subsystem;
-    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_Intake);
   }
 
