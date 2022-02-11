@@ -17,9 +17,19 @@ public class Conveyor extends SubsystemBase {
     topC = new Spark(1);
   }
 
-  public void Convey() {
+  public void convey() {
     bottomC.set(1);
     topC.set(-1);
+  }
+
+  public void reverseconvey() {
+    bottomC.set(-1);
+    topC.set(1);
+  }
+
+  public void stopconvey() {
+    bottomC.set(0);
+    topC.set(0);
   }
 
   @Override

@@ -17,9 +17,9 @@ public class SpinSparks extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Conveyor spinsparks;
   Joystick Joy0;
-  JoystickButton b1;
-  public Spark bottomS;
-  public Spark topS;
+  JoystickButton Lb1;
+  Spark bottomS;
+  Spark topS;
   
   /**
    * Creates a new ExampleCommand.
@@ -31,7 +31,7 @@ public class SpinSparks extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter);
 
-    b1 = new JoystickButton(Joy0, 1);
+    Lb1 = new JoystickButton(Joy0, 1);
   }
 
   // Called when the command is initially scheduled.
@@ -40,9 +40,7 @@ public class SpinSparks extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override

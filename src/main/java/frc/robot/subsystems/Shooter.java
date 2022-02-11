@@ -17,9 +17,14 @@ public class Shooter extends SubsystemBase {
     topS = new Spark(1);
   }
 
-  public void Shoot() {
+  public void shoot() {
     bottomS.set(1);
     topS.set(-1);
+  }
+
+  public void stopshoot() {
+    bottomS.set(0);
+    topS.set(0);
   }
 
   @Override
