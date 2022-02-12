@@ -12,4 +12,19 @@ package frc.robot;
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
-public final class Constants {}
+public final class Constants {
+
+    public static enum LengthUnits {
+        INCHES,
+        METERS
+    };
+
+    public static class LimelightConstants {
+        public final static double LIME_ANGLE = 0;
+        public final static double LIME_HEIGHT = 30.75;
+    }
+
+    public static class FieldConstants {
+        public final static double TARGET_MAX_HEIGHT = 104;
+    }
+}
