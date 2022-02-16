@@ -6,6 +6,9 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -16,26 +19,40 @@ import frc.robot.Constants.Drive;
 public class DriveTrain extends SubsystemBase {
    
     DifferentialDrive drive;
+    MotorControllerGroup leftMotorGroup;
+    MotorControllerGroup rightMotorGroup;
+
+    double kP = Drive.kP;
+    double kI = Drive.kI;
+    double kD = Drive.kD;
+    PIDController turnController = new PIDController(kP, kI, kD);
+
+    double kS = 1;
+    double kV = 1;
+    double kA = 1;
+    SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(kS, kV, kA);
+
     /** Creates a new ExampleSubsystem. */
     public DriveTrain() {
-        int amountOfLeftMotors = Constants.Drive.leftMotorPorts.length;
-        int amountOfRightMotors = Constants.Drive.rightMotorPorts.length;
+        int amountOfLeftMotors = Drive.leftMotorPorts.length;
+        int amountOfRightMotors = Drive.rightMotorPorts.length;
         WPI_TalonSRX[] leftMotors = new WPI_TalonSRX[amountOfLeftMotors];
         WPI_TalonSRX[] rightMotors = new WPI_TalonSRX[amountOfRightMotors];
 
         // Make Left Talons from the ports
         for (int i = 0; i < amountOfLeftMotors; i++)
-            leftMotors[i] = new WPI_TalonSRX(Constants.Drive.leftMotorPorts[i]);
+            leftMotors[i] = new WPI_TalonSRX(Drive.leftMotorPorts[i]);
 
         // Make Right Talons from the ports
         for (int i = 0; i < amountOfRightMotors; i++)
-            rightMotors[i] = new WPI_TalonSRX(Constants.Drive.rightMotorPorts[i]);
+            rightMotors[i] = new WPI_TalonSRX(Drive.rightMotorPorts[i]);
 
         // Put motors into their own groups
-        MotorControllerGroup leftMotorGroup = new MotorControllerGroup(leftMotors);
-        MotorControllerGroup rightMotorGroup = new MotorControllerGroup(rightMotors);
+        leftMotorGroup = new MotorControllerGroup(leftMotors);
+        rightMotorGroup = new MotorControllerGroup(rightMotors);
+
         // Invert to drive propery
-        rightMotorGroup.setInverted(true);
+        leftMotorGroup.setInverted(true);
 
         // Create the Differential Drive to drive the robot
         drive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
@@ -45,6 +62,12 @@ public class DriveTrain extends SubsystemBase {
     public void drive(double leftSpeed, double rightSpeed) {
         drive.tankDrive(leftSpeed, rightSpeed);
     }
+
+    public void driveWithFeedForward(double leftVelocity, double rightVelocity){
+        leftMotorGroup.setVoltage(feedforward.calculate(leftVelocity));
+        rightMotorGroup.setVoltage(feedforward.calculate(rightVelocity));
+    }
+
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
