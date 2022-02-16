@@ -6,8 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.SpinSparks;
-import frc.robot.subsystems.Conveyor;
+import frc.robot.commands.ShooterCommand;
+import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /**
@@ -18,10 +18,8 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Conveyor m_exampleSubsystem = new Conveyor();
-
-  private final SpinSparks m_autoCommand = new SpinSparks(m_exampleSubsystem);
-
+  private final Shooter m_Shooter = new Shooter();
+  private final ShooterCommand m_ShooterautoCommand = new ShooterCommand(m_Shooter);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
@@ -43,6 +41,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    return m_ShooterautoCommand;
   }
 }
