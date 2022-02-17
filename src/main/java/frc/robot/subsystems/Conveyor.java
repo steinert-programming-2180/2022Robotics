@@ -6,20 +6,21 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ConveyorConstants;
 
 public class Conveyor extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  public Spark bottomC;
-  public Spark topC;
+  public Spark entranceConveyor;
+  public Spark exitConveyor;
 
   public Conveyor() {
-    bottomC = new Spark(0);
-    topC = new Spark(1);
+    entranceConveyor = new Spark(ConveyorConstants.entranceConveyorPort);
+    exitConveyor = new Spark(ConveyorConstants.exitConveyorPort);
   }
 
   public void Convey() {
-    bottomC.set(1);
-    topC.set(-1);
+    entranceConveyor.set(ConveyorConstants.conveyorSpeed);
+    exitConveyor.set(-ConveyorConstants.conveyorSpeed);
   }
 
   @Override

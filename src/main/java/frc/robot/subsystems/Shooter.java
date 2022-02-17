@@ -6,20 +6,21 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  public Spark bottomS;
-  public Spark topS;
+  public Spark bottomFlywheel;
+  public Spark topFlywheel;
 
   public Shooter() {
-    bottomS = new Spark(0);
-    topS = new Spark(1);
+    bottomFlywheel = new Spark(ShooterConstants.bottomFlywheelPort);
+    topFlywheel = new Spark(ShooterConstants.topFlywheelPort);
   }
 
   public void Shoot() {
-    bottomS.set(1);
-    topS.set(-1);
+    bottomFlywheel.set(ShooterConstants.shooterSpeed);
+    topFlywheel.set(-ShooterConstants.shooterSpeed);
   }
 
   @Override
