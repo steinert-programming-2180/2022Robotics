@@ -9,7 +9,7 @@ import frc.robot.Constants.*;
 public class Limelight extends SubsystemBase{
 
     private NetworkTable limelight;
-    private NetworkTableEntry tx, ty, ta;
+    private NetworkTableEntry tx, ty, ta, tv;
 
     public Limelight () {
         limelight = NetworkTableInstance.getDefault().getTable("limelight");
@@ -17,16 +17,20 @@ public class Limelight extends SubsystemBase{
         tx = limelight.getEntry("tx");
         ty = limelight.getEntry("ty");
         ta = limelight.getEntry("ta");
+        tv = limelight.getEntry("tv");
     }
 
     public double getDistance() {
-        double tv = limelight.getEntry("tv").getDouble(0);
-        if(tv == 0) {
+        double v = tv.getDouble(0);
+        if(v < 1) {
             return -1;
         }
-        double theta = tx.getDouble(0) + LimelightConstants.LIME_ANGLE;
-        double height = FieldConstants.TARGET_MAX_HEIGHT - LimelightConstants.LIME_ANGLE;
+        double theta = ty.getDouble(0) + LimelightConstants.LIME_ANGLE;
+        double height = FieldConstants.TARGET_MAX_HEIGHT - LimelightConstants.LIME_HEIGHT;
 
+        if(theta == 0) {
+            return -1;
+        }
         return height / Math.tan(Math.toRadians(theta));
     }
 
@@ -38,6 +42,12 @@ public class Limelight extends SubsystemBase{
         SmartDashboard.putNumber("LimelightX", x);
         SmartDashboard.putNumber("LimelightY", y);
         SmartDashboard.putNumber("LimelightArea", area);
+
+        double dist = getDistance();
+        if(dist >=0) {
+            SmartDashboard.putNumber("Distance (inches)", dist);
+        }
+
     }
 
     public void setPipeline(int pipeline) {
