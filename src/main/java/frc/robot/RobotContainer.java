@@ -5,13 +5,16 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.commands.*;
 import frc.robot.commands.limelight.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -33,6 +36,10 @@ public class RobotContainer {
   private final ParallelRaceGroup m_disable = new DisableLights().withTimeout(0.01);
   private final ParallelRaceGroup m_enable = new EnableLights().withTimeout(0.01);
 
+  private final ParallelRaceGroup m_swapCam = new SwapCamera(m_limelight).withTimeout(0.01);
+  private final ParallelRaceGroup m_swapLed = new SwapLights().withTimeout(0.01);
+
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
@@ -51,7 +58,16 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+    Joystick joy = new Joystick(Constants.joystickPort);
+
+    JoystickButton swapCamButton = new JoystickButton(joy, LimelightConstants.swapCameraButtonPort);
+    JoystickButton swapLedButton = new JoystickButton(joy, LimelightConstants.swapLedButtonPort);
+
+    swapLedButton.whenPressed(m_swapLed);
+    swapCamButton.whenPressed(m_swapCam);
+
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
