@@ -18,4 +18,8 @@ public class DriveCamera extends CommandBase{
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
     }
 
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 }

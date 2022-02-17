@@ -18,6 +18,9 @@ public class PipelineCamera extends CommandBase{
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
     }
 
-
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 
 }

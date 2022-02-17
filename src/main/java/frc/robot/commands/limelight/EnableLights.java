@@ -12,5 +12,8 @@ public class EnableLights extends CommandBase{
     }
 
     
-
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 }

@@ -12,4 +12,9 @@ public class DisableLights extends CommandBase{
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
     }
 
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
+
 }
