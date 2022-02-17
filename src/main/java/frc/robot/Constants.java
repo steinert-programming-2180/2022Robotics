@@ -16,11 +16,6 @@ public final class Constants {
 
     public final static int joystickPort = 0;
 
-    public static enum LengthUnits {
-        INCHES,
-        METERS
-    };
-
     public static class LimelightConstants {
         public final static double LIME_ANGLE = 0;
         public final static double LIME_HEIGHT = 30.75;
@@ -32,5 +27,13 @@ public final class Constants {
 
     public static class FieldConstants {
         public final static double TARGET_MAX_HEIGHT = 104;
+    }
+
+    public static double inchesToMeters(double inches) {
+        return inches * 0.0254;
+    }
+
+    public static double metersToInches(double meters) {
+        return meters * 39.37;
     }
 }

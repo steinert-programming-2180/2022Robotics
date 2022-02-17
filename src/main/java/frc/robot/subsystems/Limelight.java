@@ -31,7 +31,7 @@ public class Limelight extends SubsystemBase{
         if(theta == 0) {
             return -1;
         }
-        return height / Math.tan(Math.toRadians(theta));
+        return height * Math.cot(Math.toRadians(theta));
     }
 
     public void putItems() {
