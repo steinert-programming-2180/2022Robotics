@@ -22,11 +22,6 @@ public class DriveTrain extends SubsystemBase {
     MotorControllerGroup leftMotorGroup;
     MotorControllerGroup rightMotorGroup;
 
-    double kP = Drive.kP;
-    double kI = Drive.kI;
-    double kD = Drive.kD;
-    PIDController turnController = new PIDController(kP, kI, kD);
-
     double kS = 1;
     double kV = 1;
     double kA = 1;

@@ -20,7 +20,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.Turn;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.GyroSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -35,6 +38,7 @@ public class Robot extends TimedRobot {
 
   Joystick leftJoystick, rightJoystick, middleJoystick;
   XboxController xbox;
+  JoystickButton btn1;
 
   DriveTrain driveTrainSubsystem;
 
@@ -43,6 +47,7 @@ public class Robot extends TimedRobot {
   boolean arcade = false;
   AHRS navx;
   PIDController turnController;
+  PIDController moveController;
   SimpleMotorFeedforward sim;
 
   double speed;
@@ -64,6 +69,8 @@ public class Robot extends TimedRobot {
     double kP = 0.02;
     double kI = 0.001; // 0.025
     double kD = 0;
+
+    moveController = new PIDController(kP, kI, kD);
     turnController = new PIDController(kP, kI, kD);
     turnController.setSetpoint(0);
 
@@ -82,6 +89,7 @@ public class Robot extends TimedRobot {
     rightJoystick = new Joystick(Constants.rightJoystickPort);
     middleJoystick = new Joystick(3);
     xbox = new XboxController(4);
+    btn1 = new JoystickButton(xbox, 1);
 
     navx = new AHRS(Port.kMXP);
   }
@@ -175,8 +183,12 @@ public class Robot extends TimedRobot {
     turnController.setP(p);
     turnController.setI(i);
     turnController.setD(d);
-
+    moveController.setP(p);
+    moveController.setI(i);
+    moveController.setD(d);
     boolean isHumanControlled = true;
+
+    //navx.g
 
     if(leftJoystick.getRawButton(2)){
       isHumanControlled = !isHumanControlled;
@@ -201,6 +213,8 @@ public class Robot extends TimedRobot {
 
     if(isHumanControlled) driveTrainSubsystem.drive(leftSpeed, rightSpeed);
     else driveTrainSubsystem.drive(0, speed);
+
+    btn1.whenHeld(new Turn(driveTrainSubsystem, new GyroSubsystem(), 45));
   }
 
   @Override

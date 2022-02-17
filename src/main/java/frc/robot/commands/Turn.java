@@ -30,6 +30,8 @@ public class Turn extends CommandBase {
         this.gyroSubsystem = gyroSubsystem;
         this.drivetrain = drivetrain;
         turnController.setSetpoint(targetAngle);
+        turnController.setTolerance(5);
+        //turnController.enableContinuousInput(-180, 180);
 
         addRequirements(drivetrain);
         addRequirements(gyroSubsystem);
