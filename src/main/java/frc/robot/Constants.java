@@ -14,6 +14,8 @@ package frc.robot;
  */
 public final class Constants {
 
+    public final static int joystickPort = 0;
+
     public static enum LengthUnits {
         INCHES,
         METERS
@@ -22,6 +24,10 @@ public final class Constants {
     public static class LimelightConstants {
         public final static double LIME_ANGLE = 0;
         public final static double LIME_HEIGHT = 30.75;
+
+        public final static int swapCameraButtonPort = 6;
+        public final static int swapLedButtonPort = 7;
+
     }
 
     public static class FieldConstants {
