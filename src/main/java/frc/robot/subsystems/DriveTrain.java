@@ -5,10 +5,14 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -17,10 +21,14 @@ import frc.robot.Constants;
 import frc.robot.Constants.Drive;
 
 public class DriveTrain extends SubsystemBase {
-   
-    DifferentialDrive drive;
+    AHRS navx;
+
+    DifferentialDriveOdometry odometry;
+    
     MotorControllerGroup leftMotorGroup;
     MotorControllerGroup rightMotorGroup;
+
+    DifferentialDrive drive;
 
     double kS = 1;
     double kV = 1;
@@ -52,20 +60,34 @@ public class DriveTrain extends SubsystemBase {
         // Create the Differential Drive to drive the robot
         drive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
 
+        navx = new AHRS(Port.kMXP);
+        odometry = new DifferentialDriveOdometry(navx.getRotation2d());
     }
 
     public void drive(double leftSpeed, double rightSpeed) {
         drive.tankDrive(leftSpeed, rightSpeed);
     }
 
-    public void driveWithFeedForward(double leftVelocity, double rightVelocity){
-        leftMotorGroup.setVoltage(feedforward.calculate(leftVelocity));
-        rightMotorGroup.setVoltage(feedforward.calculate(rightVelocity));
+    public void driveByVoltage(double leftVoltage, double rightVoltage){
+        leftMotorGroup.setVoltage(leftVoltage);
+        rightMotorGroup.setVoltage(rightVoltage);
+        drive.feed();
+    }
+
+    public void resetAngle(){
+        navx.reset();
+    }
+
+    public Pose2d getPose(){
+        return odometry.getPoseMeters();
     }
 
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
+        double leftDistanceMeters = 0;
+        double rightDistanceMeters = 0;
+        odometry.update(navx.getRotation2d(), leftDistanceMeters, rightDistanceMeters);
     }
 
     @Override

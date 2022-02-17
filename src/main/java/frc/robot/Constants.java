@@ -15,8 +15,10 @@ package frc.robot;
 public final class Constants {
     static final int leftJoystickPort = 1;
     static final int rightJoystickPort = 2;
+
+    public static double InchesToMeters(double inches) { return inches * 0.0254; }
     
-    
+    // EVERYTHING IS IN METERS!!!
     public static final class Drive{
         public static final int[] leftMotorPorts = {4, 5, 6};
         public static final int[] rightMotorPorts = {1, 2, 3};
@@ -28,5 +30,7 @@ public final class Constants {
         public static final double kP = 0.04;
         public static final double kI = 0;
         public static final double kD = 0.005;
+
+        public static final double trackWidth = 1;
     }
 }
