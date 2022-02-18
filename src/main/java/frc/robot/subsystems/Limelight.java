@@ -51,14 +51,14 @@ public class Limelight extends SubsystemBase{
         // Gets our angle from horizontal by adding angle of limelight to angle offset
         double theta = Math.toRadians(ty.getDouble(0) + LimelightConstants.LIME_ANGLE);
 
-        // Gets delta height from top of target to where the limelight is mounted
-        double height = Constants.inchesToMeters(FieldConstants.TARGET_MAX_HEIGHT - LimelightConstants.LIME_HEIGHT);
-
         // theta = 0 implies tan(theta) = 0, so to avoid division
         // by zero, return -1 if theta = 0
         if(theta == 0) {
             return -1;
         }
+
+        // Gets delta height from top of target to where the limelight is mounted
+        double height = Constants.inchesToMeters(FieldConstants.TARGET_MAX_HEIGHT - LimelightConstants.LIME_HEIGHT);
 
         // Returns distance by using trigonometry
         return height / Math.tan(theta);
@@ -81,14 +81,14 @@ public class Limelight extends SubsystemBase{
         // Gets our angle from horizontal by adding angle of limelight to angle offset
         double theta = Math.toRadians(ty.getDouble(0) + LimelightConstants.LIME_ANGLE);
 
-        // Gets delta height from top of target to where the limelight is mounted
-        double height = Constants.inchesToMeters(FieldConstants.TARGET_MAX_HEIGHT - LimelightConstants.LIME_HEIGHT);
-
         // theta = 0 implies sin(theta) = 0, so to avoid division
         // by zero, return -1 if theta = 0
         if(theta == 0) {
             return -1;
         }
+
+        // Gets delta height from top of target to where the limelight is mounted
+        double height = Constants.inchesToMeters(FieldConstants.TARGET_MAX_HEIGHT - LimelightConstants.LIME_HEIGHT);
 
         // Returns distance by using trigonometry
         return height / Math.sin(theta);
@@ -169,7 +169,7 @@ public class Limelight extends SubsystemBase{
      * 
      * @param mode The mode of the LED we want to use
      */
-    public static void setLedMode(double mode) {
+    public static void setLightsMode(double mode) {
         ledMode.setNumber(mode);
     }
 
@@ -182,7 +182,7 @@ public class Limelight extends SubsystemBase{
      * 2 = force blink,
      * 3 = force on
      */
-    public static double getLedMode() {
+    public static double getLightMode() {
         return (double) ledMode.getNumber(0);
     }
 
@@ -199,9 +199,9 @@ public class Limelight extends SubsystemBase{
      * Swaps the LED Status between 0 = pipeline and 1 = force off.
      * 
      */
-    public static void swapLed() {
+    public static void swapLights() {
         // The ? statement handles the if our current LED status is not 0 or 1
-        setLedMode(1 - (getLedMode() < 2 ? getLedMode() : 1));
+        setLightsMode(1 - (getLightMode() < 2 ? getLightMode() : 1));
     }
 
     /**
