@@ -93,9 +93,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    intakeButton.whenActive(new IntakeCom());
-
-
   }
 
   @Override
