@@ -14,7 +14,7 @@ public class SwapLights extends CommandBase{
     @Override
     public void initialize() {
         double currentLedMode = (double) ledMode.getNumber(0);
-        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1 - currentLedMode);
+        ledMode.setNumber(1 - currentLedMode);
     }
 
     
