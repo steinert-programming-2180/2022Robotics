@@ -30,14 +30,14 @@ public class RobotContainer {
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
   private final LimelightPeriodic m_limeperiodic = new LimelightPeriodic(m_limelight);
 
-  private final ParallelRaceGroup m_pipelinecam = new PipelineCamera(m_limelight).withTimeout(0.01);
-  private final ParallelRaceGroup m_drivecam = new DriveCamera(m_limelight).withTimeout(0.01);
-
-  private final ParallelRaceGroup m_disable = new DisableLights().withTimeout(0.01);
-  private final ParallelRaceGroup m_enable = new EnableLights().withTimeout(0.01);
-
-  private final ParallelRaceGroup m_swapCam = new SwapCamera(m_limelight).withTimeout(0.01);
-  private final ParallelRaceGroup m_swapLed = new SwapLights().withTimeout(0.01);
+  // private final ParallelRaceGroup m_pipelinecam = new PipelineCamera(m_limelight).withTimeout(0.01);
+  // private final ParallelRaceGroup m_drivecam = new DriveCamera(m_limelight).withTimeout(0.01);
+// 
+  // private final ParallelRaceGroup m_disable = new DisableLights().withTimeout(0.01);
+  // private final ParallelRaceGroup m_enable = new EnableLights().withTimeout(0.01);
+// 
+  // private final ParallelRaceGroup m_swapCam = new SwapCamera(m_limelight).withTimeout(0.01);
+  // private final ParallelRaceGroup m_swapLed = new SwapLights().withTimeout(0.01);
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -46,10 +46,10 @@ public class RobotContainer {
     configureButtonBindings();
 
     m_limelight.setDefaultCommand(m_limeperiodic);
-    SmartDashboard.putData("Drive Camera", m_drivecam);
-    SmartDashboard.putData("Pipeline Cam", m_pipelinecam);
-    SmartDashboard.putData("Enable Lights", m_enable);
-    SmartDashboard.putData("Disable Lights", m_disable);
+    // SmartDashboard.putData("Drive Camera", m_drivecam);
+    // SmartDashboard.putData("Pipeline Cam", m_pipelinecam);
+    // SmartDashboard.putData("Enable Lights", m_enable);
+    // SmartDashboard.putData("Disable Lights", m_disable);
   }
 
   /**
@@ -64,8 +64,8 @@ public class RobotContainer {
     JoystickButton swapCamButton = new JoystickButton(joy, LimelightConstants.swapCameraButtonPort);
     JoystickButton swapLedButton = new JoystickButton(joy, LimelightConstants.swapLedButtonPort);
 
-    swapLedButton.whenPressed(m_swapLed);
-    swapCamButton.whenPressed(m_swapCam);
+    swapLedButton.whenPressed( () -> Limelight.swapLed() );
+    swapCamButton.whenPressed( () -> Limelight.swapCamera() );
 
   }
 

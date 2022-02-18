@@ -4,22 +4,26 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableType;
 import frc.robot.Constants;
 import frc.robot.Constants.*;
 
 public class Limelight extends SubsystemBase{
 
-    private NetworkTable limelight;
-    private NetworkTableEntry tx, ty, ta, tv;
+    private static NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
 
-    public Limelight () {
-        limelight = NetworkTableInstance.getDefault().getTable("limelight");
-        limelight.getEntry("pipeline").setNumber(0);
-        tx = limelight.getEntry("tx");
-        ty = limelight.getEntry("ty");
-        ta = limelight.getEntry("ta");
-        tv = limelight.getEntry("tv");
-    }
+    private NetworkTableEntry tx = limelight.getEntry("tx");
+    private NetworkTableEntry ty = limelight.getEntry("ty");
+    private NetworkTableEntry ta = limelight.getEntry("ta");
+    private NetworkTableEntry tv = limelight.getEntry("tv");
+
+    
+    private static NetworkTableEntry camMode = limelight.getEntry("camMode");
+    private static NetworkTableEntry ledMode = limelight.getEntry("ledMode");
+    private static NetworkTableEntry pipelineEntry = limelight.getEntry("pipeline");
+
+
+    public Limelight () {}
 
     public double getDistance() {
         double v = tv.getDouble(0);
@@ -51,12 +55,39 @@ public class Limelight extends SubsystemBase{
 
     }
 
-    public void setPipeline(int pipeline) {
-        NetworkTableEntry pipelineEntry = limelight.getEntry("pipeline");
+    public static void setPipeline(double pipeline) {
         pipelineEntry.setNumber(pipeline);
     }
 
-    public double getPipeline() {
-        return (double) limelight.getEntry("pipeline").getNumber(0);
+    public static double getPipeline() {
+        return (double) pipelineEntry.getNumber(0);
+    }
+
+    public static void setCameraMode(double mode) {
+        camMode.setNumber(mode);
+    }
+
+    public static double getCameraMode() {
+        return (double) camMode.getNumber(0);
+    }
+
+    public static void setLedMode(double mode) {
+        ledMode.setNumber(mode);
+    }
+
+    public static double getLedMode() {
+        return (double) ledMode.getNumber(0);
+    }
+
+    public static NetworkTable getLimelightTable() {
+        return limelight;
+    }
+
+    public static void swapLed() {
+        setLedMode(1 - getLedMode());
+    }
+
+    public static void swapCamera() {
+        setCameraMode(1 - getCameraMode());
     }
 }
