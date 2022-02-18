@@ -9,11 +9,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.LimelightConstants;
-import frc.robot.commands.*;
 import frc.robot.commands.limelight.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+// import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -24,18 +23,19 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final Limelight m_limelight = new Limelight();
 
-  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
   private final LimelightPeriodic m_limeperiodic = new LimelightPeriodic(m_limelight);
+
+
+  // TODO Mess with this stuff and see if buttons on the driver station are still possible without commands
 
   // private final ParallelRaceGroup m_pipelinecam = new PipelineCamera(m_limelight).withTimeout(0.01);
   // private final ParallelRaceGroup m_drivecam = new DriveCamera(m_limelight).withTimeout(0.01);
-// 
+
   // private final ParallelRaceGroup m_disable = new DisableLights().withTimeout(0.01);
   // private final ParallelRaceGroup m_enable = new EnableLights().withTimeout(0.01);
-// 
+
   // private final ParallelRaceGroup m_swapCam = new SwapCamera(m_limelight).withTimeout(0.01);
   // private final ParallelRaceGroup m_swapLed = new SwapLights().withTimeout(0.01);
 
@@ -76,7 +76,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    return null;
   }
 
   	/**
