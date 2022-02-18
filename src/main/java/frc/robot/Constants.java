@@ -21,7 +21,7 @@ public final class Constants {
         public final static double LIME_HEIGHT = 30.75;
 
         public final static int swapCameraButtonPort = 6;
-        public final static int swapLedButtonPort = 7;
+        public final static int swapLightsButtonPort = 7;
 
     }
 

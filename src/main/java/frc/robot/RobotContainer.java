@@ -37,7 +37,7 @@ public class RobotContainer {
   // private final ParallelRaceGroup m_enable = new EnableLights().withTimeout(0.01);
 
   // private final ParallelRaceGroup m_swapCam = new SwapCamera(m_limelight).withTimeout(0.01);
-  // private final ParallelRaceGroup m_swapLed = new SwapLights().withTimeout(0.01);
+  // private final ParallelRaceGroup m_swapLights = new SwapLights().withTimeout(0.01);
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -62,9 +62,9 @@ public class RobotContainer {
     Joystick joy = new Joystick(Constants.joystickPort);
 
     JoystickButton swapCamButton = new JoystickButton(joy, LimelightConstants.swapCameraButtonPort);
-    JoystickButton swapLedButton = new JoystickButton(joy, LimelightConstants.swapLedButtonPort);
+    JoystickButton swapLightsButton = new JoystickButton(joy, LimelightConstants.swapLightsButtonPort);
 
-    swapLedButton.whenPressed( () -> Limelight.swapLed() );
+    swapLightsButton.whenPressed( () -> Limelight.swapLights() );
     swapCamButton.whenPressed( () -> Limelight.swapCamera() );
 
   }
