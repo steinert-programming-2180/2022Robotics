@@ -1,22 +1,19 @@
 package frc.robot.commands.limelight;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Limelight;
 
 public class SwapLights extends CommandBase{
 
-    NetworkTableEntry ledMode;
-
-    public SwapLights() {
-        ledMode = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode");
-    }
+    /**
+     * Swaps between light modes on command run
+     */
+    public SwapLights() {}
 
     @Override
     public void initialize() {
-        double currentLedMode = (double) ledMode.getNumber(0);
-        ledMode.setNumber(1 - currentLedMode);
+        Limelight.swapLights();
     }
-
     
     @Override
     public boolean isFinished() {

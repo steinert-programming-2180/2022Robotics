@@ -1,15 +1,18 @@
 package frc.robot.commands.limelight;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Limelight;
 
 public class DisableLights extends CommandBase{
 
+    /**
+     * Disables the lights of the limelight on Command run
+     */
     public DisableLights() {}
 
     @Override
     public void initialize() {
-        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+        Limelight.setLightsMode(1);
     }
 
     @Override
