@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.robot.Constants;
 import frc.robot.Constants.*;
 
 public class Limelight extends SubsystemBase{
@@ -26,12 +27,12 @@ public class Limelight extends SubsystemBase{
             return -1;
         }
         double theta = ty.getDouble(0) + LimelightConstants.LIME_ANGLE;
-        double height = FieldConstants.TARGET_MAX_HEIGHT - LimelightConstants.LIME_HEIGHT;
+        double height = Constants.inchesToMeters(FieldConstants.TARGET_MAX_HEIGHT - LimelightConstants.LIME_HEIGHT);
 
         if(theta == 0) {
             return -1;
         }
-        return height * Math.cot(Math.toRadians(theta));
+        return height / Math.tan(Math.toRadians(theta));
     }
 
     public void putItems() {
