@@ -5,26 +5,26 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class ConveyorCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private Conveyor conveyorcommand;
+  private Conveyor conveyor;
   
   public ConveyorCommand(Conveyor conveyor) {
-    conveyorcommand = conveyor;
+    this.conveyor = conveyor;
     addRequirements(conveyor);
   }
 
   @Override
   public void initialize() {
-    conveyorcommand.convey();
+    conveyor.convey();
   }
 
   @Override
   public void execute() {
-    conveyorcommand.convey();
+    conveyor.convey();
   }
 
   @Override
   public void end(boolean interrupted) {
-    conveyorcommand.conveystop();
+    conveyor.stopConveyor();
   }
 
   @Override
