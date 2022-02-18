@@ -6,11 +6,12 @@ import frc.robot.subsystems.Limelight;
 public class LimelightPeriodic extends CommandBase{
     private final Limelight m_limelight;
 
+    /**
+     * The periodic command for the Limelight, Calls putItems
+     */
     public LimelightPeriodic(Limelight lime) {
         m_limelight = lime;
-
         addRequirements(m_limelight);
-
     }
 
     @Override
