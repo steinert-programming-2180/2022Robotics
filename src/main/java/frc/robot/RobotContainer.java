@@ -6,7 +6,9 @@ package frc.robot;
 
 import java.util.List;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -73,13 +75,18 @@ public class RobotContainer {
       trajectoryConfig
     );
 
-    RamseteController ramseteController = new RamseteController();
+    RamseteController ramseteController = new RamseteController(Drive.b, Drive.zeta);
 
+    // https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/creating-following-trajectory.html?highlight=ramsetecommand#creating-the-ramsetecommand 
     RamseteCommand ramseteCommand = new RamseteCommand(
       trajectory, 
       driveTrain::getPose, 
       ramseteController, 
+      new SimpleMotorFeedforward(Drive.kS, Drive.kV, Drive.kA),
       kDriveKinematics, 
+      driveTrain::getWheelSpeeds, 
+      new PIDController(Drive.leftKp, Drive.leftKi, Drive.leftKd), 
+      new PIDController(Drive.rightKp, Drive.rightKi, Drive.rightKd), 
       driveTrain::driveByVoltage, 
       driveTrain
     );

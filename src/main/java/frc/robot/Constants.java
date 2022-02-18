@@ -31,6 +31,21 @@ public final class Constants {
         public static final double kI = 0;
         public static final double kD = 0.005;
 
+        public static final double kS = 0;
+        public static final double kV = 0;
+        public static final double kA = 0;
+
+        public static final double leftKp = 0;
+        public static final double leftKi = 0;
+        public static final double leftKd = 0;
+
+        public static final double rightKp = 0;
+        public static final double rightKi = 0;
+        public static final double rightKd = 0;
+
+        public static final double b = 0;
+        public static final double zeta = 0;
+
         public static final double trackWidth = 1;
     }
 }
