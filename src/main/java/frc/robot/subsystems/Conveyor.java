@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
@@ -18,19 +14,24 @@ public class Conveyor extends SubsystemBase {
     exitConveyor = new Spark(ConveyorConstants.exitConveyorPort);
   }
 
-  public void Convey() {
+  public void convey() {
     entranceConveyor.set(ConveyorConstants.conveyorSpeed);
     exitConveyor.set(-ConveyorConstants.conveyorSpeed);
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler 
-    
+  public void reverseConvey() {
+    entranceConveyor.set(-ConveyorConstants.conveyorSpeed);
+    exitConveyor.set(ConveyorConstants.conveyorSpeed);
+  }
+
+  public void stopConveyor() {
+    entranceConveyor.set(0);
+    exitConveyor.set(0);
   }
 
   @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during
-  }
+  public void periodic() {}
+
+  @Override
+  public void simulationPeriodic() {}
 }
