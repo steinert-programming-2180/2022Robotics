@@ -18,7 +18,7 @@ public final class Constants {
 
     public static class LimelightConstants {
         public final static double LIME_ANGLE = 0;
-        public final static double LIME_HEIGHT = 30.75;
+        public final static double LIME_HEIGHT = 31.75;
 
         public final static int swapCameraButtonPort = 8;
         public final static int swapLightsButtonPort = 9;
@@ -26,7 +26,9 @@ public final class Constants {
     }
 
     public static class FieldConstants {
-        public final static double TARGET_MAX_HEIGHT = 104;
+
+        //TODO Get actual height after testing
+        public final static double TARGET_MAX_HEIGHT = 43.5;
     }
 
     public static double inchesToMeters(double inches) {
