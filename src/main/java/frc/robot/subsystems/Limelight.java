@@ -12,16 +12,16 @@ import frc.robot.Constants.*;
 public class Limelight extends SubsystemBase{
 
     // Gets our Limelight NetworkTable, api located here: https://docs.limelightvision.io/en/latest/networktables_api.html
-    private NetworkTable limelight;
+    private static NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
 
-    private NetworkTableEntry tx;
-    private NetworkTableEntry ty;
-    private NetworkTableEntry ta;
-    private NetworkTableEntry tv;
+    private static NetworkTableEntry tx = limelight.getEntry("tx");
+    private static NetworkTableEntry ty = limelight.getEntry("ty");
+    private static NetworkTableEntry ta = limelight.getEntry("ta");
+    private static NetworkTableEntry tv = limelight.getEntry("tv");
 
-    private NetworkTableEntry camMode;
-    private NetworkTableEntry ledMode;
-    private NetworkTableEntry pipelineEntry;
+    private static NetworkTableEntry camMode = limelight.getEntry("camMode");
+    private static NetworkTableEntry ledMode = limelight.getEntry("ledMode");
+    private static NetworkTableEntry pipeline = limelight.getEntry("pipeline");
 
     /**
      * Limelight class for command usage, non-static usage pretty much entirely depricated.
@@ -41,7 +41,7 @@ public class Limelight extends SubsystemBase{
         // Gets the NetworkTableEntries for cameraMode, ledMode, and pipelineNumber, respectively
         camMode = limelight.getEntry("camMode");
         ledMode = limelight.getEntry("ledMode");
-        pipelineEntry = limelight.getEntry("pipeline");
+        pipeline = limelight.getEntry("pipeline");
     }
 
     /**
@@ -66,14 +66,14 @@ public class Limelight extends SubsystemBase{
         }
 
         // Gets delta height from top of target to where the limelight is mounted
-        double height = Constants.inchesToMeters(FieldConstants.TARGET_MAX_HEIGHT - LimelightConstants.LIME_HEIGHT);
+        double height = (FieldConstants.TARGET_MAX_HEIGHT - LimelightConstants.LIME_HEIGHT);
 
         // Returns distance by using trigonometry
         return height / Math.tan(theta);
     }
 
     public boolean hasTarget() {
-        return tv.getDouble(0) == 1;
+        return ( isTracking() && tv.getDouble(0) == 1);
     }
 
     /**
@@ -103,32 +103,39 @@ public class Limelight extends SubsystemBase{
         // Returns distance by using trigonometry
         return height / Math.sin(theta);
     }
+    
+    public static boolean isTracking() {
+        return (getCameraMode() == 0) && (getLightsMode() == 0);
+    }
+
     /**
      * Puts x angle of target, y angle of target, and area of target. If distance is valid, put that, too.
      */
-
     public void putItems() {
+   
+        SmartDashboard.putBoolean("Has Target?", hasTarget());
+        SmartDashboard.putBoolean("Is Tracking?", isTracking());
 
-        // Only changes values if there is a valid target
-        if(hasTarget()){
+        if(!hasTarget()) {
+            return;
+        }
 
-            // Gets x, y, area. If invalid, defaults to 0.0
-            double x = tx.getDouble(0.0);
-            double y = ty.getDouble(0.0);
-            double area = ta.getDouble(0.0);
-            
-            // Puts x, y, area to SmartDashboard
-            SmartDashboard.putNumber("LimelightX", x);
-            SmartDashboard.putNumber("LimelightY", y);
-            SmartDashboard.putNumber("LimelightArea", area);
+        // Gets x, y, area. If invalid, defaults to 0.0
+        double x = tx.getDouble(0.0);
+        double y = ty.getDouble(0.0);
+        double area = ta.getDouble(0.0);
+        
+        // Puts x, y, area to SmartDashboard
+        SmartDashboard.putNumber("LimelightX", x);
+        SmartDashboard.putNumber("LimelightY", y);
+        SmartDashboard.putNumber("LimelightArea", area);
 
-            // Gets the horizontal distance from the target
-            double dist = getHorizontalDistance();
+        // Gets the horizontal distance from the target
+        double dist = getHorizontalDistance();
 
-            // If this distance is positive, i.e. didn't trigger a failsafe, put it to SmartDashboard
-            if(dist >=0) {
-                SmartDashboard.putNumber("Distance (inches)", dist);
-            }
+        // If this distance is positive, i.e. didn't trigger a failsafe, put it to SmartDashboard
+        if(dist >=0) {
+            SmartDashboard.putNumber("Distance (inches)", dist);     
         }   
     }
 
@@ -138,8 +145,8 @@ public class Limelight extends SubsystemBase{
      * 
      * @param pipeline The pipeline we wish to use
      */
-    public void setPipeline(double pipeline) {
-        pipelineEntry.setNumber(pipeline);
+    public static void setPipeline(double mode) {
+        pipeline.setNumber(mode);
     }
 
     /**
@@ -147,9 +154,8 @@ public class Limelight extends SubsystemBase{
      * 
      * @return The pipeline in use right now
      */
-
-    public double getPipeline() {
-        return (double) pipelineEntry.getNumber(0);
+    public static double getPipeline() {
+        return (double) pipeline.getNumber(0);
     }
 
     /**
@@ -159,7 +165,7 @@ public class Limelight extends SubsystemBase{
      * 
      * @param mode The camera mode we wish to use
      */
-    public void setCameraMode(double mode) {
+    public static void setCameraMode(double mode) {
         camMode.setNumber(mode);
     }
 
@@ -168,8 +174,7 @@ public class Limelight extends SubsystemBase{
      * 
      * @return The current camera mode
      */
-
-    public double getCameraMode() {
+    public static double getCameraMode() {
         return (double) camMode.getNumber(0);
     }
 
@@ -182,7 +187,7 @@ public class Limelight extends SubsystemBase{
      * 
      * @param mode The mode of the LED we want to use
      */
-    public void setLightsMode(double mode) {
+    public static void setLightsMode(double mode) {
         ledMode.setNumber(mode);
     }
 
@@ -195,7 +200,7 @@ public class Limelight extends SubsystemBase{
      * 2 = force blink,
      * 3 = force on
      */
-    public double getLightMode() {
+    public static double getLightsMode() {
         return (double) ledMode.getNumber(0);
     }
 
@@ -204,7 +209,7 @@ public class Limelight extends SubsystemBase{
      * 
      * @return The NetworkTable for the limelight, API found here {@link https://docs.limelightvision.io/en/latest/networktables_api.html}
      */
-    public NetworkTable getLimelightTable() {
+    public static NetworkTable getLimelightTable() {
         return limelight;
     }
 
@@ -212,15 +217,15 @@ public class Limelight extends SubsystemBase{
      * Swaps the LED Status between 0 = pipeline and 1 = force off.
      * 
      */
-    public void swapLights() {
+    public static void swapLights() {
         // The ? statement handles the if our current LED status is not 0 or 1
-        setLightsMode(1 - (getLightMode() < 2 ? getLightMode() : 1));
+        setLightsMode(1 - (getLightsMode() < 2 ? getLightsMode() : 1));
     }
 
     /**
      * Swaps the Camera Status between 0 = pipeline camera and 1 = drive camera
      */
-    public void swapCamera() {
+    public static void swapCamera() {
         setCameraMode(1 - getCameraMode());
     }
 }

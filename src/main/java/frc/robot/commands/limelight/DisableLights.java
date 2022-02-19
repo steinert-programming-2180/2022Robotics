@@ -5,20 +5,14 @@ import frc.robot.subsystems.Limelight;
 
 public class DisableLights extends CommandBase{
 
-    Limelight m_limelight;
-
     /**
      * Disables the lights of the limelight on Command run
      */
-    public DisableLights(Limelight lime) {
-        m_limelight = lime;
-
-        addRequirements(lime);
-    }
+    public DisableLights() {}
 
     @Override
     public void initialize() {
-        m_limelight.setLightsMode(1);
+        Limelight.setLightsMode(1);
     }
 
     @Override
