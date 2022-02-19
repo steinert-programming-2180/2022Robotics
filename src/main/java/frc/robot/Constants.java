@@ -24,4 +24,8 @@ public final class Constants {
         public static final int exitConveyorPort = 1;
         public static final double conveyorSpeed = 1;
     }
+
+    public final class IO{
+        public static final int xboxPort = 0;
+    }
 }

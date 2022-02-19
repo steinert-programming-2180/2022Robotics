@@ -5,13 +5,16 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.Constants.IO;
 import frc.robot.commands.ConveyorBackwardCommand;
 import frc.robot.commands.ConveyorCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.IntakeReverse;
 import frc.robot.commands.ShooterCommand;
+import frc.robot.commands.TakeAndShoot;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Intake;
@@ -30,6 +33,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Conveyor conveyor = new Conveyor();
   private final Shooter shooter = new Shooter();
+  private final TakeAndShoot takeAndShoot = new TakeAndShoot(intake, conveyor, shooter);
 
   private final IntakeCommand intakeCommand = new IntakeCommand(intake);
   private final IntakeReverse intakeReverse = new IntakeReverse(intake);
@@ -41,6 +45,26 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button 
     configureButtonBindings();
+    XboxController Xbox = new XboxController(IO.xboxPort);
+    JoystickButton aButton = new JoystickButton(Xbox, 1);
+    JoystickButton bButton = new JoystickButton(Xbox, 2);
+    JoystickButton xButton = new JoystickButton(Xbox, 3);
+    JoystickButton yButton = new JoystickButton(Xbox, 4);
+    JoystickButton lButton = new JoystickButton(Xbox, 5);
+    JoystickButton rButton = new JoystickButton(Xbox, 6);
+    JoystickButton backButton = new JoystickButton(Xbox, 7);
+    JoystickButton startButton = new JoystickButton(Xbox, 8);
+    JoystickButton lStick = new JoystickButton(Xbox, 9);
+
+    aButton.whenHeld(takeAndShoot);
+    bButton.whenHeld(intakeCommand).whenHeld(conveyorCommand);
+    xButton.whenHeld(intakeReverse).whenHeld(conveyorBackwardCommand);
+    yButton.whenHeld(conveyorCommand).whenHeld(shooterCommand);
+    lButton.whenHeld(conveyorBackwardCommand);
+    rButton.whenHeld(conveyorCommand);
+    backButton.whenHeld(intakeReverse);
+    startButton.whenHeld(intakeCommand);
+    lStick.whenHeld(shooterCommand);
   }
 
   /**
@@ -49,8 +73,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {
-  }
+  private void configureButtonBindings() {}
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
