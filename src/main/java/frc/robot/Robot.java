@@ -38,20 +38,9 @@ public class Robot extends TimedRobot {
 
   Joystick leftJoystick, rightJoystick, middleJoystick;
   XboxController xbox;
-  JoystickButton btn1;
 
   DriveTrain driveTrainSubsystem;
-
-  boolean reverse = false;
-
-  boolean arcade = false;
   AHRS navx;
-  PIDController turnController;
-  PIDController moveController;
-  SimpleMotorFeedforward sim;
-
-  double speed;
-  double angle;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -65,32 +54,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     
     driveTrainSubsystem = new DriveTrain();
-
-    double kP = 0.02;
-    double kI = 0.001; // 0.025
-    double kD = 0;
-
-    moveController = new PIDController(kP, kI, kD);
-    turnController = new PIDController(kP, kI, kD);
-    turnController.setSetpoint(0);
-
-    double kS = 1;
-    double kV = 1;
-    double kA = 1;
-    sim = new SimpleMotorFeedforward(kS, kV, kA);
-
-    SmartDashboard.putNumber("SetP", SmartDashboard.getNumber("SetP", 0.02));
-    SmartDashboard.putNumber("SetI", SmartDashboard.getNumber("SetI", 0.001));
-    SmartDashboard.putNumber("SetD", SmartDashboard.getNumber("SetD", 0));
-
-    // Create the Joysticks
-
-    leftJoystick = new Joystick(Constants.leftJoystickPort);
-    rightJoystick = new Joystick(Constants.rightJoystickPort);
-    middleJoystick = new Joystick(3);
-    xbox = new XboxController(4);
-    btn1 = new JoystickButton(xbox, 1);
-
+    
     navx = new AHRS(Port.kMXP);
   }
 
@@ -103,23 +67,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    angle = navx.getYaw();
-    SmartDashboard.putNumber("Angle", angle);
-    SmartDashboard.putNumber("Angle Graph", angle);
-    SmartDashboard.putNumber("Setpoint", turnController.getSetpoint());
-    SmartDashboard.putNumber("New Force", speed);
-
     if(leftJoystick.getTriggerPressed()){
       navx.zeroYaw();
     }
-
-    // SmartDashboard.putNumber("P", MathUtil.clamp(leftJoystick.getZ(), 0, 5));
-    // SmartDashboard.putNumber("I", MathUtil.clamp(rightJoystick.getZ(), 0, 5));
-    // SmartDashboard.putNumber("D", MathUtil.clamp(middleJoystick.getZ(), 0, 5));
-    
-    SmartDashboard.putNumber("P", turnController.getP());
-    SmartDashboard.putNumber("I", turnController.getI());
-    SmartDashboard.putNumber("D", turnController.getD());
 
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
@@ -164,57 +114,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    double leftSpeed = leftJoystick.getY();
-    double rightSpeed = rightJoystick.getY();
-    // double max = 1.0/180.0;
 
-    double p = SmartDashboard.getNumber("SetP", 1.0/180.0);
-    double i = SmartDashboard.getNumber("SetI", 0);
-    double d = SmartDashboard.getNumber("SetD", 0);
-
-    SmartDashboard.putNumber("Error", turnController.getPositionError());
-    SmartDashboard.putNumber("Error Graph", turnController.getPositionError());
-
-
-    // double leftClamp = MathUtil.clamp(leftJoystick.getZ(), 0, max);
-    // double rightClamp = MathUtil.clamp(rightJoystick.getZ(), 0, 1.0/180 + 1);
-    // double middleClamp = MathUtil.clamp(middleJoystick.getZ(), 0, 1);
-
-    turnController.setP(p);
-    turnController.setI(i);
-    turnController.setD(d);
-    moveController.setP(p);
-    moveController.setI(i);
-    moveController.setD(d);
-    boolean isHumanControlled = true;
-
-    //navx.g
-
-    if(leftJoystick.getRawButton(2)){
-      isHumanControlled = !isHumanControlled;
-    }
-
-    if (rightJoystick.getRawButton(1)){
-      turnController.setSetpoint(135);
-    }
-
-    if (middleJoystick.getTrigger()){
-      turnController.setSetpoint(45);
-    }
-
-    if(xbox.getYButton()) turnController.setSetpoint(0);
-    else if(xbox.getBButton())turnController.setSetpoint(90);
-    else if(xbox.getAButton()) turnController.setSetpoint(180);
-    else if(xbox.getXButton()) turnController.setSetpoint(-90);
-
-    SmartDashboard.putBoolean("Is Human Controlled", isHumanControlled);
-
-    speed = MathUtil.clamp(turnController.calculate(angle), -1, 1);
-
-    if(isHumanControlled) driveTrainSubsystem.drive(leftSpeed, rightSpeed);
-    else driveTrainSubsystem.drive(0, speed);
-
-    btn1.whenHeld(new Turn(driveTrainSubsystem, new GyroSubsystem(), 45));
   }
 
   @Override
