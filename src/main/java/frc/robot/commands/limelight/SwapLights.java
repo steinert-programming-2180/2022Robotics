@@ -5,14 +5,20 @@ import frc.robot.subsystems.Limelight;
 
 public class SwapLights extends CommandBase{
 
+    Limelight m_limelight;
+
     /**
      * Swaps between light modes on command run
      */
-    public SwapLights() {}
+    public SwapLights(Limelight lime) {
+        m_limelight = lime;
+
+        addRequirements(lime);
+    }
 
     @Override
     public void initialize() {
-        Limelight.swapLights();
+        m_limelight.swapLights();
     }
     
     @Override

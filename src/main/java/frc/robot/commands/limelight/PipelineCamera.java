@@ -5,14 +5,20 @@ import frc.robot.subsystems.Limelight;
 
 public class PipelineCamera extends CommandBase{
 
+    Limelight m_limelight;
+
     /**
      * Enables the pipeline camera for the limelight on command run
      */
-    public PipelineCamera() {}
+    public PipelineCamera(Limelight lime) {
+        m_limelight = lime;
+
+        addRequirements(lime);
+    }
 
     @Override
     public void initialize() {
-        Limelight.setCameraMode(0);
+        m_limelight.setCameraMode(0);
     }
 
     @Override

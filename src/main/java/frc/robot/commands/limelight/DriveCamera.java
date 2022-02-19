@@ -5,14 +5,20 @@ import frc.robot.subsystems.Limelight;
 
 public class DriveCamera extends CommandBase{
 
+    Limelight m_limelight;
+
     /**
      * Enables the driver camera for the limelight on command run
      */
-    public DriveCamera() {}
+    public DriveCamera(Limelight lime) {
+        m_limelight = lime;
+
+        addRequirements(lime);
+    }
 
     @Override
     public void initialize() {
-        Limelight.setCameraMode(1);
+        m_limelight.setCameraMode(1);
     }
 
     @Override

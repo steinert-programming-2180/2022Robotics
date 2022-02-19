@@ -5,14 +5,20 @@ import frc.robot.subsystems.Limelight;
 
 public class SwapCamera extends CommandBase{
 
+    Limelight m_limelight;
+
     /**
      * Swaps between camera modes on command run
      */
-    public SwapCamera() {}
+    public SwapCamera(Limelight lime) {
+        m_limelight = lime;
+
+        addRequirements(lime);
+    }
 
     @Override
     public void initialize() {
-        Limelight.swapCamera();
+        m_limelight.swapCamera();
     }
 
     @Override

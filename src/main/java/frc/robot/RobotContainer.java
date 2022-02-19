@@ -26,30 +26,15 @@ public class RobotContainer {
   private final Limelight m_limelight = new Limelight();
 
   private final LimelightPeriodic m_limeperiodic = new LimelightPeriodic(m_limelight);
-
-
-  // TODO Mess with this stuff and see if buttons on the driver station are still possible without commands
-
-  // private final ParallelRaceGroup m_pipelinecam = new PipelineCamera(m_limelight).withTimeout(0.01);
-  // private final ParallelRaceGroup m_drivecam = new DriveCamera(m_limelight).withTimeout(0.01);
-
-  // private final ParallelRaceGroup m_disable = new DisableLights().withTimeout(0.01);
-  // private final ParallelRaceGroup m_enable = new EnableLights().withTimeout(0.01);
-
-  // private final ParallelRaceGroup m_swapCam = new SwapCamera(m_limelight).withTimeout(0.01);
-  // private final ParallelRaceGroup m_swapLights = new SwapLights().withTimeout(0.01);
-
+  private final SwapLights m_swapLights = new SwapLights(m_limelight);
+  private final SwapCamera m_swapCamera = new SwapCamera(m_limelight);
+ 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-
     m_limelight.setDefaultCommand(m_limeperiodic);
-    // SmartDashboard.putData("Drive Camera", m_drivecam);
-    // SmartDashboard.putData("Pipeline Cam", m_pipelinecam);
-    // SmartDashboard.putData("Enable Lights", m_enable);
-    // SmartDashboard.putData("Disable Lights", m_disable);
   }
 
   /**
@@ -64,8 +49,9 @@ public class RobotContainer {
     JoystickButton swapCamButton = new JoystickButton(joy, LimelightConstants.swapCameraButtonPort);
     JoystickButton swapLightsButton = new JoystickButton(joy, LimelightConstants.swapLightsButtonPort);
 
-    swapLightsButton.whenPressed( () -> Limelight.swapLights() );
-    swapCamButton.whenPressed( () -> Limelight.swapCamera() );
+
+    swapLightsButton.whenPressed(m_swapLights);
+    swapCamButton.whenPressed(m_swapCamera);
 
   }
 
