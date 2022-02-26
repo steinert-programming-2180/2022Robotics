@@ -33,10 +33,8 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-  DriveTrain driveTrain = new DriveTrain();
-
-  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
+  private final ExampleSubsystem emptySubsystem = new ExampleSubsystem();
+  private final ExampleCommand emptyCommand = new ExampleCommand(emptySubsystem);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -78,19 +76,20 @@ public class RobotContainer {
     RamseteController ramseteController = new RamseteController(Drive.b, Drive.zeta);
 
     // https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/creating-following-trajectory.html?highlight=ramsetecommand#creating-the-ramsetecommand 
-    RamseteCommand ramseteCommand = new RamseteCommand(
-      trajectory, 
-      driveTrain::getPose, 
-      ramseteController, 
-      new SimpleMotorFeedforward(Drive.kS, Drive.kV, Drive.kA),
-      kDriveKinematics, 
-      driveTrain::getWheelSpeeds, 
-      new PIDController(Drive.leftKp, Drive.leftKi, Drive.leftKd), 
-      new PIDController(Drive.rightKp, Drive.rightKi, Drive.rightKd), 
-      driveTrain::driveByVoltage, 
-      driveTrain
-    );
+    // RamseteCommand ramseteCommand = new RamseteCommand(
+    //   trajectory, 
+    //   driveTrain::getPose, 
+    //   ramseteController, 
+    //   new SimpleMotorFeedforward(Drive.kS, Drive.kV, Drive.kA),
+    //   kDriveKinematics, 
+    //   driveTrain::getWheelSpeeds, 
+    //   new PIDController(Drive.leftKp, Drive.leftKi, Drive.leftKd), 
+    //   new PIDController(Drive.rightKp, Drive.rightKi, Drive.rightKd), 
+    //   driveTrain::driveByVoltage, 
+    //   driveTrain
+    // );
 
-    return ramseteCommand.andThen(() -> driveTrain.drive(0, 0));
+    // return ramseteCommand.andThen(() -> driveTrain.drive(0, 0));
+    return emptyCommand;
   }
 }

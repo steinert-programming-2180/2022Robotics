@@ -20,8 +20,8 @@ public final class Constants {
     
     // EVERYTHING IS IN METERS!!!
     public static final class Drive{
-        public static final int[] leftMotorPorts = {4, 5, 6};
-        public static final int[] rightMotorPorts = {1, 2, 3};
+        public static final int[] leftMotorPorts = {1, 2, 3};
+        public static final int[] rightMotorPorts = {4, 5, 6};
 
         static final double lowModifier = 0.75;
         static final double medModifier = 0.85;

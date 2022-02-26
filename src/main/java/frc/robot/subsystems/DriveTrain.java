@@ -4,21 +4,18 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.Drive;
 
 public class DriveTrain extends SubsystemBase {
@@ -30,26 +27,26 @@ public class DriveTrain extends SubsystemBase {
     MotorControllerGroup rightMotorGroup;
 
     DifferentialDrive drive;
+    Compressor compressor;
 
-    double kS = 1;
-    double kV = 1;
-    double kA = 1;
-    SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(kS, kV, kA);
+    CANSparkMax[] leftMotors;
+    CANSparkMax[] rightMotors;
 
     /** Creates a new ExampleSubsystem. */
     public DriveTrain() {
         int amountOfLeftMotors = Drive.leftMotorPorts.length;
         int amountOfRightMotors = Drive.rightMotorPorts.length;
-        WPI_TalonSRX[] leftMotors = new WPI_TalonSRX[amountOfLeftMotors];
-        WPI_TalonSRX[] rightMotors = new WPI_TalonSRX[amountOfRightMotors];
+        
+        leftMotors = new CANSparkMax[amountOfLeftMotors];
+        rightMotors = new CANSparkMax[amountOfRightMotors];
 
         // Make Left Talons from the ports
         for (int i = 0; i < amountOfLeftMotors; i++)
-            leftMotors[i] = new WPI_TalonSRX(Drive.leftMotorPorts[i]);
+            leftMotors[i] = new CANSparkMax(Drive.leftMotorPorts[i], MotorType.kBrushless);
 
         // Make Right Talons from the ports
         for (int i = 0; i < amountOfRightMotors; i++)
-            rightMotors[i] = new WPI_TalonSRX(Drive.rightMotorPorts[i]);
+            rightMotors[i] = new CANSparkMax(Drive.rightMotorPorts[i], MotorType.kBrushless);
 
         // Put motors into their own groups
         leftMotorGroup = new MotorControllerGroup(leftMotors);
@@ -60,13 +57,17 @@ public class DriveTrain extends SubsystemBase {
 
         // Create the Differential Drive to drive the robot
         drive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
-
+        //compressor = new Compressor(PneumaticsModuleType.REVPH);
         navx = new AHRS(Port.kMXP);
         odometry = new DifferentialDriveOdometry(navx.getRotation2d());
     }
 
     public void drive(double leftSpeed, double rightSpeed) {
         drive.tankDrive(leftSpeed, rightSpeed);
+
+        // TODO: only for testing; get rid of this later
+        // for(CANSparkMax i : leftMotors) i.set(leftSpeed);
+        // for(CANSparkMax i : rightMotors) i.set(rightSpeed);
     }
 
     public void driveByVoltage(double leftVoltage, double rightVoltage){
