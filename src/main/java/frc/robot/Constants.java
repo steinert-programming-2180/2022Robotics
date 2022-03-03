@@ -19,7 +19,7 @@ public final class Constants {
         public static final double shooterSpeed = 1.0/3;
     }
 
-    public final class ConveyorConstants{
+    public static final class ConveyorConstants{
         public static final int entranceConveyorPort = 10;
         public static final int exitConveyorPort = 9;
         public static final double conveyorSpeed = 1;
@@ -28,6 +28,9 @@ public final class Constants {
     public final class IntakeConstants{
         public static final int leftIntakePort = 8;
         public static final int rightIntakePort = 7;
+
+        public static final int extendSolenoid = 1;
+        public static final int retractSolenoid = 3;
     }
 
     public final class IO{
@@ -43,7 +46,7 @@ public final class Constants {
     public static double InchesToMeters(double inches) { return inches * 0.0254; }
     
     // EVERYTHING IS IN METERS!!!
-    public static final class Drive{
+    public static final class DriveConstants{
         public static final int[] leftMotorPorts = {1, 2, 3};
         public static final int[] rightMotorPorts = {4, 5, 6};
 
@@ -51,13 +54,13 @@ public final class Constants {
         static final double medModifier = 0.85;
         static final double highModifier = 1;
 
-        public static final double kP = 0.04;
+        public static final double kP = 23.741;
         public static final double kI = 0;
-        public static final double kD = 0.005;
+        public static final double kD = 0.6788;
 
-        public static final double kS = 0;
-        public static final double kV = 0;
-        public static final double kA = 0;
+        public static final double kS = 0.13112;
+        public static final double kV = 0.12103;
+        public static final double kA = 0.012125;
 
         public static final double leftKp = 0;
         public static final double leftKi = 0;

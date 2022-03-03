@@ -28,7 +28,7 @@ import frc.robot.commands.IntakeReverse;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.TakeAndShoot;
 import frc.robot.subsystems.Conveyor;
-import frc.robot.Constants.Drive;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.DefaultDrive;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Drivetrain;
@@ -81,8 +81,10 @@ public class RobotContainer {
     JoystickButton backButton = new JoystickButton(Xbox, 7);
     JoystickButton startButton = new JoystickButton(Xbox, 8);
     JoystickButton lStick = new JoystickButton(Xbox, 9);
+    JoystickButton rStick = new JoystickButton(Xbox, 10);
     JoystickButton highGearButton = new JoystickButton(leftJoystick, 3);
     JoystickButton lowGearButton = new JoystickButton(rightJoystick, 3);
+    
 
     aButton.whenHeld(takeAndShoot);
     bButton.whenHeld(intakeCommand).whenHeld(conveyorCommand);
@@ -92,10 +94,13 @@ public class RobotContainer {
     rButton.whenHeld(conveyorCommand);
     backButton.whenHeld(intakeReverse);
     startButton.whenHeld(intakeCommand);
-    lStick.whenHeld(shooterCommand);
 
     highGearButton.whenPressed(() -> drivetrain.highGear());
     lowGearButton.whenPressed(() -> drivetrain.lowGear());
+
+    lStick.whenPressed(() -> intake.extendIntake());
+    rStick.whenPressed(() -> intake.retracktIntake());
+
 
     // make sure always driving
     drivetrain.setDefaultCommand(driveCommand);
@@ -116,7 +121,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(Drive.trackWidth);
+    DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(DriveConstants.trackWidth);
 
     Pose2d start = new Pose2d(0, 0, Rotation2d.fromDegrees(45));
     List<Translation2d> waypoints = List.of(
@@ -133,7 +138,7 @@ public class RobotContainer {
       trajectoryConfig
     );
 
-    RamseteController ramseteController = new RamseteController(Drive.b, Drive.zeta);
+    RamseteController ramseteController = new RamseteController(DriveConstants.b, DriveConstants.zeta);
 
     // https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/creating-following-trajectory.html?highlight=ramsetecommand#creating-the-ramsetecommand 
     // RamseteCommand ramseteCommand = new RamseteCommand(
