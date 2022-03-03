@@ -13,8 +13,11 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    static final int leftJoystickPort = 1;
-    static final int rightJoystickPort = 2;
+    public static final int leftJoystickPort = 1;
+    public static final int rightJoystickPort = 2;
+
+    public static final int PneumaticHubPort = 20;
+    public static final int PowerDistributionPort = 22;
 
     public static double InchesToMeters(double inches) { return inches * 0.0254; }
     
@@ -47,5 +50,9 @@ public final class Constants {
         public static final double zeta = 0;
 
         public static final double trackWidth = 1;
+
+        public static final int highGearSolenoid = 2;
+        public static final int lowGearSolenoid = 0;
+           
     }
 }

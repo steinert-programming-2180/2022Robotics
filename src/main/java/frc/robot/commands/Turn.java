@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants.Drive;
-import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.GyroSubsystem;
 
@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 /** An example command that uses an example subsystem. */
 public class Turn extends CommandBase {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-    private final DriveTrain drivetrain;
+    private final Drivetrain drivetrain;
     private final GyroSubsystem gyroSubsystem;
 
     double kP = Drive.kP;
@@ -26,7 +26,7 @@ public class Turn extends CommandBase {
     double kD = Drive.kD;
     PIDController turnController = new PIDController(kP, kI, kD);
 
-    public Turn(DriveTrain drivetrain, GyroSubsystem gyroSubsystem, int targetAngle) {
+    public Turn(Drivetrain drivetrain, GyroSubsystem gyroSubsystem, int targetAngle) {
         this.gyroSubsystem = gyroSubsystem;
         this.drivetrain = drivetrain;
         turnController.setSetpoint(targetAngle);
