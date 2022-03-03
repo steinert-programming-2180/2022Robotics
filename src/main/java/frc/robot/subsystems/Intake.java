@@ -1,33 +1,33 @@
 package frc.robot.subsystems;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
     
     
-    private TalonSRX leftInt, rightInt;
+    private CANSparkMax leftInt, rightInt;
     public Intake(){
-        leftInt= new TalonSRX(0);
-        rightInt= new TalonSRX(1);        
+        leftInt = new CANSparkMax(IntakeConstants.leftIntakePort, MotorType.kBrushless);
+        rightInt = new CANSparkMax(IntakeConstants.rightIntakePort, MotorType.kBrushless);        
     }
 
     public void intakeStop(){
         
-        leftInt.set(ControlMode.PercentOutput, 0);
-        rightInt.set(ControlMode.PercentOutput, 0);
+        leftInt.set(0);
+        rightInt.set(0);
     }
 
     public void intakeSpin(){ 
-        leftInt.set(ControlMode.PercentOutput, 1);
-        rightInt.set(ControlMode.PercentOutput, -1);
+        leftInt.set(-1);
+        rightInt.set(-1);
     }
 
     public void intakeReverse(){      
-        leftInt.set(ControlMode.PercentOutput, -1);
-        rightInt.set(ControlMode.PercentOutput, 1);
+        leftInt.set(1);
+        rightInt.set(1);
     }
 
 }

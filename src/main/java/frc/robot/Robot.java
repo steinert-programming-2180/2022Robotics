@@ -4,11 +4,27 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Constants.Drive;
+import frc.robot.commands.*;
+import frc.robot.subsystems.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -25,6 +41,15 @@ public class Robot extends TimedRobot {
   JoystickButton intakeButton = new JoystickButton(stick1, 1);
   
 
+  Joystick leftJoystick, rightJoystick, middleJoystick;
+  XboxController xbox;
+
+  DigitalInput sensor;
+
+  PneumaticHub pneumaticsHub;
+  Compressor compressor;
+
+  PowerDistribution powerDistributionHub;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -35,6 +60,16 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    sensor = new DigitalInput(9);
+
+    compressor = new Compressor(PneumaticsModuleType.REVPH);
+
+    powerDistributionHub = new PowerDistribution(12, ModuleType.kRev);
+    pneumaticsHub = new PneumaticHub(20);
+
+    powerDistributionHub.clearStickyFaults();
+    pneumaticsHub.clearStickyFaults();
   }
 
   /**
@@ -90,7 +125,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-
+    compressor.enableDigital();
+    SmartDashboard.putBoolean("sensor", sensor.get());
   }
 
   @Override

@@ -1,27 +1,30 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConveyorConstants;
 
 public class Conveyor extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  public Spark entranceConveyor;
-  public Spark exitConveyor;
+  public CANSparkMax entranceConveyor;
+  public CANSparkMax exitConveyor;
 
   public Conveyor() {
-    entranceConveyor = new Spark(ConveyorConstants.entranceConveyorPort);
-    exitConveyor = new Spark(ConveyorConstants.exitConveyorPort);
+    entranceConveyor = new CANSparkMax(ConveyorConstants.entranceConveyorPort, MotorType.kBrushless);
+    exitConveyor = new CANSparkMax(ConveyorConstants.exitConveyorPort, MotorType.kBrushless);
   }
 
   public void convey() {
-    entranceConveyor.set(ConveyorConstants.conveyorSpeed);
-    exitConveyor.set(-ConveyorConstants.conveyorSpeed);
+    entranceConveyor.set(-ConveyorConstants.conveyorSpeed);
+    exitConveyor.set(ConveyorConstants.conveyorSpeed);
   }
 
   public void reverseConvey() {
-    entranceConveyor.set(-ConveyorConstants.conveyorSpeed);
-    exitConveyor.set(ConveyorConstants.conveyorSpeed);
+    entranceConveyor.set(ConveyorConstants.conveyorSpeed);
+    exitConveyor.set(-ConveyorConstants.conveyorSpeed);
   }
 
   public void stopConveyor() {
