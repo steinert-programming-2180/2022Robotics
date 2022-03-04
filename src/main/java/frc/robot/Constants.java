@@ -14,7 +14,7 @@ package frc.robot;
  */
 public final class Constants {
     public final class ShooterConstants{
-        public static final double shooterSpeed = 1.0/3;
+        public static final double shooterSpeed = 0.25;
 
         public static final int bottomFlywheelPort = 12;
         public static final int topFlywheelPort = 11;
@@ -66,6 +66,13 @@ public final class Constants {
     
     // EVERYTHING IS IN METERS!!!
     public static final class DriveConstants{
+        // how long the robot should drive for during autonomous in SECONDS!
+        public static final double autonomousDriveTime = 3;
+        public static final double autonomousSpeed = 0.2;
+
+        public static final double initialSpeedLimit = 0.7;
+        public static final double secondSpeedLimit = 0.8;
+
         public static final int[] leftMotorPorts = {1, 2, 3};
         public static final int[] rightMotorPorts = {4, 5, 6};
 

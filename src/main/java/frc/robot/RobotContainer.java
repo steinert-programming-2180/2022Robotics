@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.IO;
+import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.ConveyorBackwardCommand;
 import frc.robot.commands.ConveyorCommand;
 import frc.robot.commands.ExampleCommand;
@@ -39,9 +40,12 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -63,57 +67,68 @@ public class RobotContainer {
   private final ConveyorBackwardCommand conveyorBackwardCommand = new ConveyorBackwardCommand(conveyor);
   private final ShooterCommand shooterCommand = new ShooterCommand(shooter);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  // Emergency autonomous. not actual autonomous unfortunately
+  private AutonomousCommand autonomousCommand = new AutonomousCommand(drivetrain);
+  private final boolean isAutonomousWorking = false;
+
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
-    // Configure the button 
+    // Configure the button
     configureButtonBindings();
-    Joystick leftJoystick = new Joystick(IO.leftJoystickPort);
-    Joystick rightJoystick = new Joystick(IO.rightJoystickPort);
-
-    XboxController Xbox = new XboxController(IO.xboxPort);
-    JoystickButton aButton = new JoystickButton(Xbox, 1);
-    JoystickButton bButton = new JoystickButton(Xbox, 2);
-    JoystickButton xButton = new JoystickButton(Xbox, 3);
-    JoystickButton yButton = new JoystickButton(Xbox, 4);
-    JoystickButton lButton = new JoystickButton(Xbox, 5);
-    JoystickButton rButton = new JoystickButton(Xbox, 6);
-    JoystickButton backButton = new JoystickButton(Xbox, 7);
-    JoystickButton startButton = new JoystickButton(Xbox, 8);
-    JoystickButton lStick = new JoystickButton(Xbox, 9);
-    JoystickButton rStick = new JoystickButton(Xbox, 10);
-    JoystickButton highGearButton = new JoystickButton(leftJoystick, 3);
-    JoystickButton lowGearButton = new JoystickButton(rightJoystick, 3);
-    
-
-    // aButton.whenHeld(takeAndShoot);
-    aButton.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm());
-    //bButton.whenHeld(intakeCommand).whenHeld(conveyorCommand);
-    bButton.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm());
-    xButton.whenHeld(intakeReverse).whenHeld(conveyorBackwardCommand);
-    yButton.whenHeld(conveyorCommand).whenHeld(shooterCommand);
-    lButton.whenHeld(conveyorBackwardCommand);
-    rButton.whenHeld(conveyorCommand);
-    backButton.whenHeld(intakeReverse);
-    startButton.whenHeld(intakeCommand);
-
-    highGearButton.whenPressed(() -> drivetrain.highGear());
-    lowGearButton.whenPressed(() -> drivetrain.lowGear());
-
-    lStick.whenPressed(() -> intake.extendIntake());
-    rStick.whenPressed(() -> intake.retracktIntake());
-
 
     // make sure always driving
     drivetrain.setDefaultCommand(driveCommand);
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be created by
+   * Use this method to define your button->command mappings. Buttons can be
+   * created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+   * it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    Joystick leftJoystick = new Joystick(IO.leftJoystickPort);
+    Joystick rightJoystick = new Joystick(IO.rightJoystickPort);
+    XboxController xbox = new XboxController(IO.xboxPort);
+
+    JoystickButton highGearButton = new JoystickButton(leftJoystick, 3);
+    JoystickButton lowGearButton = new JoystickButton(rightJoystick, 3);
+    JoystickButton leftTrigger = new JoystickButton(leftJoystick, Joystick.ButtonType.kTrigger.value);
+    JoystickButton rightTrigger = new JoystickButton(rightJoystick, Joystick.ButtonType.kTrigger.value);
+
+    JoystickButton aButton = new JoystickButton(xbox, 1);
+    JoystickButton bButton = new JoystickButton(xbox, 2);
+    JoystickButton xButton = new JoystickButton(xbox, 3);
+    JoystickButton yButton = new JoystickButton(xbox, 4);
+    JoystickButton leftBumper = new JoystickButton(xbox, 5);
+    JoystickButton rightBumper = new JoystickButton(xbox, 6);
+    JoystickButton backButton = new JoystickButton(xbox, 7);
+    JoystickButton startButton = new JoystickButton(xbox, 8);
+    JoystickButton leftStick = new JoystickButton(xbox, 9);
+    JoystickButton rightStick = new JoystickButton(xbox, 10);
+
+    // Operator
+    aButton.whileHeld(intakeCommand);
+    xButton.whileHeld(shooterCommand);
+    bButton.whileHeld(conveyorCommand);
+
+    leftStick.whenPressed(intakeReverse);
+
+    leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm());
+    rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm());
+
+    backButton.whenPressed(() -> intake.retractIntake());
+    startButton.whenPressed(() -> intake.extendIntake());
+
+    // Driver:
+    highGearButton.whenPressed(() -> drivetrain.highGear());
+    lowGearButton.whenPressed(() -> drivetrain.lowGear());
+    leftTrigger.or(rightTrigger).whenActive(() -> driveCommand.setSpeedLimit(DriveConstants.secondSpeedLimit)).whenInactive(() -> driveCommand.resetSpeedLimit());
+    leftTrigger.and(rightTrigger).whenActive(() -> driveCommand.removeSpeedLimit()).whenInactive(() -> driveCommand.resetSpeedLimit());
   }
 
   /**
@@ -122,40 +137,38 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    if(!isAutonomousWorking) return autonomousCommand;
+
     DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(DriveConstants.trackWidth);
 
     Pose2d start = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
     List<Translation2d> waypoints = List.of(
-      new Translation2d(0, 3)
-    );
+        new Translation2d(0, 3));
     Pose2d end = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
-    
+
     TrajectoryConfig trajectoryConfig = new TrajectoryConfig(3, 3);
 
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-      start,
-      waypoints,
-      end,
-      trajectoryConfig
-    );
+        start,
+        waypoints,
+        end,
+        trajectoryConfig);
 
     RamseteController ramseteController = new RamseteController(DriveConstants.b, DriveConstants.zeta);
 
-    // https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/creating-following-trajectory.html?highlight=ramsetecommand#creating-the-ramsetecommand 
+    // https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/creating-following-trajectory.html?highlight=ramsetecommand#creating-the-ramsetecommand
     RamseteCommand ramseteCommand = new RamseteCommand(
-      trajectory, 
-      drivetrain::getPose, 
-      ramseteController, 
-      new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA),
-      kDriveKinematics, 
-      drivetrain::getWheelSpeeds, 
-      new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD), 
-      new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD), 
-      drivetrain::driveByVoltage, 
-      drivetrain
-    );
+        trajectory,
+        drivetrain::getPose,
+        ramseteController,
+        new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA),
+        kDriveKinematics,
+        drivetrain::getWheelSpeeds,
+        new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD),
+        new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD),
+        drivetrain::driveByVoltage,
+        drivetrain);
 
     return ramseteCommand.andThen(() -> drivetrain.drive(0, 0));
-    //return emptyCommand;
   }
 }

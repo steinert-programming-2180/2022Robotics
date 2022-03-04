@@ -50,7 +50,7 @@ public class Drivetrain extends SubsystemBase {
         rightMotorGroup = new MotorControllerGroup(rightMotors);
 
         // Invert to drive propery
-        leftMotorGroup.setInverted(true);
+        leftMotorGroup.setInverted(false);
         rightMotorGroup.setInverted(true);
 
         // Create the Differential Drive to drive the robot

@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IO;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -19,9 +20,23 @@ public class DefaultDrive extends CommandBase {
   Joystick leftJoystick;
   Joystick righJoystick;
 
+  double speedLimit = DriveConstants.initialSpeedLimit;
+
   public DefaultDrive(Drivetrain drivetrain) {
     this.drivetrain = drivetrain;
     addRequirements(drivetrain);
+  }
+
+  public void setSpeedLimit(double speedLimit){
+    this.speedLimit = speedLimit;
+  }
+  
+  public void resetSpeedLimit(){
+    setSpeedLimit(DriveConstants.initialSpeedLimit);
+  }
+
+  public void removeSpeedLimit() {
+    setSpeedLimit(1);
   }
 
   @Override
@@ -32,7 +47,9 @@ public class DefaultDrive extends CommandBase {
 
   @Override
   public void execute() {
-    drivetrain.drive(leftJoystick.getY(), righJoystick.getY());
+    double leftSpeed = leftJoystick.getY() * speedLimit;
+    double rightSpeed = righJoystick.getY() * speedLimit;
+    drivetrain.drive(leftSpeed, rightSpeed);
   }
 
   @Override
