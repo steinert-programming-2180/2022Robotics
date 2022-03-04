@@ -95,8 +95,8 @@ public class RobotContainer {
     Joystick rightJoystick = new Joystick(IO.rightJoystickPort);
     XboxController xbox = new XboxController(IO.xboxPort);
 
-    JoystickButton highGearButton = new JoystickButton(leftJoystick, 3);
-    JoystickButton lowGearButton = new JoystickButton(rightJoystick, 3);
+    JoystickButton lowGearButton = new JoystickButton(leftJoystick, 3);
+    JoystickButton highGearButton = new JoystickButton(rightJoystick, 3);
     JoystickButton leftTrigger = new JoystickButton(leftJoystick, Joystick.ButtonType.kTrigger.value);
     JoystickButton rightTrigger = new JoystickButton(rightJoystick, Joystick.ButtonType.kTrigger.value);
 
