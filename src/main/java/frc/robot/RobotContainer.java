@@ -26,11 +26,10 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.IntakeReverse;
 import frc.robot.commands.ShooterCommand;
-import frc.robot.commands.TakeAndShoot;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.DefaultDrive;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Intake;
@@ -56,9 +55,9 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Conveyor conveyor = new Conveyor();
   private final Shooter shooter = new Shooter();
-  private final TakeAndShoot takeAndShoot = new TakeAndShoot(intake, conveyor, shooter);
+  private final Arm arm = new Arm();
 
-  private final IntakeCommand intakeCommand = new IntakeCommand(intake);
+  private final IntakeCommand intakeCommand = new IntakeCommand(intake, conveyor);
   private final IntakeReverse intakeReverse = new IntakeReverse(intake);
   private final ConveyorCommand conveyorCommand = new ConveyorCommand(conveyor);
   private final ConveyorBackwardCommand conveyorBackwardCommand = new ConveyorBackwardCommand(conveyor);
@@ -68,8 +67,8 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button 
     configureButtonBindings();
-    Joystick leftJoystick = new Joystick(Constants.leftJoystickPort);
-    Joystick rightJoystick = new Joystick(Constants.rightJoystickPort);
+    Joystick leftJoystick = new Joystick(IO.leftJoystickPort);
+    Joystick rightJoystick = new Joystick(IO.rightJoystickPort);
 
     XboxController Xbox = new XboxController(IO.xboxPort);
     JoystickButton aButton = new JoystickButton(Xbox, 1);
@@ -86,8 +85,10 @@ public class RobotContainer {
     JoystickButton lowGearButton = new JoystickButton(rightJoystick, 3);
     
 
-    aButton.whenHeld(takeAndShoot);
-    bButton.whenHeld(intakeCommand).whenHeld(conveyorCommand);
+    // aButton.whenHeld(takeAndShoot);
+    aButton.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm());
+    //bButton.whenHeld(intakeCommand).whenHeld(conveyorCommand);
+    bButton.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm());
     xButton.whenHeld(intakeReverse).whenHeld(conveyorBackwardCommand);
     yButton.whenHeld(conveyorCommand).whenHeld(shooterCommand);
     lButton.whenHeld(conveyorBackwardCommand);
@@ -123,11 +124,11 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(DriveConstants.trackWidth);
 
-    Pose2d start = new Pose2d(0, 0, Rotation2d.fromDegrees(45));
+    Pose2d start = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
     List<Translation2d> waypoints = List.of(
       new Translation2d(0, 3)
     );
-    Pose2d end = new Pose2d(3, 0, Rotation2d.fromDegrees(0));
+    Pose2d end = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
     
     TrajectoryConfig trajectoryConfig = new TrajectoryConfig(3, 3);
 
@@ -141,20 +142,20 @@ public class RobotContainer {
     RamseteController ramseteController = new RamseteController(DriveConstants.b, DriveConstants.zeta);
 
     // https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/creating-following-trajectory.html?highlight=ramsetecommand#creating-the-ramsetecommand 
-    // RamseteCommand ramseteCommand = new RamseteCommand(
-    //   trajectory, 
-    //   driveTrain::getPose, 
-    //   ramseteController, 
-    //   new SimpleMotorFeedforward(Drive.kS, Drive.kV, Drive.kA),
-    //   kDriveKinematics, 
-    //   driveTrain::getWheelSpeeds, 
-    //   new PIDController(Drive.leftKp, Drive.leftKi, Drive.leftKd), 
-    //   new PIDController(Drive.rightKp, Drive.rightKi, Drive.rightKd), 
-    //   driveTrain::driveByVoltage, 
-    //   driveTrain
-    // );
+    RamseteCommand ramseteCommand = new RamseteCommand(
+      trajectory, 
+      drivetrain::getPose, 
+      ramseteController, 
+      new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA),
+      kDriveKinematics, 
+      drivetrain::getWheelSpeeds, 
+      new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD), 
+      new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD), 
+      drivetrain::driveByVoltage, 
+      drivetrain
+    );
 
-    // return ramseteCommand.andThen(() -> driveTrain.drive(0, 0));
-    return emptyCommand;
+    return ramseteCommand.andThen(() -> drivetrain.drive(0, 0));
+    //return emptyCommand;
   }
 }

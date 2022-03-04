@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
+import frc.robot.Constants.IO;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj.Joystick;
@@ -25,8 +26,8 @@ public class DefaultDrive extends CommandBase {
 
   @Override
   public void initialize() {
-    leftJoystick = new Joystick(Constants.leftJoystickPort);
-    righJoystick = new Joystick(Constants.rightJoystickPort);
+    leftJoystick = new Joystick(IO.leftJoystickPort);
+    righJoystick = new Joystick(IO.rightJoystickPort);
   }
 
   @Override

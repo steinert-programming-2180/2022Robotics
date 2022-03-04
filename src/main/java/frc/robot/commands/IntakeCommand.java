@@ -4,47 +4,62 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.Constants.ConveyorConstants.ConveyorSection;
+import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
 public class IntakeCommand extends CommandBase {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Intake intake;
+    @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
+    private final Intake intake;
+    private final Conveyor conveyor;
 
-  /**
-   * Creates a new ExampleCommand.
-   *
-   * @param subsystem The subsystem used by this command.
-   */
-  public IntakeCommand(Intake intake) {
-    this.intake = intake;
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intake);
-  }
+    /**
+     * Creates a new ExampleCommand.
+     *
+     * @param subsystem The subsystem used by this command.
+     */
+    public IntakeCommand(Intake intake, Conveyor conveyor) {
+        this.intake = intake;
+        this.conveyor = conveyor;
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-      intake.intakeStop();
-  }
+        // Use addRequirements() here to declare subsystem dependencies.
+        addRequirements(intake);
+        addRequirements(conveyor);
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-      intake.intakeSpin();
-  }
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-      intake.intakeStop();
-  }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        boolean isExitFull = conveyor.getBeamBreakStatus(ConveyorSection.EXIT);
+        boolean isEntranceFull = conveyor.getBeamBreakStatus(ConveyorSection.ENTRANCE);
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+        if (isExitFull && isEntranceFull)
+            return;
+
+        intake.intakeSpin();
+        if (isExitFull)
+            conveyor.convey(ConveyorSection.ENTRANCE);
+        else
+            conveyor.convey();
+    }
+
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+        conveyor.stopConveyor();
+        intake.intakeStop();
+    }
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }

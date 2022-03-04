@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -35,6 +36,11 @@ public class Drivetrain extends SubsystemBase {
     CANSparkMax[] leftMotors;
     CANSparkMax[] rightMotors;
 
+    boolean inHighGear = true;
+    
+    RelativeEncoder leftEncoder;
+    RelativeEncoder righEncoder;
+
     DoubleSolenoid shifters;
 
     /** Creates a new ExampleSubsystem. */
@@ -44,6 +50,7 @@ public class Drivetrain extends SubsystemBase {
         rightMotorGroup = new MotorControllerGroup(rightMotors);
 
         // Invert to drive propery
+        leftMotorGroup.setInverted(true);
         rightMotorGroup.setInverted(true);
 
         // Create the Differential Drive to drive the robot
@@ -51,8 +58,28 @@ public class Drivetrain extends SubsystemBase {
 
         navx = new AHRS(Port.kMXP);
         odometry = new DifferentialDriveOdometry(navx.getRotation2d());
+        leftEncoder = leftMotors[0].getEncoder();
+        righEncoder = rightMotors[0].getEncoder();
 
         shifters = new DoubleSolenoid(Constants.PneumaticHubPort, PneumaticsModuleType.REVPH, DriveConstants.highGearSolenoid, DriveConstants.lowGearSolenoid);
+        inHighGear = getGear();
+    }
+
+    // True if high; False if low;
+    public boolean getGear(){
+        return shifters.get() == Value.kForward;
+    }
+
+    public double getCurrentGearRatio(){
+        return getGear() ? DriveConstants.highGearRatio : DriveConstants.lowGearRatio;
+    }
+
+    public double rpmToVelocity(double rpm){
+        return rpm / getCurrentGearRatio() * (1.0/60.0);
+    }
+
+    public double getWheelCircumference(){
+        return DriveConstants.wheelDiameter * Math.PI;
     }
 
     private void setupMotorArrays() {
@@ -96,18 +123,20 @@ public class Drivetrain extends SubsystemBase {
     public Pose2d getPose() {
         return odometry.getPoseMeters();
     }
-
+    
+    // TODO: get actual meters per second
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-        double leftMetersPerSecond = 0;
-        double rightMetersPerSecond = 0;
+        double leftMetersPerSecond = rpmToVelocity( leftEncoder.getVelocity() );
+        double rightMetersPerSecond = rpmToVelocity( righEncoder.getVelocity() );
         return new DifferentialDriveWheelSpeeds(leftMetersPerSecond, rightMetersPerSecond);
     }
 
+    // TODO: get actual distance
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        double leftDistanceMeters = 0;
-        double rightDistanceMeters = 0;
+        double leftDistanceMeters = leftEncoder.getPosition() / getCurrentGearRatio() * getWheelCircumference() ;
+        double rightDistanceMeters = righEncoder.getPosition() / getCurrentGearRatio() * getWheelCircumference() ;
         odometry.update(navx.getRotation2d(), leftDistanceMeters, rightDistanceMeters);
     }
 
