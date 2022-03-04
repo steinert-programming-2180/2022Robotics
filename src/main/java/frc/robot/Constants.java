@@ -79,10 +79,6 @@ public final class Constants {
         public static final int highGearSolenoid = 2;
         public static final int lowGearSolenoid = 0;
 
-        static final double lowModifier = 0.75;
-        static final double medModifier = 0.85;
-        static final double highModifier = 1;
-
         public static final double kP = 23.741;
         public static final double kI = 0;
         public static final double kD = 0.6788;

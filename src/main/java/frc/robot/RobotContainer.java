@@ -115,14 +115,16 @@ public class RobotContainer {
     aButton.whileHeld(intakeCommand);
     xButton.whileHeld(shooterCommand);
     bButton.whileHeld(conveyorCommand);
+    yButton.whenPressed(() -> intake.extendOrRetract());
+
+    startButton.whenPressed(() -> intake.extendIntake());
+    backButton.whenPressed(() -> intake.retractIntake());
 
     leftStick.whenPressed(intakeReverse);
+    rightStick.whenPressed(conveyorBackwardCommand);
 
     leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm());
     rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm());
-
-    backButton.whenPressed(() -> intake.retractIntake());
-    startButton.whenPressed(() -> intake.extendIntake());
 
     // Driver:
     highGearButton.whenPressed(() -> drivetrain.highGear());
