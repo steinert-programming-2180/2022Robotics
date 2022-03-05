@@ -76,9 +76,7 @@ public class Arm extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
         SmartDashboard.putBoolean("Lower Limit Switch", lowerLimitSwitch.get());
-
-        SmartDashboard.putNumber("Left Pos", leftEncoder.getPosition());
-        SmartDashboard.putNumber("Right pos", rightEncoder.getPosition());
+        SmartDashboard.putNumber("Arm Encoder", rightEncoder.getPosition());
 
     }
 
