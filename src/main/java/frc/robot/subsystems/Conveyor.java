@@ -1,10 +1,12 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConveyorConstants;
 import frc.robot.Constants.ConveyorConstants.ConveyorSection;
@@ -20,6 +22,9 @@ public class Conveyor extends SubsystemBase {
   public Conveyor() {
     entranceConveyor = new CANSparkMax(ConveyorConstants.entranceConveyorPort, MotorType.kBrushless);
     exitConveyor = new CANSparkMax(ConveyorConstants.exitConveyorPort, MotorType.kBrushless);
+    
+    entranceConveyor.setIdleMode(IdleMode.kBrake);
+    exitConveyor.setIdleMode(IdleMode.kBrake);
 
     entranceBeamBreak = new DigitalInput(ConveyorConstants.entranceBeamBreakPort);
     exitBeamBreak = new DigitalInput(ConveyorConstants.exitBeamBreakPort);
@@ -60,7 +65,10 @@ public class Conveyor extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    SmartDashboard.putBoolean("Entrance", getBeamBreakStatus(ConveyorSection.ENTRANCE));
+    SmartDashboard.putBoolean("Exit", getBeamBreakStatus(ConveyorSection.EXIT));
+  }
 
   @Override
   public void simulationPeriodic() {}

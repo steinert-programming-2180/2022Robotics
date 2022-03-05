@@ -15,6 +15,9 @@ public class IntakeCommand extends CommandBase {
     private final Intake intake;
     private final Conveyor conveyor;
 
+    boolean isExitFull;
+    boolean isEntranceFull;
+
     /**
      * Creates a new ExampleCommand.
      *
@@ -37,17 +40,19 @@ public class IntakeCommand extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        // boolean isExitFull = conveyor.getBeamBreakStatus(ConveyorSection.EXIT);
-        // boolean isEntranceFull = conveyor.getBeamBreakStatus(ConveyorSection.ENTRANCE);
-        boolean isExitFull = false;
-        boolean isEntranceFull = false;
+        isExitFull = conveyor.getBeamBreakStatus(ConveyorSection.EXIT);
+        isEntranceFull = conveyor.getBeamBreakStatus(ConveyorSection.ENTRANCE);
 
-        if (isExitFull && isEntranceFull)
-            return;
+        // if (isExitFull && isEntranceFull) {
+        //     end(false);
+        //     return;
+        // }
 
         intake.intakeSpin();
-        if (isExitFull)
+        if (isExitFull) {
             conveyor.convey(ConveyorSection.ENTRANCE);
+            conveyor.stopConveyor(ConveyorSection.EXIT);
+        }
         else
             conveyor.convey();
     }
@@ -62,6 +67,6 @@ public class IntakeCommand extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return isExitFull && isEntranceFull;
     }
 }

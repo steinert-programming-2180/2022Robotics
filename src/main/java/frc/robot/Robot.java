@@ -86,6 +86,9 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    // SmartDashboard.putBoolean("DIO 2", dio2.get());
+    // SmartDashboard.putBoolean("DIO 3", dio3.get());
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

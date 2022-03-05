@@ -36,8 +36,8 @@ public final class Constants {
         public static final int entranceConveyorPort = 10;
         public static final int exitConveyorPort = 9;
 
-        public static final int entranceBeamBreakPort = 1;
-        public static final int exitBeamBreakPort = 2;
+        public static final int entranceBeamBreakPort = 2;
+        public static final int exitBeamBreakPort = 3;
 
         public enum ConveyorSection {
             ENTRANCE,
