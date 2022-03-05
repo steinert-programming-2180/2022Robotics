@@ -17,7 +17,7 @@ public class Intake extends SubsystemBase {
         leftInt = new CANSparkMax(IntakeConstants.leftIntakePort, MotorType.kBrushless);
         rightInt = new CANSparkMax(IntakeConstants.rightIntakePort, MotorType.kBrushless);
         solenoid = new DoubleSolenoid(Constants.PneumaticHubPort, PneumaticsModuleType.REVPH, 1, 3);
-        solenoid.set(Value.kReverse);
+        solenoid.set(Value.kForward);
     }
 
     public void intakeStop(){

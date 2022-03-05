@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -20,26 +21,51 @@ public class Arm extends SubsystemBase {
     DigitalInput lowerLimitSwitch;
     DigitalInput topLimitSwitch;
 
+    RelativeEncoder leftEncoder;
+    RelativeEncoder rightEncoder; //used;
+    //distance of 60
+
+    double referencePoint = 0;
+
     public Arm() {
         leftArmRaiser = new CANSparkMax(ArmConstants.leftArmRaiserPort, MotorType.kBrushless);
         rightArmRaiser = new CANSparkMax(ArmConstants.rightArmRaiserPort, MotorType.kBrushless);
         rightArmRaiser.follow(leftArmRaiser, true);
 
+        leftEncoder = leftArmRaiser.getEncoder();
+        rightEncoder = rightArmRaiser.getEncoder();
+
         lowerLimitSwitch = new DigitalInput(ArmConstants.lowerLimitSwitchPort);
         //topLimitSwitch = new DigitalInput(ArmConstants.topLimitSwitchPort);
     }
 
+    public void resetReferencePoint(){
+        rightEncoder.setPosition(0);
+    }
+
     public void raiseArm(){
+        if(hasReachedUpperLimit()){
+            stopArm();
+            return;
+        }
         leftArmRaiser.set(ArmConstants.armSpeed);
     }
 
     public void lowerArm(){
         // When triggered, lower limit switch is false
-        if(!lowerLimitSwitch.get()) {
+        if(hasReachedLowerLimit()) {
             stopArm();
             return;
         }
         leftArmRaiser.set(-ArmConstants.armSpeed);
+    }
+
+    public boolean hasReachedLowerLimit(){
+        return !lowerLimitSwitch.get();
+    }
+
+    public boolean hasReachedUpperLimit(){
+        return rightEncoder.getPosition() >= referencePoint + 60;
     }
 
     public void stopArm() {
@@ -50,6 +76,10 @@ public class Arm extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
         SmartDashboard.putBoolean("Lower Limit Switch", lowerLimitSwitch.get());
+
+        SmartDashboard.putNumber("Left Pos", leftEncoder.getPosition());
+        SmartDashboard.putNumber("Right pos", rightEncoder.getPosition());
+
     }
 
     @Override

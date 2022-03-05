@@ -27,6 +27,8 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.IntakeReverse;
 import frc.robot.commands.ShooterCommand;
+import frc.robot.commands.LowerArm;
+import frc.robot.commands.RaiseArm;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.Constants.DriveConstants;
@@ -67,6 +69,10 @@ public class RobotContainer {
   private final ConveyorBackwardCommand conveyorBackwardCommand = new ConveyorBackwardCommand(conveyor);
   private final ShooterCommand shooterCommand = new ShooterCommand(shooter);
 
+  private final LowerArm lowerArm = new LowerArm(arm);
+  private final RaiseArm raiseArm = new RaiseArm(arm);
+  
+
   // Emergency autonomous. not actual autonomous unfortunately
   private AutonomousCommand autonomousCommand = new AutonomousCommand(drivetrain);
   private final boolean isAutonomousWorking = false;
@@ -78,7 +84,6 @@ public class RobotContainer {
     // Configure the button
     configureButtonBindings();
 
-    // make sure always driving
     drivetrain.setDefaultCommand(driveCommand);
   }
 
@@ -117,14 +122,14 @@ public class RobotContainer {
     bButton.whileHeld(conveyorCommand);
     yButton.whenPressed(() -> intake.extendOrRetract());
 
-    startButton.whenPressed(() -> intake.extendIntake());
-    backButton.whenPressed(() -> intake.retractIntake());
+    startButton.whenPressed(raiseArm).whenPressed(shooterCommand);
+    backButton.whenPressed(lowerArm).cancelWhenPressed(shooterCommand);
 
     leftStick.whenPressed(intakeReverse);
     rightStick.whenPressed(conveyorBackwardCommand);
 
-    leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm());
-    rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm());
+    leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArm).cancelWhenPressed(lowerArm);
+    rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArm).cancelWhenPressed(lowerArm);
 
     // Driver:
     highGearButton.whenPressed(() -> drivetrain.highGear());
@@ -139,6 +144,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    lowerArm.schedule();
     if(!isAutonomousWorking) return autonomousCommand;
 
     DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(DriveConstants.trackWidth);
