@@ -19,19 +19,19 @@ public class AutonomousCommand extends CommandBase {
       this.drivetrain = drivetrain;
       addRequirements(drivetrain);
 
-      startTime = System.currentTimeMillis();
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    startTime = System.currentTimeMillis();
       drivetrain.drive(0, 0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      drivetrain.drive(DriveConstants.autonomousSpeed, DriveConstants.autonomousSpeed);
+      drivetrain.drive(-DriveConstants.autonomousSpeed, -DriveConstants.autonomousSpeed);
   }
 
   // Called once the command ends or is interrupted.

@@ -67,7 +67,7 @@ public final class Constants {
     // EVERYTHING IS IN METERS!!!
     public static final class DriveConstants{
         // how long the robot should drive for during autonomous in SECONDS!
-        public static final double autonomousDriveTime = 3;
+        public static final double autonomousDriveTime = 15;
         public static final double autonomousSpeed = 0.2;
 
         public static final double initialSpeedLimit = 0.7;

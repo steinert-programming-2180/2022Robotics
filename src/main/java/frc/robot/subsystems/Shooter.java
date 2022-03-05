@@ -22,6 +22,11 @@ public class Shooter extends SubsystemBase {
     topEncoder = topFlywheel.getEncoder();
   }
 
+  // meters per second
+  public void shootAtSpeed(double speed){
+    bottomEncoder.getVelocity();
+  }
+
   public void shoot() {
     bottomFlywheel.set(ShooterConstants.shooterSpeed);
     topFlywheel.set(ShooterConstants.shooterSpeed);
