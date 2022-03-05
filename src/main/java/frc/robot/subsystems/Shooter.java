@@ -20,6 +20,8 @@ public class Shooter extends SubsystemBase {
     topFlywheel = new CANSparkMax(ShooterConstants.topFlywheelPort, MotorType.kBrushless);
     bottomEncoder = bottomFlywheel.getEncoder();
     topEncoder = topFlywheel.getEncoder();
+    SmartDashboard.putNumber("Shooter Speed", ShooterConstants.shooterSpeed);
+
   }
 
   // meters per second
@@ -28,8 +30,9 @@ public class Shooter extends SubsystemBase {
   }
 
   public void shoot() {
-    bottomFlywheel.set(ShooterConstants.shooterSpeed);
-    topFlywheel.set(ShooterConstants.shooterSpeed);
+    double shooterSpeed = SmartDashboard.getNumber("Shooter Speed", ShooterConstants.shooterSpeed);
+    bottomFlywheel.set(shooterSpeed);
+    topFlywheel.set(shooterSpeed);
   }
 
   public void stopShooting() {
