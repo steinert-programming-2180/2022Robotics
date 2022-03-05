@@ -61,7 +61,7 @@ public class Conveyor extends SubsystemBase {
   }
 
   public boolean getBeamBreakStatus(ConveyorSection section){
-    return (section == ConveyorSection.ENTRANCE) ? entranceBeamBreak.get() : exitBeamBreak.get();
+    return (section == ConveyorSection.ENTRANCE) ? !entranceBeamBreak.get() : exitBeamBreak.get();
   }
 
   @Override

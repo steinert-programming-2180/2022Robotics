@@ -43,18 +43,23 @@ public class IntakeCommand extends CommandBase {
         isExitFull = conveyor.getBeamBreakStatus(ConveyorSection.EXIT);
         isEntranceFull = conveyor.getBeamBreakStatus(ConveyorSection.ENTRANCE);
 
-        // if (isExitFull && isEntranceFull) {
-        //     end(false);
-        //     return;
-        // }
-
-        intake.intakeSpin();
-        if (isExitFull) {
+        if(isExitFull && isEntranceFull) {
+            intake.intakeStop();
+            conveyor.stopConveyor();
+        }
+        else if(isExitFull && !isEntranceFull) {
+            intake.intakeSpin();
             conveyor.convey(ConveyorSection.ENTRANCE);
             conveyor.stopConveyor(ConveyorSection.EXIT);
         }
-        else
+        else if(isEntranceFull && !isExitFull){
+            intake.intakeSpin();
             conveyor.convey();
+        }
+        else {
+            intake.intakeSpin();
+            conveyor.convey();
+        }
     }
 
     // Called once the command ends or is interrupted.
@@ -67,6 +72,6 @@ public class IntakeCommand extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return isExitFull && isEntranceFull;
+        return false;
     }
 }
