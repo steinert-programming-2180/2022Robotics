@@ -72,6 +72,11 @@ public class Limelight extends SubsystemBase{
         return height / Math.tan(theta);
     }
 
+    /**
+     * Checks if we have a target, based off of if we are tracking and we see a target
+     * 
+     * @return True if we are tracking and seeing a target, false otherwise
+     */
     public boolean hasTarget() {
         return ( isTracking() && tv.getDouble(0) == 1);
     }
@@ -104,6 +109,11 @@ public class Limelight extends SubsystemBase{
         return height / Math.sin(theta);
     }
     
+    /**
+     * Determines if we are in tracking mode based on what our camera and lights are doing
+     * 
+     * @return True if we are tracking, false otherwise
+     */
     public static boolean isTracking() {
         return (getCameraMode() == 0) && (getLightsMode() == 0);
     }
@@ -116,6 +126,7 @@ public class Limelight extends SubsystemBase{
         SmartDashboard.putBoolean("Has Target?", hasTarget());
         SmartDashboard.putBoolean("Is Tracking?", isTracking());
 
+        // If there is no target, we just end here
         if(!hasTarget()) {
             return;
         }
@@ -215,7 +226,6 @@ public class Limelight extends SubsystemBase{
 
     /**
      * Swaps the LED Status between 0 = pipeline and 1 = force off.
-     * 
      */
     public static void swapLights() {
         // The ? statement handles the if our current LED status is not 0 or 1
