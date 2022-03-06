@@ -65,9 +65,9 @@ public final class Constants {
         public static final int defaultAutonomous = 1; // This is the index of the default auto
         
         // Times are in SECONDS
-        public static final double shooterTime = 3;
-        public static final double conveyorTime = 3;
-        public static final double driveTime = 5;
+        public static final double shooterTime = 2;
+        public static final double conveyorTime = 2;
+        public static final double driveTime = 7;
     }
 
     public static final int PneumaticHubPort = 20;
@@ -77,7 +77,7 @@ public final class Constants {
     
     // EVERYTHING IS IN METERS!!!
     public static final class DriveConstants{
-        public static final double autonomousSpeed = 0.4;
+        public static final double autonomousSpeed = 0.7;
 
         public static final double initialSpeedLimit = 0.7;
         public static final double secondSpeedLimit = 0.8;
