@@ -31,6 +31,7 @@ public final class Constants {
     }
 
     public static final class ConveyorConstants{
+        public static final double autonomousTime = 3; // in SECONDS
         public static final double conveyorSpeed = 1;
 
         public static final int entranceConveyorPort = 10;
@@ -59,6 +60,16 @@ public final class Constants {
         public static final int rightJoystickPort = 2;
     }
 
+    public static final class AutonomousConstants {
+        public static final String[] autonomousOptions = {"None", "Drive Backward", "Simple Auto"};
+        public static final int defaultAutonomous = 1; // This is the index of the default auto
+        
+        // Times are in SECONDS
+        public static final double shooterTime = 3;
+        public static final double conveyorTime = 3;
+        public static final double driveTime = 5;
+    }
+
     public static final int PneumaticHubPort = 20;
     public static final int PowerDistributionPort = 22;
 
@@ -66,9 +77,7 @@ public final class Constants {
     
     // EVERYTHING IS IN METERS!!!
     public static final class DriveConstants{
-        // how long the robot should drive for during autonomous in SECONDS!
-        public static final double autonomousDriveTime = 15;
-        public static final double autonomousSpeed = 0.2;
+        public static final double autonomousSpeed = 0.4;
 
         public static final double initialSpeedLimit = 0.7;
         public static final double secondSpeedLimit = 0.8;

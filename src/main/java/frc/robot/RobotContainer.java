@@ -20,17 +20,19 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.IO;
-import frc.robot.commands.AutonomousCommand;
+import frc.robot.commands.SimpleAuto;
 import frc.robot.commands.ConveyorBackwardCommand;
 import frc.robot.commands.ConveyorCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.IntakeReverse;
 import frc.robot.commands.ShooterCommand;
+import frc.robot.commands.TimedDrive;
 import frc.robot.commands.LowerArm;
 import frc.robot.commands.RaiseArm;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Conveyor;
+import frc.robot.Constants.AutonomousConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.DefaultDrive;
 import frc.robot.subsystems.Drivetrain;
@@ -38,7 +40,9 @@ import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -71,11 +75,12 @@ public class RobotContainer {
 
   private final LowerArm lowerArm = new LowerArm(arm);
   private final RaiseArm raiseArm = new RaiseArm(arm);
+
+  private final TimedDrive timedDrive = new TimedDrive(drivetrain, -DriveConstants.autonomousSpeed, AutonomousConstants.driveTime);
   
 
   // Emergency autonomous. not actual autonomous unfortunately
-  private AutonomousCommand autonomousCommand = new AutonomousCommand(drivetrain);
-  private final boolean isAutonomousWorking = false;
+  private SimpleAuto simpleAuto = new SimpleAuto(raiseArm, shooterCommand, conveyorCommand, timedDrive);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -138,15 +143,46 @@ public class RobotContainer {
     leftTrigger.and(rightTrigger).whenActive(() -> driveCommand.removeSpeedLimit()).whenInactive(() -> driveCommand.resetSpeedLimit());
   }
 
+  public void turnOffEverything(){
+    intake.intakeStop();
+    conveyor.stopConveyor();
+    shooter.stopShooting();
+    arm.stopArm();
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    lowerArm.schedule();
-    if(!isAutonomousWorking) return autonomousCommand;
+    CommandBase autonomousCommand = emptyCommand;
 
+    int autonomousMode = ShuffleboardControl.getAutonomousMode();
+
+    // These are the indexes of each auto mode in the array (refer to Constants.java)
+    switch (autonomousMode) {
+      case 0: // None
+        autonomousCommand = emptyCommand;
+        break;
+      case 1: // Drive Backward
+        autonomousCommand = timedDrive;
+        break;
+      case 2: // Simple Auto
+        autonomousCommand = simpleAuto;
+        break;
+      case 3: // Reserved for the paths (NOT WORKING):
+        autonomousCommand = emptyCommand; // really, it's getRamseteCommand()
+        break;
+      default:
+        autonomousCommand = emptyCommand;
+        break;
+    }
+    
+    return new SequentialCommandGroup(lowerArm, simpleAuto);
+  }
+
+  private CommandBase getRamseteCommand(){
     DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(DriveConstants.trackWidth);
 
     Pose2d start = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
@@ -176,7 +212,7 @@ public class RobotContainer {
         new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD),
         drivetrain::driveByVoltage,
         drivetrain);
-
+        
     return ramseteCommand.andThen(() -> drivetrain.drive(0, 0));
   }
 }
