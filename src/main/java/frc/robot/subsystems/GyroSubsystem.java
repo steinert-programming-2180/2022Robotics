@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class GyroSubsystem extends SubsystemBase {
@@ -19,12 +20,13 @@ public class GyroSubsystem extends SubsystemBase {
 
   // returns angle from -180 to 180
   public double getAngle() {
-    return navx.getYaw();
+    return navx.getAngle();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Angle", getAngle());
   }
 
   @Override

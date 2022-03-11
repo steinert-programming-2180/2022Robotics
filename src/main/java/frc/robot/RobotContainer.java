@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -16,12 +18,16 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Drive;
 import frc.robot.commands.DefaultDrive;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.Turn;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -41,6 +47,7 @@ public class RobotContainer {
 
   private final Drivetrain drivetrain = new Drivetrain();
   private final DefaultDrive driveCommand = new DefaultDrive(drivetrain);
+  private final Turn turnCommand = new Turn(drivetrain, 90);
 
   Joystick leftJoystick = new Joystick(Constants.leftJoystickPort);
   Joystick righJoystick = new Joystick(Constants.rightJoystickPort);
@@ -61,6 +68,32 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    JoystickButton a = new JoystickButton(leftJoystick, 1);
+    a.whenActive(() -> drivetrain.resetAngle());
+  }
+
+  public void setDrivetrainMotorsToBrake(){
+    drivetrain.setMotorsToBrake();
+  }
+
+  public void setDrivetrainMotorsToCoast(){
+    drivetrain.setMotorsToCoast();
+  }
+
+  public Trajectory openAutoPath(){
+    String trajectoryJSON = "paths/FarthestBlue.wpilib.json";
+    Trajectory trajectory = null;
+
+
+    try {
+      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+      trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+      System.out.println("Success");
+    } catch (IOException ex) {
+      System.out.println("Unable to open trajectory: " + trajectoryJSON);
+    }
+
+    return trajectory;
   }
 
   /**
@@ -69,15 +102,18 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    drivetrain.resetAngle();
     DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(Drive.trackWidth);
 
-    Pose2d start = new Pose2d(0, 0, Rotation2d.fromDegrees(45));
+
+    Pose2d start = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
     List<Translation2d> waypoints = List.of(
-      new Translation2d(0, 3)
+      new Translation2d(1, 0)
     );
-    Pose2d end = new Pose2d(3, 0, Rotation2d.fromDegrees(0));
+    Pose2d end = new Pose2d(1, 0, Rotation2d.fromDegrees(0));
+
     
-    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(3, 3);
+    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(3,3);
 
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
       start,
@@ -86,23 +122,25 @@ public class RobotContainer {
       trajectoryConfig
     );
 
+    drivetrain.resetOdometry(trajectory.getInitialPose());
+
     RamseteController ramseteController = new RamseteController(Drive.b, Drive.zeta);
 
     // https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/creating-following-trajectory.html?highlight=ramsetecommand#creating-the-ramsetecommand 
-    // RamseteCommand ramseteCommand = new RamseteCommand(
-    //   trajectory, 
-    //   driveTrain::getPose, 
-    //   ramseteController, 
-    //   new SimpleMotorFeedforward(Drive.kS, Drive.kV, Drive.kA),
-    //   kDriveKinematics, 
-    //   driveTrain::getWheelSpeeds, 
-    //   new PIDController(Drive.leftKp, Drive.leftKi, Drive.leftKd), 
-    //   new PIDController(Drive.rightKp, Drive.rightKi, Drive.rightKd), 
-    //   driveTrain::driveByVoltage, 
-    //   driveTrain
-    // );
+    RamseteCommand ramseteCommand = new RamseteCommand(
+      trajectory, 
+      drivetrain::getPose, 
+      ramseteController, 
+      new SimpleMotorFeedforward(Drive.kS, Drive.kV, Drive.kA),
+      kDriveKinematics, 
+      drivetrain::getWheelSpeeds, 
+      new PIDController(Drive.leftKp, Drive.leftKi, Drive.leftKd), 
+      new PIDController(Drive.rightKp, Drive.rightKi, Drive.rightKd), 
+      drivetrain::driveByVoltage, 
+      drivetrain
+    );
 
-    // return ramseteCommand.andThen(() -> driveTrain.drive(0, 0));
-    return emptyCommand;
+   // return turnCommand;
+    return ramseteCommand.andThen(() -> drivetrain.drive(0, 0));
   }
 }

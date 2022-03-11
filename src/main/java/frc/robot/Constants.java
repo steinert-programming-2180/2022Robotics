@@ -30,29 +30,33 @@ public final class Constants {
         static final double medModifier = 0.85;
         static final double highModifier = 1;
 
-        public static final double kP = 0.04;
+        public static final double kP = 42.42; // was 0.04
         public static final double kI = 0;
-        public static final double kD = 0.005;
+        public static final double kD = 2.8747; // was 0.005
 
-        public static final double kS = 0;
-        public static final double kV = 0;
-        public static final double kA = 0;
+        public static final double kS = 0.16283;
+        public static final double kV = 0.67659;
+        public static final double kA = 0.122;
 
-        public static final double leftKp = 0;
+        public static final double leftKp = 0.49699;
         public static final double leftKi = 0;
         public static final double leftKd = 0;
 
-        public static final double rightKp = 0;
+        public static final double rightKp = 0.49699;
         public static final double rightKi = 0;
         public static final double rightKd = 0;
 
-        public static final double b = 0;
-        public static final double zeta = 0;
+        public static final double b = 2;
+        public static final double zeta = 0.7;
 
         public static final double trackWidth = 1;
 
         public static final int highGearSolenoid = 2;
         public static final int lowGearSolenoid = 0;
+
+        public static final double lowGearRatio = 12.03;
+        public static final double highGearRatio = 5.56;
+        public static final double wheelDiameter = InchesToMeters(4);
            
     }
 }

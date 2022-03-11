@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.Drive;
 import frc.robot.commands.*;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.GyroSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -37,13 +38,6 @@ public class Robot extends TimedRobot {
   Joystick leftJoystick, rightJoystick, middleJoystick;
   XboxController xbox;
 
-  DigitalInput sensor;
-
-  PneumaticHub pneumaticsHub;
-  Compressor compressor;
-
-  PowerDistribution powerDistributionHub;
-
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -53,16 +47,6 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-
-    sensor = new DigitalInput(9);
-
-    compressor = new Compressor(PneumaticsModuleType.REVPH);
-
-    powerDistributionHub = new PowerDistribution(12, ModuleType.kRev);
-    pneumaticsHub = new PneumaticHub(20);
-
-    powerDistributionHub.clearStickyFaults();
-    pneumaticsHub.clearStickyFaults();
   }
 
   /**
@@ -97,6 +81,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+    m_robotContainer.setDrivetrainMotorsToBrake();
   }
 
   /** This function is called periodically during autonomous. */
@@ -112,13 +97,12 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_robotContainer.setDrivetrainMotorsToCoast();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    compressor.enableDigital();
-    SmartDashboard.putBoolean("sensor", sensor.get());
   }
 
   @Override
