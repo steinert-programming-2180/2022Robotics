@@ -4,25 +4,28 @@
 
 package frc.robot;
 
+// import java.io.File;
+// import java.io.FileWriter;
+// import java.io.IOException;
+
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Constants.Drive;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.GyroSubsystem;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -35,9 +38,24 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  XboxController stick1= new XboxController(0);
+  JoystickButton intakeButton = new JoystickButton(stick1, 1);
+  
+
   Joystick leftJoystick, rightJoystick, middleJoystick;
   XboxController xbox;
 
+  DigitalInput sensor;
+
+  PneumaticHub pneumaticsHub;
+  Compressor compressor;
+
+  PowerDistribution powerDistributionHub;
+
+  // FileWriter rightRecord, leftRecord;
+  // File leftControl, rightControl;
+  String leftString, rightString;
+  double leftValue, rightValue;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -47,6 +65,18 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    sensor = new DigitalInput(9);
+
+    compressor = new Compressor(PneumaticsModuleType.REVPH);
+
+    powerDistributionHub = new PowerDistribution(12, ModuleType.kRev);
+    pneumaticsHub = new PneumaticHub(20);
+
+    powerDistributionHub.clearStickyFaults();
+    pneumaticsHub.clearStickyFaults();
+
+    ShuffleboardControl.initializeAutonomousChooser();
   }
 
   /**
@@ -94,6 +124,8 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+
+    //m_robotContainer.turnOffEverything();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
@@ -109,9 +141,38 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+
+    // try {
+    //   leftRecord = new FileWriter(leftControl);
+    //   rightRecord = new FileWriter(rightControl);
+
+      
+    // } catch (IOException e) {
+    //   e.printStackTrace();
+    // }
+
   }
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+
+    // leftValue = leftJoystick.getY();
+    // rightValue = rightJoystick.getY();
+
+    // leftString = String.valueOf(leftValue + "\n");
+    // rightString = String.valueOf(rightValue + "\n");
+
+
+    // try {
+    //   leftRecord.append(leftString);
+    //   leftRecord.flush();
+
+    //   rightRecord.append(rightString);
+    //   rightRecord.flush();
+    // } catch (IOException e) {
+
+
+    // }
+  }
 }

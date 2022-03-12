@@ -6,7 +6,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import frc.robot.Constants.Drive;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drivetrain;
 
 public class FollowTrajectory extends RamseteCommand {
@@ -14,12 +14,12 @@ public class FollowTrajectory extends RamseteCommand {
         super(
             trajectory,
             drivetrain::getPose, 
-            new RamseteController(Drive.b, Drive.zeta), 
-            new SimpleMotorFeedforward(Drive.kS, Drive.kV, Drive.kA),
-            new DifferentialDriveKinematics(Drive.trackWidth), 
+            new RamseteController(DriveConstants.b, DriveConstants.zeta), 
+            new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA),
+            new DifferentialDriveKinematics(DriveConstants.trackWidth), 
             drivetrain::getWheelSpeeds, 
-            new PIDController(Drive.leftKp, Drive.leftKi, Drive.leftKd), 
-            new PIDController(Drive.rightKp, Drive.rightKi, Drive.rightKd), 
+            new PIDController(DriveConstants.leftKp, DriveConstants.leftKi, DriveConstants.leftKd), 
+            new PIDController(DriveConstants.rightKp, DriveConstants.rightKi, DriveConstants.rightKd), 
             drivetrain::driveByVoltage, 
             drivetrain
         );

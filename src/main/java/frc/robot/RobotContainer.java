@@ -24,53 +24,135 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.Drive;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.DefaultDrive;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.Turn;
+import frc.robot.Constants.IO;
+import frc.robot.commands.SimpleAuto;
+import frc.robot.commands.ConveyorBackwardCommand;
+import frc.robot.commands.ConveyorCommand;
+import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.IntakeReverse;
+import frc.robot.commands.ShooterCommand;
+import frc.robot.commands.TimedDrive;
+import frc.robot.commands.LowerArm;
+import frc.robot.commands.RaiseArm;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Conveyor;
+import frc.robot.Constants.AutonomousConstants;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.commands.DefaultDrive;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem emptySubsystem = new ExampleSubsystem();
-  private final ExampleCommand emptyCommand = new ExampleCommand(emptySubsystem);
+  private ExampleSubsystem emptySubsystem = new ExampleSubsystem();
+  private ExampleCommand emptyCommand = new ExampleCommand(emptySubsystem);
 
+  // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
   private final DefaultDrive driveCommand = new DefaultDrive(drivetrain);
   private final Turn turnCommand = new Turn(drivetrain, 90);
 
-  Joystick leftJoystick = new Joystick(Constants.leftJoystickPort);
-  Joystick righJoystick = new Joystick(Constants.rightJoystickPort);
+  private final Intake intake = new Intake();
+  private final Conveyor conveyor = new Conveyor();
+  private final Shooter shooter = new Shooter();
+  private final Arm arm = new Arm();
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  private final IntakeCommand intakeCommand = new IntakeCommand(intake, conveyor);
+  private final IntakeReverse intakeReverse = new IntakeReverse(intake);
+  private final ConveyorCommand conveyorCommand = new ConveyorCommand(conveyor);
+  private final ConveyorBackwardCommand conveyorBackwardCommand = new ConveyorBackwardCommand(conveyor);
+  private final ShooterCommand shooterCommand = new ShooterCommand(shooter);
+
+  private final LowerArm lowerArm = new LowerArm(arm);
+  private final RaiseArm raiseArm = new RaiseArm(arm);
+
+  private final TimedDrive timedDrive = new TimedDrive(drivetrain, -DriveConstants.autonomousSpeed, AutonomousConstants.driveTime);
+  
+
+  // Emergency autonomous. not actual autonomous unfortunately
+  private SimpleAuto simpleAuto = new SimpleAuto(raiseArm, shooterCommand, conveyorCommand, timedDrive);
+
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
-    // Configure the button bindings
+    // Configure the button
     configureButtonBindings();
 
-    // make sure always driving
     drivetrain.setDefaultCommand(driveCommand);
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be created by
+   * Use this method to define your button->command mappings. Buttons can be
+   * created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+   * it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    JoystickButton a = new JoystickButton(leftJoystick, 1);
-    a.whenActive(() -> drivetrain.resetAngle());
+    Joystick leftJoystick = new Joystick(IO.leftJoystickPort);
+    Joystick rightJoystick = new Joystick(IO.rightJoystickPort);
+    XboxController xbox = new XboxController(IO.xboxPort);
+
+    JoystickButton lowGearButton = new JoystickButton(leftJoystick, 3);
+    JoystickButton highGearButton = new JoystickButton(rightJoystick, 3);
+    JoystickButton leftTrigger = new JoystickButton(leftJoystick, Joystick.ButtonType.kTrigger.value);
+    JoystickButton rightTrigger = new JoystickButton(rightJoystick, Joystick.ButtonType.kTrigger.value);
+
+    JoystickButton aButton = new JoystickButton(xbox, 1);
+    JoystickButton bButton = new JoystickButton(xbox, 2);
+    JoystickButton xButton = new JoystickButton(xbox, 3);
+    JoystickButton yButton = new JoystickButton(xbox, 4);
+    JoystickButton leftBumper = new JoystickButton(xbox, 5);
+    JoystickButton rightBumper = new JoystickButton(xbox, 6);
+    JoystickButton backButton = new JoystickButton(xbox, 7);
+    JoystickButton startButton = new JoystickButton(xbox, 8);
+    JoystickButton leftStick = new JoystickButton(xbox, 9);
+    JoystickButton rightStick = new JoystickButton(xbox, 10);
+
+    // Operator
+    aButton.whileHeld(intakeCommand);
+    xButton.whileHeld(shooterCommand);
+    bButton.whileHeld(conveyorCommand);
+    yButton.whenPressed(() -> intake.extendOrRetract());
+
+    startButton.whenPressed(raiseArm).whenPressed(shooterCommand);
+    backButton.whenPressed(lowerArm).cancelWhenPressed(shooterCommand);
+
+    leftStick.whenPressed(intakeReverse);
+    rightStick.whenPressed(conveyorBackwardCommand);
+
+    leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArm).cancelWhenPressed(lowerArm);
+    rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArm).cancelWhenPressed(lowerArm);
+
+    // Driver:
+    highGearButton.whenPressed(() -> drivetrain.highGear());
+    lowGearButton.whenPressed(() -> drivetrain.lowGear());
+    leftTrigger.or(rightTrigger).whenActive(() -> driveCommand.setSpeedLimit(DriveConstants.secondSpeedLimit)).whenInactive(() -> driveCommand.resetSpeedLimit());
+    leftTrigger.and(rightTrigger).whenActive(() -> driveCommand.removeSpeedLimit()).whenInactive(() -> driveCommand.resetSpeedLimit());
   }
 
   public void setDrivetrainMotorsToBrake(){
@@ -97,58 +179,79 @@ public class RobotContainer {
     return trajectory;
   }
 
+  public void turnOffEverything(){
+    intake.intakeStop();
+    conveyor.stopConveyor();
+    shooter.stopShooting();
+    arm.stopArm();
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
+
+   // NOTE: autonomous is inverted. Battery is front. Left is positive. Right is negative.
   public Command getAutonomousCommand() {
     drivetrain.resetSensors();
-    DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(Drive.trackWidth);
 
     TrajectoryConfig trajectoryConfig = new TrajectoryConfig(3, 2);
-    TrajectoryConfig backwardConfig = new TrajectoryConfig(3, 2);
+    TrajectoryConfig backwardConfig = new TrajectoryConfig(1, 1);
     backwardConfig.setReversed(false);
     trajectoryConfig.setReversed(true);
 
     Trajectory goToBall = TrajectoryGenerator.generateTrajectory(
       new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-      List.of(
-        new Translation2d(-1, 0)
-      ),
-      new Pose2d(-2, 0, Rotation2d.fromDegrees(0)),
+      List.of(),
+      new Pose2d(-1, 0, Rotation2d.fromDegrees(0)),
       trajectoryConfig
     );
 
+    // from left ball to hub
     Trajectory goBackToGoal = TrajectoryGenerator.generateTrajectory(
       new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-      List.of(
-        new Translation2d(1, 0)
-      ),
-      new Pose2d(3, -0.6, Rotation2d.fromDegrees(-45)),
+      List.of(),
+      new Pose2d(1.7, -0.35, Rotation2d.fromDegrees(-45)),
       backwardConfig
     );
 
+    // lower arm, set drive gear, intake out, turn on conveyor before or while
+    // when conveyor is full, raise arm and shooter
+    // wait till path then shoot
+
+    // from right ball to hub
     Trajectory goBackToGoal2 = TrajectoryGenerator.generateTrajectory(
       new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-      List.of(
-        new Translation2d(1, 0)
-      ),
-      new Pose2d(3, 0.4, Rotation2d.fromDegrees(45)), 
+      List.of(),
+      new Pose2d(1.7, 0.3, Rotation2d.fromDegrees(22.5)), 
       backwardConfig
     );
 
-    Trajectory trajectory = goBackToGoal;
+    Trajectory goToSecondBall = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 
+      List.of(
+        new Translation2d(0, 1)
+      ), 
+      new Pose2d(0, 2, Rotation2d.fromDegrees(90)), 
+      trajectoryConfig
+    );
 
-    drivetrain.resetOdometry(trajectory.getInitialPose());
-
-    RamseteController ramseteController = new RamseteController(Drive.b, Drive.zeta);
-
+    CommandBase command;
+    
     // https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/creating-following-trajectory.html?highlight=ramsetecommand#creating-the-ramsetecommand 
     RamseteCommand followBallPath = new FollowTrajectory(goToBall, drivetrain);
-    RamseteCommand followGoalLeftPath = new FollowTrajectory(goBackToGoal, drivetrain);
-    RamseteCommand followGoalRightPath = new FollowTrajectory(goBackToGoal2, drivetrain);
+    RamseteCommand followGoalLeftPath = new FollowTrajectory(goBackToGoal, drivetrain); // goes to hub when we are on the left
+    RamseteCommand followGoalRightPath = new FollowTrajectory(goBackToGoal2, drivetrain); // goest to hub when we are on the right
+    RamseteCommand followSecondBall = new FollowTrajectory(goToSecondBall, drivetrain);
 
-    return followBallPath.andThen(() -> drivetrain.resetSensors()).andThen(followGoalRightPath);
+    CommandBase precommands = lowerArm.andThen(() -> drivetrain.highGear());
+    return followBallPath.andThen(() -> drivetrain.resetSensors()).andThen(followGoalLeftPath);
+    // return followSecondBall;
+  }
+
+  private CommandBase getRamseteCommand(){
+    // https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/creating-following-trajectory.html?highlight=ramsetecommand#creating-the-ramsetecommand
+    return null;
   }
 }

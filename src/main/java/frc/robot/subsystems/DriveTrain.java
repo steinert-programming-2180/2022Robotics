@@ -10,10 +10,8 @@ package frc.robot.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxRelativeEncoder.Type;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,12 +22,12 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.Drive;
+import frc.robot.Constants.DriveConstants;
+
 public class Drivetrain extends SubsystemBase {
     AHRS navx;
 
@@ -69,7 +67,7 @@ public class Drivetrain extends SubsystemBase {
         odometry = new DifferentialDriveOdometry(navx.getRotation2d());
         resetSensors();
 
-        shifters = new DoubleSolenoid(Constants.PneumaticHubPort, PneumaticsModuleType.REVPH, Drive.highGearSolenoid, Drive.lowGearSolenoid);
+        shifters = new DoubleSolenoid(Constants.PneumaticHubPort, PneumaticsModuleType.REVPH, DriveConstants.highGearSolenoid, DriveConstants.lowGearSolenoid);
         inHighGear = getGear();
     }
 
@@ -90,8 +88,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getCurrentGearRatio(){
-       // return getGear() ? Drive.highGearRatio : Drive.lowGearRatio;
-       return Drive.highGearRatio;
+        return getGear() ? DriveConstants.highGearRatio : DriveConstants.lowGearRatio;
     }
 
     public double rpmToVelocity(double rpm){
@@ -99,25 +96,25 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getWheelCircumference(){
-        return Drive.wheelDiameter * Math.PI;
+        return DriveConstants.wheelDiameter * Math.PI;
     }
 
     private void setupMotorArrays() {
-        int amountOfLeftMotors = Drive.leftMotorPorts.length;
-        int amountOfRightMotors = Drive.rightMotorPorts.length;
+        int amountOfLeftMotors = DriveConstants.leftMotorPorts.length;
+        int amountOfRightMotors = DriveConstants.rightMotorPorts.length;
 
         leftMotors = new CANSparkMax[amountOfLeftMotors];
         rightMotors = new CANSparkMax[amountOfRightMotors];
 
         // Make Left Sparks from the ports
-        for (int i = 0; i < amountOfLeftMotors; i++){
-            leftMotors[i] = new CANSparkMax(Drive.leftMotorPorts[i], MotorType.kBrushless);
+        for (int i = 0; i < DriveConstants.leftMotorPorts.length; i++){
+            leftMotors[i] = new CANSparkMax(DriveConstants.leftMotorPorts[i], MotorType.kBrushless);
             leftMotors[i].setInverted(false);
         }
 
         // Make Right Sparks from the ports
         for (int i = 0; i < amountOfRightMotors; i++){
-            rightMotors[i] = new CANSparkMax(Drive.rightMotorPorts[i], MotorType.kBrushless);
+            rightMotors[i] = new CANSparkMax(DriveConstants.rightMotorPorts[i], MotorType.kBrushless);
             rightMotors[i].setInverted(true);
         }
     }

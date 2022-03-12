@@ -13,22 +13,80 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final int leftJoystickPort = 1;
-    public static final int rightJoystickPort = 2;
+    public final class ShooterConstants{
+        public static final double shooterSpeed = 0.2;
+
+        public static final int bottomFlywheelPort = 12;
+        public static final int topFlywheelPort = 11;
+    }
+
+    public final class ArmConstants{
+        public static final int leftArmRaiserPort = 13;
+        public static final int rightArmRaiserPort = 14;
+
+        public static final int lowerLimitSwitchPort = 0;
+        public static final int topLimitSwitchPort = 2;
+
+        public static final double armSpeed = 0.3;
+    }
+
+    public static final class ConveyorConstants{
+        public static final double autonomousTime = 3; // in SECONDS
+        public static final double conveyorSpeed = 1;
+
+        public static final int entranceConveyorPort = 10;
+        public static final int exitConveyorPort = 9;
+
+        public static final int entranceBeamBreakPort = 2;
+        public static final int exitBeamBreakPort = 3;
+
+        public enum ConveyorSection {
+            ENTRANCE,
+            EXIT
+        }
+    }
+
+    public final class IntakeConstants{
+        public static final int leftIntakePort = 8;
+        public static final int rightIntakePort = 7;
+
+        public static final int extendSolenoid = 1;
+        public static final int retractSolenoid = 3;
+    }
+
+    public final class IO{
+        public static final int xboxPort = 0;
+        public static final int leftJoystickPort = 1;
+        public static final int rightJoystickPort = 2;
+    }
+
+    public static final class AutonomousConstants {
+        public static final String[] autonomousOptions = {"None", "Drive Left", "Drive Right"};
+        public static final int defaultAutonomous = 1; // This is the index of the default auto
+        
+        // Times are in SECONDS
+        public static final double shooterTime = 2;
+        public static final double conveyorTime = 2;
+        public static final double driveTime = 7;
+    }
 
     public static final int PneumaticHubPort = 20;
     public static final int PowerDistributionPort = 22;
 
-    public static double InchesToMeters(double inches) { return inches * 0.0254; }
+    public static double inchesToMeters(double inches) { return inches * 0.0254; }
     
     // EVERYTHING IS IN METERS!!!
-    public static final class Drive{
+    public static final class DriveConstants{
+        public static final double autonomousSpeed = 0.7;
+
+        public static final double initialSpeedLimit = 0.7;
+        public static final double secondSpeedLimit = 0.8;
+
         public static final int[] leftMotorPorts = {1, 2, 3};
         public static final int[] rightMotorPorts = {4, 5, 6};
 
-        static final double lowModifier = 0.75;
-        static final double medModifier = 0.85;
-        static final double highModifier = 1;
+        public static final int highGearSolenoid = 2;
+        public static final int lowGearSolenoid = 0;
 
         public static final double kP = 42.42; // was 0.04
         public static final double kI = 0;
@@ -50,13 +108,9 @@ public final class Constants {
         public static final double zeta = 0.7;
 
         public static final double trackWidth = 0.6477;
-
-        public static final int highGearSolenoid = 2;
-        public static final int lowGearSolenoid = 0;
-
         public static final double lowGearRatio = 12.03;
         public static final double highGearRatio = 5.56;
-        public static final double wheelDiameter = InchesToMeters(4);
+        public static final double wheelDiameter = inchesToMeters(4);
            
     }
 }

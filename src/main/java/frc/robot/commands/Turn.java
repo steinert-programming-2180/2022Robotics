@@ -4,7 +4,7 @@
 
 package frc.robot.commands;
 
-import frc.robot.Constants.Drive;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.GyroSubsystem;
@@ -21,9 +21,9 @@ public class Turn extends CommandBase {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final Drivetrain drivetrain;
 
-    double kP = Drive.kP;
-    double kI = Drive.kI;
-    double kD = Drive.kD;
+    double kP = DriveConstants.kP;
+    double kI = DriveConstants.kI;
+    double kD = DriveConstants.kD;
     PIDController turnController = new PIDController(kP, kI, kD);
 
     public Turn(Drivetrain drivetrain, int targetAngle) {
