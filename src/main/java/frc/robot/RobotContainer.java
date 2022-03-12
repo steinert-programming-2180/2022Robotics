@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Drive;
 import frc.robot.commands.DefaultDrive;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.Turn;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -128,6 +129,15 @@ public class RobotContainer {
       backwardConfig
     );
 
+    Trajectory goBackToGoal2 = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+      List.of(
+        new Translation2d(1, 0)
+      ),
+      new Pose2d(3, 0.4, Rotation2d.fromDegrees(45)), 
+      backwardConfig
+    );
+
     Trajectory trajectory = goBackToGoal;
 
     drivetrain.resetOdometry(trajectory.getInitialPose());
@@ -135,33 +145,10 @@ public class RobotContainer {
     RamseteController ramseteController = new RamseteController(Drive.b, Drive.zeta);
 
     // https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/creating-following-trajectory.html?highlight=ramsetecommand#creating-the-ramsetecommand 
-    RamseteCommand ramseteCommand = new RamseteCommand(
-      goToBall, 
-      drivetrain::getPose, 
-      ramseteController, 
-      new SimpleMotorFeedforward(Drive.kS, Drive.kV, Drive.kA),
-      kDriveKinematics, 
-      drivetrain::getWheelSpeeds, 
-      new PIDController(Drive.leftKp, Drive.leftKi, Drive.leftKd), 
-      new PIDController(Drive.rightKp, Drive.rightKi, Drive.rightKd), 
-      drivetrain::driveByVoltage, 
-      drivetrain
-    );
+    RamseteCommand followBallPath = new FollowTrajectory(goToBall, drivetrain);
+    RamseteCommand followGoalLeftPath = new FollowTrajectory(goBackToGoal, drivetrain);
+    RamseteCommand followGoalRightPath = new FollowTrajectory(goBackToGoal2, drivetrain);
 
-    RamseteCommand ramseteCommand2 = new RamseteCommand(
-      goBackToGoal, 
-      drivetrain::getPose, 
-      ramseteController, 
-      new SimpleMotorFeedforward(Drive.kS, Drive.kV, Drive.kA),
-      kDriveKinematics, 
-      drivetrain::getWheelSpeeds, 
-      new PIDController(Drive.leftKp, Drive.leftKi, Drive.leftKd), 
-      new PIDController(Drive.rightKp, Drive.rightKi, Drive.rightKd), 
-      drivetrain::driveByVoltage, 
-      drivetrain
-    );
-
-   // return turnCommand;
-    return ramseteCommand.andThen(() -> drivetrain.resetSensors()).andThen(ramseteCommand2).andThen(() -> drivetrain.drive(0, 0));
+    return followBallPath.andThen(() -> drivetrain.resetSensors()).andThen(followGoalRightPath);
   }
 }
