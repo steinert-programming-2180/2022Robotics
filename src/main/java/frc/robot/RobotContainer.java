@@ -102,25 +102,33 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    drivetrain.resetAngle();
+    drivetrain.resetSensors();
     DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(Drive.trackWidth);
 
+    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(3, 2);
+    TrajectoryConfig backwardConfig = new TrajectoryConfig(3, 2);
+    backwardConfig.setReversed(false);
+    trajectoryConfig.setReversed(true);
 
-    Pose2d start = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
-    List<Translation2d> waypoints = List.of(
-      new Translation2d(1, 0)
-    );
-    Pose2d end = new Pose2d(1, 0, Rotation2d.fromDegrees(0));
-
-    
-    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(3,3);
-
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-      start,
-      waypoints,
-      end,
+    Trajectory goToBall = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+      List.of(
+        new Translation2d(-1, 0)
+      ),
+      new Pose2d(-2, 0, Rotation2d.fromDegrees(0)),
       trajectoryConfig
     );
+
+    Trajectory goBackToGoal = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+      List.of(
+        new Translation2d(1, 0)
+      ),
+      new Pose2d(3, -0.6, Rotation2d.fromDegrees(-45)),
+      backwardConfig
+    );
+
+    Trajectory trajectory = goBackToGoal;
 
     drivetrain.resetOdometry(trajectory.getInitialPose());
 
@@ -128,7 +136,20 @@ public class RobotContainer {
 
     // https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/creating-following-trajectory.html?highlight=ramsetecommand#creating-the-ramsetecommand 
     RamseteCommand ramseteCommand = new RamseteCommand(
-      trajectory, 
+      goToBall, 
+      drivetrain::getPose, 
+      ramseteController, 
+      new SimpleMotorFeedforward(Drive.kS, Drive.kV, Drive.kA),
+      kDriveKinematics, 
+      drivetrain::getWheelSpeeds, 
+      new PIDController(Drive.leftKp, Drive.leftKi, Drive.leftKd), 
+      new PIDController(Drive.rightKp, Drive.rightKi, Drive.rightKd), 
+      drivetrain::driveByVoltage, 
+      drivetrain
+    );
+
+    RamseteCommand ramseteCommand2 = new RamseteCommand(
+      goBackToGoal, 
       drivetrain::getPose, 
       ramseteController, 
       new SimpleMotorFeedforward(Drive.kS, Drive.kV, Drive.kA),
@@ -141,6 +162,6 @@ public class RobotContainer {
     );
 
    // return turnCommand;
-    return ramseteCommand.andThen(() -> drivetrain.drive(0, 0));
+    return ramseteCommand.andThen(() -> drivetrain.resetSensors()).andThen(ramseteCommand2).andThen(() -> drivetrain.drive(0, 0));
   }
 }

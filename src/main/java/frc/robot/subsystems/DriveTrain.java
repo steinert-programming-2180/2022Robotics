@@ -16,6 +16,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxRelativeEncoder.Type;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -56,8 +57,8 @@ public class Drivetrain extends SubsystemBase {
         rightMotorGroup = new MotorControllerGroup(rightMotors);
 
         // Invert to drive propery
-        leftMotorGroup.setInverted(false);
-        rightMotorGroup.setInverted(true);
+        // leftMotorGroup.setInverted(true);
+        // rightMotorGroup.setInverted(true);
 
         // Create the Differential Drive to drive the robot
         drive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
@@ -109,12 +110,16 @@ public class Drivetrain extends SubsystemBase {
         rightMotors = new CANSparkMax[amountOfRightMotors];
 
         // Make Left Sparks from the ports
-        for (int i = 0; i < amountOfLeftMotors; i++)
+        for (int i = 0; i < amountOfLeftMotors; i++){
             leftMotors[i] = new CANSparkMax(Drive.leftMotorPorts[i], MotorType.kBrushless);
+            leftMotors[i].setInverted(false);
+        }
 
         // Make Right Sparks from the ports
-        for (int i = 0; i < amountOfRightMotors; i++)
+        for (int i = 0; i < amountOfRightMotors; i++){
             rightMotors[i] = new CANSparkMax(Drive.rightMotorPorts[i], MotorType.kBrushless);
+            rightMotors[i].setInverted(true);
+        }
     }
 
     public void drive(double leftSpeed, double rightSpeed) {
@@ -122,8 +127,8 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void driveByVoltage(double leftVoltage, double rightVoltage) {
-        leftMotorGroup.setVoltage(-leftVoltage);
-        rightMotorGroup.setVoltage(-rightVoltage);
+        leftMotorGroup.setVoltage(leftVoltage);
+        rightMotorGroup.setVoltage(rightVoltage);
         drive.feed();
     }
 
@@ -172,9 +177,9 @@ public class Drivetrain extends SubsystemBase {
         double leftMetersPerSecond = rpmToVelocity( leftEncoder.getVelocity() );
         double rightMetersPerSecond = rpmToVelocity( righEncoder.getVelocity() );
 
-        SmartDashboard.putNumber("Left Speed", -leftMetersPerSecond);
+        SmartDashboard.putNumber("Left Speed", leftMetersPerSecond);
         SmartDashboard.putNumber("Right Speed", rightMetersPerSecond);
-        return new DifferentialDriveWheelSpeeds(-leftMetersPerSecond, rightMetersPerSecond);
+        return new DifferentialDriveWheelSpeeds(leftMetersPerSecond, rightMetersPerSecond);
     }
 
     // TODO: get actual distance
@@ -184,13 +189,16 @@ public class Drivetrain extends SubsystemBase {
         getWheelSpeeds();
         double leftDistanceMeters = leftEncoder.getPosition() / getCurrentGearRatio() * getWheelCircumference() ;
         double rightDistanceMeters = righEncoder.getPosition() / getCurrentGearRatio() * getWheelCircumference() ;
-        odometry.update(navx.getRotation2d(), -leftDistanceMeters, rightDistanceMeters);
+        odometry.update(Rotation2d.fromDegrees(navx.getAngle()), leftDistanceMeters, rightDistanceMeters);
 
         SmartDashboard.putString("Current Gear", getGear() ? "High Gear":"Low Gear");
         SmartDashboard.putNumber("Angle Accumulation", navx.getRotation2d().getDegrees());
         SmartDashboard.putNumber("Angle", getAngle());
-        SmartDashboard.putNumber("Left Distance Meters", -leftDistanceMeters);
+        SmartDashboard.putNumber("Left Distance Meters", leftDistanceMeters);
         SmartDashboard.putNumber("Right Distance Meters", rightDistanceMeters);
+
+        SmartDashboard.putNumber("X", getPose().getX());
+        SmartDashboard.putNumber("Y", getPose().getY());
     }
 
     @Override
