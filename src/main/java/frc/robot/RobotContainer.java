@@ -239,14 +239,31 @@ public class RobotContainer {
 
     CommandBase command;
     
+    
     // https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/creating-following-trajectory.html?highlight=ramsetecommand#creating-the-ramsetecommand 
     RamseteCommand followBallPath = new FollowTrajectory(goToBall, drivetrain);
     RamseteCommand followGoalLeftPath = new FollowTrajectory(goBackToGoal, drivetrain); // goes to hub when we are on the left
     RamseteCommand followGoalRightPath = new FollowTrajectory(goBackToGoal2, drivetrain); // goest to hub when we are on the right
     RamseteCommand followSecondBall = new FollowTrajectory(goToSecondBall, drivetrain);
 
-    CommandBase precommands = lowerArm.andThen(() -> drivetrain.highGear());
-    return followBallPath.andThen(() -> drivetrain.resetSensors()).andThen(followGoalLeftPath);
+    switch(ShuffleboardControl.getAutonomousMode()){
+      case 0:
+        command = emptyCommand;
+        break;
+      case 1:
+        command = followBallPath.andThen(() -> drivetrain.resetSensors()).andThen(followGoalLeftPath);
+        break;
+      case 2:
+        command = followBallPath.andThen(() -> drivetrain.resetSensors()).andThen(followGoalRightPath);
+        break;
+      default:
+        command = emptyCommand;
+        break;
+    }
+    
+    drivetrain.highGear();
+    CommandBase precommands = new ParallelCommandGroup(lowerArm, intakeCommand);
+    return command;
     // return followSecondBall;
   }
 
