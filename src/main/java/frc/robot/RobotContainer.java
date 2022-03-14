@@ -80,7 +80,7 @@ public class RobotContainer {
   
 
   // Emergency autonomous. not actual autonomous unfortunately
-  private SimpleAuto simpleAuto = new SimpleAuto(raiseArm, shooterCommand, conveyorCommand, timedDrive);
+  private SimpleAuto simpleAuto = new SimpleAuto(new RaiseArm(arm), shooterCommand, conveyorCommand, timedDrive);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
