@@ -14,7 +14,7 @@ package frc.robot;
  */
 public final class Constants {
     public final class ShooterConstants{
-        public static final double shooterSpeed = 0.2;
+        public static final double shooterSpeed = 0.3;
 
         public static final int bottomFlywheelPort = 12;
         public static final int topFlywheelPort = 11;
@@ -28,6 +28,8 @@ public final class Constants {
         public static final int topLimitSwitchPort = 2;
 
         public static final double armSpeed = 0.3;
+
+        public static final int maxEncoderVal = 85;
     }
 
     public static final class ConveyorConstants{

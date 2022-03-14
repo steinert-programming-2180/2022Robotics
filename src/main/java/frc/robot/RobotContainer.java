@@ -95,12 +95,58 @@ public class RobotContainer {
   // Emergency autonomous. not actual autonomous unfortunately
   private SimpleAuto simpleAuto = new SimpleAuto(new RaiseArm(arm), shooterCommand, conveyorCommand, timedDrive);
 
+    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(3, 2);
+    TrajectoryConfig backwardConfig = new TrajectoryConfig(1, 1);
+
+    Trajectory goToBall;
+    // from left ball to hub
+    Trajectory goBackToGoal;
+
+    // lower arm, set drive gear, intake out, turn on conveyor before or while
+    // when conveyor is full, raise arm and shooter
+    // wait till path then shoot
+
+    // from right ball to hub
+    Trajectory goBackToGoal2;
+
+    Trajectory goToSecondBall;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     // Configure the button
     configureButtonBindings();
+
+    backwardConfig.setReversed(false);
+    trajectoryConfig.setReversed(true);
+
+    goToBall = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+      List.of(),
+      new Pose2d(-1, 0, Rotation2d.fromDegrees(0)),
+      trajectoryConfig
+    );
+    goBackToGoal =  TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+      List.of(),
+      new Pose2d(1.7, -0.35, Rotation2d.fromDegrees(-45)),
+      backwardConfig
+    );
+    goBackToGoal2 = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+      List.of(),
+      new Pose2d(1.7, 0.3, Rotation2d.fromDegrees(22.5)), 
+      backwardConfig
+    );
+    goToSecondBall = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 
+      List.of(
+        new Translation2d(0, 1)
+      ), 
+      new Pose2d(0, 2, Rotation2d.fromDegrees(90)), 
+      trajectoryConfig
+    );
 
     drivetrain.setDefaultCommand(driveCommand);
   }
@@ -197,46 +243,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     drivetrain.resetSensors();
 
-    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(3, 2);
-    TrajectoryConfig backwardConfig = new TrajectoryConfig(1, 1);
-    backwardConfig.setReversed(false);
-    trajectoryConfig.setReversed(true);
-
-    Trajectory goToBall = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-      List.of(),
-      new Pose2d(-1, 0, Rotation2d.fromDegrees(0)),
-      trajectoryConfig
-    );
-
-    // from left ball to hub
-    Trajectory goBackToGoal = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-      List.of(),
-      new Pose2d(1.7, -0.35, Rotation2d.fromDegrees(-45)),
-      backwardConfig
-    );
-
-    // lower arm, set drive gear, intake out, turn on conveyor before or while
-    // when conveyor is full, raise arm and shooter
-    // wait till path then shoot
-
-    // from right ball to hub
-    Trajectory goBackToGoal2 = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-      List.of(),
-      new Pose2d(1.7, 0.3, Rotation2d.fromDegrees(22.5)), 
-      backwardConfig
-    );
-
-    Trajectory goToSecondBall = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 
-      List.of(
-        new Translation2d(0, 1)
-      ), 
-      new Pose2d(0, 2, Rotation2d.fromDegrees(90)), 
-      trajectoryConfig
-    );
+    
 
     CommandBase command;
     
@@ -264,8 +271,9 @@ public class RobotContainer {
     
     drivetrain.highGear();
     CommandBase precommands = new ParallelCommandGroup(lowerArm, intakeCommand);
-    CommandBase shootBall = ( new TimedCommand(new ShooterCommand(shooter), 3) ).andThen( (new ConveyorCommand(conveyor)).alongWith(new ShooterCommand(shooter)) );
-    return precommands.alongWith(followBallPath).andThen(() -> drivetrain.resetSensors()).andThen(followGoalLeftPath.alongWith(raiseArm)).andThen(shootBall);
+    CommandBase revUpShooter = new TimedCommand(new ShooterCommand(shooter), 2);
+    CommandBase shootBall = (new ConveyorCommand(conveyor)).alongWith(new ShooterCommand(shooter));
+    return precommands.alongWith(followBallPath).andThen(() -> drivetrain.resetSensors()).andThen(followGoalLeftPath.alongWith(raiseArm).alongWith(revUpShooter)).andThen(shootBall);
   }
 
   private CommandBase getRamseteCommand(){

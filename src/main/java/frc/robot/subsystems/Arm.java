@@ -65,7 +65,7 @@ public class Arm extends SubsystemBase {
     }
 
     public boolean hasReachedUpperLimit(){
-        return rightEncoder.getPosition() >= referencePoint + 60;
+        return rightEncoder.getPosition() >= referencePoint + 80;
     }
 
     public void stopArm() {
