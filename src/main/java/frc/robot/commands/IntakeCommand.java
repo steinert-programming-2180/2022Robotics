@@ -40,8 +40,10 @@ public class IntakeCommand extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        isExitFull = conveyor.getBeamBreakStatus(ConveyorSection.EXIT);
-        isEntranceFull = conveyor.getBeamBreakStatus(ConveyorSection.ENTRANCE);
+        intake.extendIntake();
+        
+        isExitFull = isExitFull();
+        isEntranceFull = isEntranceFull();
 
         if(isExitFull && isEntranceFull) {
             intake.intakeStop();
@@ -62,6 +64,14 @@ public class IntakeCommand extends CommandBase {
         }
     }
 
+    boolean isExitFull(){
+        return conveyor.getBeamBreakStatus(ConveyorSection.EXIT);
+    }
+
+    boolean isEntranceFull(){
+        return conveyor.getBeamBreakStatus(ConveyorSection.ENTRANCE);
+    }
+
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
@@ -72,6 +82,6 @@ public class IntakeCommand extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return isEntranceFull() && isExitFull();
     }
 }

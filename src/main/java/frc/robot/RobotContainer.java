@@ -31,6 +31,7 @@ import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.Turn;
 import frc.robot.Constants.IO;
 import frc.robot.commands.SimpleAuto;
+import frc.robot.commands.TimedCommand;
 import frc.robot.commands.ConveyorBackwardCommand;
 import frc.robot.commands.ConveyorCommand;
 import frc.robot.commands.ExampleCommand;
@@ -92,7 +93,7 @@ public class RobotContainer {
   
 
   // Emergency autonomous. not actual autonomous unfortunately
-  private SimpleAuto simpleAuto = new SimpleAuto(raiseArm, shooterCommand, conveyorCommand, timedDrive);
+  private SimpleAuto simpleAuto = new SimpleAuto(new RaiseArm(arm), shooterCommand, conveyorCommand, timedDrive);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -251,7 +252,7 @@ public class RobotContainer {
         command = emptyCommand;
         break;
       case 1:
-        command = followBallPath.andThen(() -> drivetrain.resetSensors()).andThen(followGoalLeftPath);
+        //command = followBallPath.andThen(() -> drivetrain.resetSensors()).andThen(followGoalLeftPath);
         break;
       case 2:
         command = followBallPath.andThen(() -> drivetrain.resetSensors()).andThen(followGoalRightPath);
@@ -263,8 +264,8 @@ public class RobotContainer {
     
     drivetrain.highGear();
     CommandBase precommands = new ParallelCommandGroup(lowerArm, intakeCommand);
-    return command;
-    // return followSecondBall;
+    CommandBase shootBall = ( new TimedCommand(new ShooterCommand(shooter), 3) ).andThen( (new ConveyorCommand(conveyor)).alongWith(new ShooterCommand(shooter)) );
+    return precommands.alongWith(followBallPath).andThen(() -> drivetrain.resetSensors()).andThen(followGoalLeftPath.alongWith(raiseArm)).andThen(shootBall);
   }
 
   private CommandBase getRamseteCommand(){

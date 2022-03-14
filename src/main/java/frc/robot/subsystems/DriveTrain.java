@@ -88,7 +88,8 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getCurrentGearRatio(){
-        return getGear() ? DriveConstants.highGearRatio : DriveConstants.lowGearRatio;
+        // return getGear() ? DriveConstants.highGearRatio : DriveConstants.lowGearRatio;
+        return DriveConstants.lowGearRatio;
     }
 
     public double rpmToVelocity(double rpm){
@@ -193,6 +194,11 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Angle", getAngle());
         SmartDashboard.putNumber("Left Distance Meters", leftDistanceMeters);
         SmartDashboard.putNumber("Right Distance Meters", rightDistanceMeters);
+        int gear = 0;
+        if(shifters.get() == Value.kForward) gear = 1;
+        else if(shifters.get() == Value.kReverse) gear = -1;
+        else if(shifters.get() == Value.kOff) gear = 0;
+        SmartDashboard.putNumber("High Or Low", gear);
 
         SmartDashboard.putNumber("X", getPose().getX());
         SmartDashboard.putNumber("Y", getPose().getY());
