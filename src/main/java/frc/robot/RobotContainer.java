@@ -273,7 +273,7 @@ public class RobotContainer {
     CommandBase precommands = new ParallelCommandGroup(lowerArm, intakeCommand);
     CommandBase revUpShooter = new TimedCommand(new ShooterCommand(shooter), 2);
     CommandBase shootBall = (new ConveyorCommand(conveyor)).alongWith(new ShooterCommand(shooter));
-    return precommands.alongWith(followBallPath).andThen(() -> drivetrain.resetSensors()).andThen(followGoalLeftPath.alongWith(raiseArm).alongWith(revUpShooter)).andThen(shootBall);
+    return (precommands.alongWith(followBallPath).andThen(() -> drivetrain.resetSensors()).andThen(followGoalLeftPath.alongWith(raiseArm)).andThen(new ConveyorCommand(conveyor))).alongWith(new ShooterCommand(shooter));
   }
 
   private CommandBase getRamseteCommand(){
