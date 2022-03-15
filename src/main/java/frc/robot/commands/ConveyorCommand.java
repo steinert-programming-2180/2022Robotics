@@ -1,12 +1,13 @@
 package frc.robot.commands;
 
+import frc.robot.Constants.ConveyorConstants.ConveyorSection;
 import frc.robot.subsystems.Conveyor;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class ConveyorCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private Conveyor conveyor;
-  
+  private double startTime;
   public ConveyorCommand(Conveyor conveyor) {
     this.conveyor = conveyor;
     addRequirements(conveyor);
@@ -14,12 +15,16 @@ public class ConveyorCommand extends CommandBase {
 
   @Override
   public void initialize() {
-    conveyor.convey();
+    startTime = System.currentTimeMillis();
   }
 
   @Override
   public void execute() {
-    conveyor.convey();
+    if(System.currentTimeMillis() - startTime < 300) {
+      conveyor.convey(ConveyorSection.EXIT);
+    } else {
+      conveyor.convey();
+    }
   }
 
   @Override
