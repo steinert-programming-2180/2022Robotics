@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.ShooterCommand;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
@@ -34,7 +35,7 @@ public class Shooter extends SubsystemBase {
     ff = new SimpleMotorFeedforward(ShooterConstants.kS, ShooterConstants.kV, ShooterConstants.kA);
 
     SmartDashboard.putNumber("Shooter Speed", ShooterConstants.shooterSpeed);
-    SmartDashboard.putNumber("Goal RPM", 2);
+    SmartDashboard.putNumber("Goal RPM", ShooterConstants.shooterRPM);
     setMotorsToCoast();
   }
 
@@ -44,7 +45,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setGoalRPM(double rpm){
-    goalRPM = rpm;
+    goalRPM = rpm / 60;
   }
 
   public void shoot() {
@@ -53,8 +54,8 @@ public class Shooter extends SubsystemBase {
     setGoalRPM( SmartDashboard.getNumber("Goal RPM", 0) );
 
     double calculatedSpeed = ff.calculate(goalRPM);
-    bottomFlywheel.set(calculatedSpeed);
-    topFlywheel.set(calculatedSpeed);
+    bottomFlywheel.setVoltage(calculatedSpeed);
+    topFlywheel.setVoltage(calculatedSpeed);
   }
 
   public void stopShooting() {

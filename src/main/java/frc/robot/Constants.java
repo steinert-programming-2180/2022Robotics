@@ -15,7 +15,7 @@ package frc.robot;
 public final class Constants {
     public final class ShooterConstants{
         public static final double shooterSpeed = 0.28;
-        public static final double shooterRPM = 1000;
+        public static final double shooterRPM = 1500;
 
         public static final int bottomFlywheelPort = 12;
         public static final int topFlywheelPort = 11;
