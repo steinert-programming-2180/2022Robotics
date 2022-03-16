@@ -104,8 +104,9 @@ public class RobotContainer {
     Trajectory goBackToGoal;
 
     // from right ball to hub
-    Trajectory goBackToGoal2;
     Trajectory goToSecondBall;
+    Trajectory goBackToGoal2;
+    Trajectory goBackToGoalFromSecondBall;
 
     // the position we want to be at when autonomous ends and we're on the left
     Trajectory leftTeleopPosition;
@@ -141,11 +142,15 @@ public class RobotContainer {
     );
     goToSecondBall = TrajectoryGenerator.generateTrajectory(
       new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 
-      List.of(
-        new Translation2d(0, 1)
-      ), 
-      new Pose2d(0, 2, Rotation2d.fromDegrees(90)), 
+      List.of(), 
+      new Pose2d(-1.2, -1.5, Rotation2d.fromDegrees(22.5)), 
       trajectoryConfig
+    );
+    goBackToGoalFromSecondBall = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(), 
+      List.of(), 
+      new Pose2d(1.8, 0.3, Rotation2d.fromDegrees(-45)), 
+      backwardConfig
     );
     leftTeleopPosition = TrajectoryGenerator.generateTrajectory(
       new Pose2d(), 
@@ -261,6 +266,7 @@ public class RobotContainer {
     RamseteCommand followGoalLeftPath = new FollowTrajectory(goBackToGoal, drivetrain); // goes to hub when we are on the left
     RamseteCommand followGoalRightPath = new FollowTrajectory(goBackToGoal2, drivetrain); // goest to hub when we are on the right
     RamseteCommand followSecondBall = new FollowTrajectory(goToSecondBall, drivetrain);
+    RamseteCommand followGoalFromSecondBall = new FollowTrajectory(goBackToGoalFromSecondBall, drivetrain);
 
     switch(ShuffleboardControl.getAutonomousMode()){
       case 0:
@@ -282,11 +288,11 @@ public class RobotContainer {
     
 
 
-    // return oneBallAuto(false, precommands, followBallPath, followGoalLeftPath, followGoalRightPath, raiseArm);
-    return twoBallAuto(precommands, followBallPath, followGoalRightPath, raiseArm, followSecondBall);
+    // return twoBallAuto(false, precommands, followBallPath, followGoalLeftPath, followGoalRightPath, raiseArm);
+    return threeBallAuto(precommands, followBallPath, followGoalRightPath, raiseArm, followSecondBall, followGoalFromSecondBall);
   }
 
-  private CommandBase twoBallAuto(CommandBase precommands, CommandBase followBallPath, CommandBase followGoalRightPath, CommandBase raiseArm, CommandBase followSecondBall){
+  private CommandBase threeBallAuto(CommandBase precommands, CommandBase followBallPath, CommandBase followGoalRightPath, CommandBase raiseArm, CommandBase followSecondBall, CommandBase backToGoal){
     CommandBase goToGoal = followGoalRightPath;
 
     return (
@@ -296,12 +302,17 @@ public class RobotContainer {
       .andThen(new WaitCommand(0.5))
       .andThen(new TimedCommand(new ConveyorCommand(conveyor), 1))
       .andThen(() -> drivetrain.resetSensors())
-      .andThen(followSecondBall)
+      .andThen((new LowerArm(arm)).alongWith(followSecondBall).alongWith(new IntakeCommand(intake, conveyor, false))
+      .andThen(() -> drivetrain.resetSensors())
+      .andThen( backToGoal.alongWith(new RaiseArm(arm)) )
+      .andThen(new WaitCommand(0.5))
+      .andThen(new TimedCommand(new ConveyorCommand(conveyor), 1))
+      )
     )
-    .alongWith(new TimedCommand(new ShooterCommand(shooter), 6.5));
+    .alongWith(new TimedCommand(new ShooterCommand(shooter), 15));
   }
 
-  private CommandBase oneBallAuto(boolean isLeft, CommandBase precommands, CommandBase followBallPath, CommandBase followGoalLeftPath, CommandBase followGoalRightPath, CommandBase raiseArm){
+  private CommandBase twoBallAuto(boolean isLeft, CommandBase precommands, CommandBase followBallPath, CommandBase followGoalLeftPath, CommandBase followGoalRightPath, CommandBase raiseArm){
     CommandBase goToGoal = isLeft ? followGoalLeftPath : followGoalRightPath;
     CommandBase getRidOfOpponentBall = ( new FollowTrajectory( isLeft ? leftTeleopPosition:rightTeleopPosition , drivetrain) ).alongWith(new LowerArm(arm)).alongWith(new IntakeReverse(intake));
 

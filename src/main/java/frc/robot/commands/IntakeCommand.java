@@ -18,6 +18,8 @@ public class IntakeCommand extends CommandBase {
     boolean isExitFull;
     boolean isEntranceFull;
 
+    boolean twoBall = true;
+
     /**
      * Creates a new ExampleCommand.
      *
@@ -30,6 +32,11 @@ public class IntakeCommand extends CommandBase {
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(intake);
         addRequirements(conveyor);
+    }
+
+    public IntakeCommand(Intake intake, Conveyor conveyor, boolean twoBall) {
+        this(intake, conveyor);
+        this.twoBall = twoBall;
     }
 
     // Called when the command is initially scheduled.
@@ -82,6 +89,8 @@ public class IntakeCommand extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return isEntranceFull() && isExitFull();
+        if(twoBall)
+            return isExitFull() && isEntranceFull();
+        return isExitFull();    
     }
 }
