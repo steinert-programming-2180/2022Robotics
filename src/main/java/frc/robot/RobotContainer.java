@@ -284,7 +284,7 @@ public class RobotContainer {
     }
     
     drivetrain.highGear();
-    CommandBase precommands = new ParallelCommandGroup(lowerArm, intakeCommand);
+    CommandBase precommands = new ParallelCommandGroup(lowerArm, new TimedCommand(intakeCommand, 3));
     
 
 

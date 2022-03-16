@@ -26,11 +26,11 @@ public class TimedCommand extends CommandBase {
   
     @Override
     public void end(boolean interrupted) {
-        command.end(false);
+        command.end(interrupted);
     }
   
     @Override
     public boolean isFinished() {
-      return System.currentTimeMillis() - startTime > timeInSeconds * 1000;
+      return System.currentTimeMillis() - startTime > timeInSeconds * 1000 || command.isFinished();
     }
 }
