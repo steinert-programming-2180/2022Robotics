@@ -14,12 +14,12 @@ public class FollowTrajectory extends RamseteCommand {
         super(
             trajectory,
             drivetrain::getPose, 
-            new RamseteController(DriveConstants.b, DriveConstants.zeta), 
+            new RamseteController(), 
             new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA),
             new DifferentialDriveKinematics(DriveConstants.trackWidth), 
             drivetrain::getWheelSpeeds, 
-            new PIDController(DriveConstants.leftKp, DriveConstants.leftKi, DriveConstants.leftKd), 
-            new PIDController(DriveConstants.rightKp, DriveConstants.rightKi, DriveConstants.rightKd), 
+            new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD), 
+            new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD), 
             drivetrain::driveByVoltage, 
             drivetrain
         );

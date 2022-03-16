@@ -64,10 +64,17 @@ public class Conveyor extends SubsystemBase {
     return (section == ConveyorSection.ENTRANCE) ? !entranceBeamBreak.get() : exitBeamBreak.get();
   }
 
+  public boolean isConveyorEmpty(){
+    boolean hasEntranceBall = getBeamBreakStatus(ConveyorSection.ENTRANCE);
+    boolean hasExitBall = getBeamBreakStatus(ConveyorSection.EXIT);
+    return !(hasEntranceBall || hasExitBall);
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("Entrance", getBeamBreakStatus(ConveyorSection.ENTRANCE));
     SmartDashboard.putBoolean("Exit", getBeamBreakStatus(ConveyorSection.EXIT));
+    SmartDashboard.putBoolean("Conveyor Empty?", isConveyorEmpty());
   }
 
   @Override

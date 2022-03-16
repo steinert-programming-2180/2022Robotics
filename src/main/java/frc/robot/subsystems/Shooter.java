@@ -20,8 +20,7 @@ public class Shooter extends SubsystemBase {
   public RelativeEncoder bottomEncoder;
   public CANSparkMax topFlywheel;
   public RelativeEncoder topEncoder;
-  PIDController rpmController;
-  SimpleMotorFeedforward ff;
+  SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ShooterConstants.kS, ShooterConstants.kV, ShooterConstants.kA);
   double goalRPM = ShooterConstants.shooterRPM;
 
   public Shooter() {
@@ -30,12 +29,7 @@ public class Shooter extends SubsystemBase {
     bottomEncoder = bottomFlywheel.getEncoder();
     topEncoder = topFlywheel.getEncoder();
 
-    rpmController = new PIDController(ShooterConstants.kP, ShooterConstants.kI, ShooterConstants.kD);
-    rpmController.setSetpoint(ShooterConstants.shooterRPM);
-    ff = new SimpleMotorFeedforward(ShooterConstants.kS, ShooterConstants.kV, ShooterConstants.kA);
-
-    SmartDashboard.putNumber("Shooter Speed", ShooterConstants.shooterSpeed);
-    SmartDashboard.putNumber("Goal RPM", ShooterConstants.shooterRPM);
+    SmartDashboard.putNumber("Goal RPM", goalRPM);
     setMotorsToCoast();
   }
 
@@ -44,16 +38,11 @@ public class Shooter extends SubsystemBase {
     topFlywheel.setIdleMode(IdleMode.kCoast);
   }
 
-  public void setGoalRPM(double rpm){
-    goalRPM = rpm / 60;
-  }
+  public void setGoalRPM(double rpm){ goalRPM = rpm / 60; }
 
   public void shoot() {
-    double shooterSpeed = SmartDashboard.getNumber("Shooter Speed", ShooterConstants.shooterSpeed);
+    double calculatedSpeed = feedforward.calculate(goalRPM);
 
-    setGoalRPM( SmartDashboard.getNumber("Goal RPM", 0) );
-
-    double calculatedSpeed = ff.calculate(goalRPM);
     bottomFlywheel.setVoltage(calculatedSpeed);
     topFlywheel.setVoltage(calculatedSpeed);
   }
@@ -65,6 +54,7 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
+    setGoalRPM( SmartDashboard.getNumber("Goal RPM", ShooterConstants.shooterRPM) );
     SmartDashboard.putNumber("Low RPM", bottomEncoder.getVelocity());
     SmartDashboard.putNumber("High RPM", topEncoder.getVelocity());
   }

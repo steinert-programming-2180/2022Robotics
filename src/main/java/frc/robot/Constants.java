@@ -14,7 +14,6 @@ package frc.robot;
  */
 public final class Constants {
     public final class ShooterConstants{
-        public static final double shooterSpeed = 0.28;
         public static final double shooterRPM = 1500;
 
         public static final int bottomFlywheelPort = 12;
@@ -23,10 +22,6 @@ public final class Constants {
         public static final double kS = 0.17096;
         public static final double kV = 0.12577;
         public static final double kA = 0.0086187;
-
-        public static final double kP = 0.13306;
-        public static final double kI = 0;
-        public static final double kD = 0;
     }
 
     public final class ArmConstants{
@@ -99,24 +94,14 @@ public final class Constants {
         public static final int highGearSolenoid = 2;
         public static final int lowGearSolenoid = 0;
 
-        public static final double kP = 42.42; // was 0.04
+        // PID for velocity
+        public static final double kP = 1.3935;
         public static final double kI = 0;
-        public static final double kD = 2.8747; // was 0.005
+        public static final double kD = 0;
 
         public static final double kS = 0.17341;
         public static final double kV = 2.1344;
         public static final double kA = 0.31494;
-
-        public static final double leftKp = 1.3935;
-        public static final double leftKi = 0;
-        public static final double leftKd = 0;
-
-        public static final double rightKp = 1.3935;
-        public static final double rightKi = 0;
-        public static final double rightKd = 0;
-
-        public static final double b = 2;
-        public static final double zeta = 0.7;
 
         public static final double trackWidth = 0.6477;
         public static final double lowGearRatio = 12.03;

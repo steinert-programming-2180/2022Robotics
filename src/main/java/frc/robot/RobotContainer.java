@@ -55,6 +55,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -95,21 +96,19 @@ public class RobotContainer {
   // Emergency autonomous. not actual autonomous unfortunately
   private SimpleAuto simpleAuto = new SimpleAuto(new RaiseArm(arm), shooterCommand, conveyorCommand, timedDrive);
 
-    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(3, 2);
+    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(1, 1);
     TrajectoryConfig backwardConfig = new TrajectoryConfig(1, 1);
 
     Trajectory goToBall;
     // from left ball to hub
     Trajectory goBackToGoal;
 
-    // lower arm, set drive gear, intake out, turn on conveyor before or while
-    // when conveyor is full, raise arm and shooter
-    // wait till path then shoot
-
     // from right ball to hub
     Trajectory goBackToGoal2;
-
     Trajectory goToSecondBall;
+
+    // the position we want to be at when autonomous ends and we're on the left
+    Trajectory leftTeleopPosition;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -145,6 +144,12 @@ public class RobotContainer {
         new Translation2d(0, 1)
       ), 
       new Pose2d(0, 2, Rotation2d.fromDegrees(90)), 
+      trajectoryConfig
+    );
+    leftTeleopPosition = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(), 
+      List.of(), 
+      new Pose2d(-1.2, -1.1, Rotation2d.fromDegrees(180)),
       trajectoryConfig
     );
 
@@ -271,9 +276,22 @@ public class RobotContainer {
     
     drivetrain.highGear();
     CommandBase precommands = new ParallelCommandGroup(lowerArm, intakeCommand);
-    CommandBase revUpShooter = new TimedCommand(new ShooterCommand(shooter), 2);
-    CommandBase shootBall = (new ConveyorCommand(conveyor)).alongWith(new ShooterCommand(shooter));
-    return (precommands.alongWith(followBallPath).andThen(() -> drivetrain.resetSensors()).andThen(followGoalLeftPath.alongWith(raiseArm)).andThen(new TimedCommand(emptyCommand, .5)).andThen(new ConveyorCommand(conveyor))).alongWith(new ShooterCommand(shooter));
+    CommandBase getRidOfOpponentBall = ( new FollowTrajectory(leftTeleopPosition, drivetrain) ).alongWith(new LowerArm(arm)).alongWith(new IntakeReverse(intake));
+
+    CommandBase oneBallAuto =  
+    (
+      precommands.alongWith(followBallPath)
+      .andThen(() -> drivetrain.resetSensors())
+      .andThen(followGoalLeftPath.alongWith(raiseArm))
+      .andThen(new WaitCommand(0.5))
+      .andThen(new TimedCommand(new ConveyorCommand(conveyor), 1))
+      .andThen(() -> drivetrain.resetSensors())
+      .andThen(getRidOfOpponentBall)
+    )
+    .alongWith(new TimedCommand(new ShooterCommand(shooter), 6.5));
+
+
+    return oneBallAuto.andThen(() -> drivetrain.resetSensors());
   }
 
   private CommandBase getRamseteCommand(){
