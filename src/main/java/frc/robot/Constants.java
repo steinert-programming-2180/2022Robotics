@@ -67,7 +67,7 @@ public final class Constants {
     }
 
     public static final class AutonomousConstants {
-        public static final String[] autonomousOptions = {"None", "Drive Left", "Drive Right"};
+        public static final String[] autonomousOptions = {"None", "Zone 1 - 2", "Zone 2 - 2", "Zone 2 - 3"};
         public static final int defaultAutonomous = 1; // This is the index of the default auto
         
         // Times are in SECONDS

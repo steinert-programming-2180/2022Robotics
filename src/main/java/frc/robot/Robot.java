@@ -68,13 +68,13 @@ public class Robot extends TimedRobot {
 
     sensor = new DigitalInput(9);
 
-    compressor = new Compressor(PneumaticsModuleType.REVPH);
-
     powerDistributionHub = new PowerDistribution(12, ModuleType.kRev);
     pneumaticsHub = new PneumaticHub(20);
 
     powerDistributionHub.clearStickyFaults();
     pneumaticsHub.clearStickyFaults();
+
+    compressor = new Compressor(PneumaticsModuleType.REVPH);
 
     ShuffleboardControl.initializeAutonomousChooser();
   }

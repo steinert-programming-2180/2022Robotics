@@ -31,7 +31,7 @@ public final class ShuffleboardControl {
             }
         }
         // TODO: insert paths
-        SmartDashboard.putData("Auto Selector", autoChooser);
+        SmartDashboard.putData("Auto", autoChooser);
     }
 
     public static int getAutonomousMode(){
