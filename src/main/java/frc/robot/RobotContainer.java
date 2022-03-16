@@ -278,15 +278,14 @@ public class RobotContainer {
     }
     
     drivetrain.highGear();
-    CommandBase precommands = new ParallelCommandGroup(lowerArm, intakeCommand);
+    CommandBase precommands = new ParallelCommandGroup(lowerArm, new TimedCommand(intakeCommand, 3));
     
 
-
-    // return oneBallAuto(false, precommands, followBallPath, followGoalLeftPath, followGoalRightPath, raiseArm);
-    return twoBallAuto(precommands, followBallPath, followGoalRightPath, raiseArm, followSecondBall);
+    return twoBallAuto(false, precommands, followBallPath, followGoalLeftPath, followGoalRightPath, raiseArm);
+    // return threeBallAuto(precommands, followBallPath, followGoalRightPath, raiseArm, followSecondBall);
   }
 
-  private CommandBase twoBallAuto(CommandBase precommands, CommandBase followBallPath, CommandBase followGoalRightPath, CommandBase raiseArm, CommandBase followSecondBall){
+  private CommandBase threeBallAuto(CommandBase precommands, CommandBase followBallPath, CommandBase followGoalRightPath, CommandBase raiseArm, CommandBase followSecondBall){
     CommandBase goToGoal = followGoalRightPath;
 
     return (
@@ -301,7 +300,7 @@ public class RobotContainer {
     .alongWith(new TimedCommand(new ShooterCommand(shooter), 6.5));
   }
 
-  private CommandBase oneBallAuto(boolean isLeft, CommandBase precommands, CommandBase followBallPath, CommandBase followGoalLeftPath, CommandBase followGoalRightPath, CommandBase raiseArm){
+  private CommandBase twoBallAuto(boolean isLeft, CommandBase precommands, CommandBase followBallPath, CommandBase followGoalLeftPath, CommandBase followGoalRightPath, CommandBase raiseArm){
     CommandBase goToGoal = isLeft ? followGoalLeftPath : followGoalRightPath;
     CommandBase getRidOfOpponentBall = ( new FollowTrajectory( isLeft ? leftTeleopPosition:rightTeleopPosition , drivetrain) ).alongWith(new LowerArm(arm)).alongWith(new IntakeReverse(intake));
 
