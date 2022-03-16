@@ -109,6 +109,7 @@ public class RobotContainer {
 
     // the position we want to be at when autonomous ends and we're on the left
     Trajectory leftTeleopPosition;
+    Trajectory rightTeleopPosition;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -150,6 +151,12 @@ public class RobotContainer {
       new Pose2d(), 
       List.of(), 
       new Pose2d(-1.2, -1.1, Rotation2d.fromDegrees(180)),
+      trajectoryConfig
+    );
+    rightTeleopPosition = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(), 
+      List.of(), 
+      new Pose2d(-1.2, 1.1, Rotation2d.fromDegrees(180)),
       trajectoryConfig
     );
 
@@ -247,11 +254,7 @@ public class RobotContainer {
    // NOTE: autonomous is inverted. Battery is front. Left is positive. Right is negative.
   public Command getAutonomousCommand() {
     drivetrain.resetSensors();
-
-    
-
     CommandBase command;
-    
     
     // https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/creating-following-trajectory.html?highlight=ramsetecommand#creating-the-ramsetecommand 
     RamseteCommand followBallPath = new FollowTrajectory(goToBall, drivetrain);
@@ -276,22 +279,43 @@ public class RobotContainer {
     
     drivetrain.highGear();
     CommandBase precommands = new ParallelCommandGroup(lowerArm, intakeCommand);
-    CommandBase getRidOfOpponentBall = ( new FollowTrajectory(leftTeleopPosition, drivetrain) ).alongWith(new LowerArm(arm)).alongWith(new IntakeReverse(intake));
+    
 
-    CommandBase oneBallAuto =  
-    (
+
+    // return oneBallAuto(false, precommands, followBallPath, followGoalLeftPath, followGoalRightPath, raiseArm);
+    return twoBallAuto(precommands, followBallPath, followGoalRightPath, raiseArm, followSecondBall);
+  }
+
+  private CommandBase twoBallAuto(CommandBase precommands, CommandBase followBallPath, CommandBase followGoalRightPath, CommandBase raiseArm, CommandBase followSecondBall){
+    CommandBase goToGoal = followGoalRightPath;
+
+    return (
       precommands.alongWith(followBallPath)
       .andThen(() -> drivetrain.resetSensors())
-      .andThen(followGoalLeftPath.alongWith(raiseArm))
+      .andThen(goToGoal.alongWith(raiseArm))
+      .andThen(new WaitCommand(0.5))
+      .andThen(new TimedCommand(new ConveyorCommand(conveyor), 1))
+      .andThen(() -> drivetrain.resetSensors())
+      .andThen(followSecondBall)
+    )
+    .alongWith(new TimedCommand(new ShooterCommand(shooter), 6.5));
+  }
+
+  private CommandBase oneBallAuto(boolean isLeft, CommandBase precommands, CommandBase followBallPath, CommandBase followGoalLeftPath, CommandBase followGoalRightPath, CommandBase raiseArm){
+    CommandBase goToGoal = isLeft ? followGoalLeftPath : followGoalRightPath;
+    CommandBase getRidOfOpponentBall = ( new FollowTrajectory( isLeft ? leftTeleopPosition:rightTeleopPosition , drivetrain) ).alongWith(new LowerArm(arm)).alongWith(new IntakeReverse(intake));
+
+
+    return (
+      precommands.alongWith(followBallPath)
+      .andThen(() -> drivetrain.resetSensors())
+      .andThen(goToGoal.alongWith(raiseArm))
       .andThen(new WaitCommand(0.5))
       .andThen(new TimedCommand(new ConveyorCommand(conveyor), 1))
       .andThen(() -> drivetrain.resetSensors())
       .andThen(getRidOfOpponentBall)
     )
     .alongWith(new TimedCommand(new ShooterCommand(shooter), 6.5));
-
-
-    return oneBallAuto.andThen(() -> drivetrain.resetSensors());
   }
 
   private CommandBase getRamseteCommand(){
