@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -25,11 +26,12 @@ public class Arm extends SubsystemBase {
     RelativeEncoder rightEncoder; //used;
     //distance of 60
 
-    double referencePoint = 0;
-
     public Arm() {
         leftArmRaiser = new CANSparkMax(ArmConstants.leftArmRaiserPort, MotorType.kBrushless);
         rightArmRaiser = new CANSparkMax(ArmConstants.rightArmRaiserPort, MotorType.kBrushless);
+
+        setArmToBrake();
+
         rightArmRaiser.follow(leftArmRaiser, true);
 
         leftEncoder = leftArmRaiser.getEncoder();
@@ -37,6 +39,16 @@ public class Arm extends SubsystemBase {
 
         lowerLimitSwitch = new DigitalInput(ArmConstants.lowerLimitSwitchPort);
         //topLimitSwitch = new DigitalInput(ArmConstants.topLimitSwitchPort);
+    }
+
+    void setArmToBrake(){
+        leftArmRaiser.setIdleMode(IdleMode.kBrake);
+        rightArmRaiser.setIdleMode(IdleMode.kBrake);
+    }
+
+    void setArmToCoast(){
+        leftArmRaiser.setIdleMode(IdleMode.kCoast);
+        rightArmRaiser.setIdleMode(IdleMode.kCoast);
     }
 
     public void resetReferencePoint(){
@@ -55,6 +67,7 @@ public class Arm extends SubsystemBase {
         // When triggered, lower limit switch is false
         if(hasReachedLowerLimit()) {
             stopArm();
+            resetReferencePoint();
             return;
         }
         leftArmRaiser.set(-ArmConstants.armSpeed);
@@ -65,7 +78,7 @@ public class Arm extends SubsystemBase {
     }
 
     public boolean hasReachedUpperLimit(){
-        return rightEncoder.getPosition() >= referencePoint + 80;
+        return rightEncoder.getPosition() >= 80;
     }
 
     public void stopArm() {

@@ -106,12 +106,12 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // m_robotContainer.setDrivetrainMotorsToCoast();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
-    m_robotContainer.setDrivetrainMotorsToCoast();
   }
 
   /** This function is called periodically during autonomous. */
@@ -141,38 +141,10 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-
-    // try {
-    //   leftRecord = new FileWriter(leftControl);
-    //   rightRecord = new FileWriter(rightControl);
-
-      
-    // } catch (IOException e) {
-    //   e.printStackTrace();
-    // }
-
   }
 
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-
-    // leftValue = leftJoystick.getY();
-    // rightValue = rightJoystick.getY();
-
-    // leftString = String.valueOf(leftValue + "\n");
-    // rightString = String.valueOf(rightValue + "\n");
-
-
-    // try {
-    //   leftRecord.append(leftString);
-    //   leftRecord.flush();
-
-    //   rightRecord.append(rightString);
-    //   rightRecord.flush();
-    // } catch (IOException e) {
-
-
-    // }
   }
 }

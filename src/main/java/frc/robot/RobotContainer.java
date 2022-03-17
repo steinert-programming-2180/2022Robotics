@@ -74,7 +74,6 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
   private final DefaultDrive driveCommand = new DefaultDrive(drivetrain);
-  private final Turn turnCommand = new Turn(drivetrain, 90);
 
   private final Intake intake = new Intake();
   private final Conveyor conveyor = new Conveyor();
@@ -88,29 +87,24 @@ public class RobotContainer {
   private final ShooterCommand shooterCommand = new ShooterCommand(shooter);
 
   private final LowerArm lowerArm = new LowerArm(arm);
-  private final RaiseArm raiseArm = new RaiseArm(arm);
-
-  private final TimedDrive timedDrive = new TimedDrive(drivetrain, -DriveConstants.autonomousSpeed, AutonomousConstants.driveTime);
-  
+  private final RaiseArm raiseArm = new RaiseArm(arm);  
 
   // Emergency autonomous. not actual autonomous unfortunately
-  private SimpleAuto simpleAuto = new SimpleAuto(new RaiseArm(arm), shooterCommand, conveyorCommand, timedDrive);
+  TrajectoryConfig trajectoryConfig = new TrajectoryConfig(1, 1);
+  TrajectoryConfig backwardConfig = new TrajectoryConfig(1, 1);
 
-    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(1, 1);
-    TrajectoryConfig backwardConfig = new TrajectoryConfig(1, 1);
+  Trajectory goToBall;
+  // from left ball to hub
+  Trajectory goBackToGoal;
 
-    Trajectory goToBall;
-    // from left ball to hub
-    Trajectory goBackToGoal;
+  // from right ball to hub
+  Trajectory goToSecondBall;
+  Trajectory goBackToGoal2;
+  Trajectory goBackToGoalFromSecondBall;
 
-    // from right ball to hub
-    Trajectory goToSecondBall;
-    Trajectory goBackToGoal2;
-    Trajectory goBackToGoalFromSecondBall;
-
-    // the position we want to be at when autonomous ends and we're on the left
-    Trajectory leftTeleopPosition;
-    Trajectory rightTeleopPosition;
+  // the position we want to be at when autonomous ends and we're on the left
+  Trajectory leftTeleopPosition;
+  Trajectory rightTeleopPosition;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -267,11 +261,11 @@ public class RobotContainer {
     RamseteCommand followGoalRightPath = new FollowTrajectory(goBackToGoal2, drivetrain); // goest to hub when we are on the right
     RamseteCommand followSecondBall = new FollowTrajectory(goToSecondBall, drivetrain);
     RamseteCommand followGoalFromSecondBall = new FollowTrajectory(goBackToGoalFromSecondBall, drivetrain);
-    CommandBase precommands = new ParallelCommandGroup(lowerArm, new TimedCommand(intakeCommand, 3));
+    CommandBase precommands = new ParallelCommandGroup(new LowerArm(arm), new TimedCommand(new IntakeCommand(intake, conveyor), 3));
 
     switch(ShuffleboardControl.getAutonomousMode()){
       case 0:
-        command = emptyCommand;
+        command = new ExampleCommand(emptySubsystem);
         break;
       case 1:
         command = getTwoBallAuto(true, precommands, followBallPath, followGoalLeftPath, followGoalRightPath, new RaiseArm(arm));
@@ -280,10 +274,10 @@ public class RobotContainer {
         command = getTwoBallAuto(false, precommands, followBallPath, followGoalLeftPath, followGoalRightPath, new RaiseArm(arm));
         break;
       case 3:
-        command = getThreeBallAuto(precommands, followBallPath, followGoalRightPath, raiseArm, followSecondBall, followGoalFromSecondBall);
+        command = getThreeBallAuto(precommands, followBallPath, followGoalRightPath, new RaiseArm(arm), followSecondBall, followGoalFromSecondBall);
         break;
       default:
-        command = emptyCommand;
+        command = new ExampleCommand(emptySubsystem);
         break;
     }
     
