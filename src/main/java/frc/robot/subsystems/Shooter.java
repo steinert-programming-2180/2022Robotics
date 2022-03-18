@@ -11,6 +11,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.ShuffleboardControl;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.ShooterCommand;
 
@@ -26,6 +27,7 @@ public class Shooter extends SubsystemBase {
   public Shooter() {
     bottomFlywheel = new CANSparkMax(ShooterConstants.bottomFlywheelPort, MotorType.kBrushless);
     topFlywheel = new CANSparkMax(ShooterConstants.topFlywheelPort, MotorType.kBrushless);
+    
     bottomEncoder = bottomFlywheel.getEncoder();
     topEncoder = topFlywheel.getEncoder();
 
@@ -55,8 +57,9 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     setGoalRPM( SmartDashboard.getNumber("Goal RPM", ShooterConstants.shooterRPM) );
-    SmartDashboard.putNumber("Low RPM", bottomEncoder.getVelocity());
-    SmartDashboard.putNumber("High RPM", topEncoder.getVelocity());
+
+    ShuffleboardControl.addToDevelopment("Low RPM", bottomEncoder.getVelocity());
+    ShuffleboardControl.addToDevelopment("High RPM", topEncoder.getVelocity());
   }
 
   @Override

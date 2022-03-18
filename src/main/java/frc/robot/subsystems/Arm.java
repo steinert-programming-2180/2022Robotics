@@ -9,9 +9,12 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.ShuffleboardControl;
 import frc.robot.Constants.ArmConstants;
 
 public class Arm extends SubsystemBase {
@@ -20,11 +23,15 @@ public class Arm extends SubsystemBase {
     CANSparkMax rightArmRaiser;
 
     DigitalInput lowerLimitSwitch;
-    DigitalInput topLimitSwitch;
 
-    RelativeEncoder leftEncoder;
-    RelativeEncoder rightEncoder; //used;
-    //distance of 60
+    AnalogInput potentiometer;
+
+    final double goalPotentiometerValue = 2515 - 100;
+    final double maxPotentiometerValue = 4096;
+    final double minPotentiometerValue = 1294;
+    final double maxPotentiometerAngle = 225;
+
+    RelativeEncoder armEncoder; // uses encoder of right motor
 
     public Arm() {
         leftArmRaiser = new CANSparkMax(ArmConstants.leftArmRaiserPort, MotorType.kBrushless);
@@ -33,12 +40,17 @@ public class Arm extends SubsystemBase {
         setArmToBrake();
 
         rightArmRaiser.follow(leftArmRaiser, true);
+        potentiometer = new AnalogInput(ArmConstants.potentiometerPort);
 
-        leftEncoder = leftArmRaiser.getEncoder();
-        rightEncoder = rightArmRaiser.getEncoder();
+        armEncoder = rightArmRaiser.getEncoder();
 
         lowerLimitSwitch = new DigitalInput(ArmConstants.lowerLimitSwitchPort);
-        //topLimitSwitch = new DigitalInput(ArmConstants.topLimitSwitchPort);
+    }
+
+    double getAngleFromPotentiometer(){
+        double rawPotentiometerValue = potentiometer.getValue();
+        double potentiometerValueAsPercent = rawPotentiometerValue / maxPotentiometerValue ;
+        return potentiometerValueAsPercent * maxPotentiometerAngle;
     }
 
     void setArmToBrake(){
@@ -52,7 +64,7 @@ public class Arm extends SubsystemBase {
     }
 
     public void resetReferencePoint(){
-        rightEncoder.setPosition(0);
+        armEncoder.setPosition(0);
     }
 
     public void raiseArm(){
@@ -75,10 +87,12 @@ public class Arm extends SubsystemBase {
 
     public boolean hasReachedLowerLimit(){
         return !lowerLimitSwitch.get();
+        // return potentiometer.getValue() <= 1310;
     }
 
     public boolean hasReachedUpperLimit(){
-        return rightEncoder.getPosition() >= 80;
+        // return armEncoder.getPosition() >= 85;
+        return potentiometer.getValue() >= goalPotentiometerValue;
     }
 
     public void stopArm() {
@@ -88,9 +102,9 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        SmartDashboard.putBoolean("Lower Limit Switch", lowerLimitSwitch.get());
-        SmartDashboard.putNumber("Arm Encoder", rightEncoder.getPosition());
-
+        ShuffleboardControl.addToDevelopment("Lower Limit Switch", lowerLimitSwitch.get());
+        ShuffleboardControl.addToDevelopment("Arm Encoder", armEncoder.getPosition());
+        ShuffleboardControl.addToDevelopment("Pot Value", potentiometer.getValue());
     }
 
     @Override

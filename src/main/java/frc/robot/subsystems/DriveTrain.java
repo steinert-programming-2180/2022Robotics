@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.ShuffleboardControl;
 import frc.robot.Constants.DriveConstants;
 
 public class Drivetrain extends SubsystemBase {
@@ -175,8 +176,8 @@ public class Drivetrain extends SubsystemBase {
         double leftMetersPerSecond = rpmToVelocity( leftEncoder.getVelocity() );
         double rightMetersPerSecond = rpmToVelocity( righEncoder.getVelocity() );
 
-        SmartDashboard.putNumber("Left Speed", leftMetersPerSecond);
-        SmartDashboard.putNumber("Right Speed", rightMetersPerSecond);
+        ShuffleboardControl.addToDevelopment("Left Speed", leftMetersPerSecond);
+        ShuffleboardControl.addToDevelopment("Right Speed", rightMetersPerSecond);
         return new DifferentialDriveWheelSpeeds(leftMetersPerSecond, rightMetersPerSecond);
     }
 
@@ -189,19 +190,19 @@ public class Drivetrain extends SubsystemBase {
         double rightDistanceMeters = righEncoder.getPosition() / getCurrentGearRatio() * getWheelCircumference() ;
         odometry.update(Rotation2d.fromDegrees(navx.getAngle()), leftDistanceMeters, rightDistanceMeters);
 
-        SmartDashboard.putString("Current Gear", getGear() ? "High Gear":"Low Gear");
-        SmartDashboard.putNumber("Angle Accumulation", navx.getRotation2d().getDegrees());
-        SmartDashboard.putNumber("Angle", getAngle());
-        SmartDashboard.putNumber("Left Distance Meters", leftDistanceMeters);
-        SmartDashboard.putNumber("Right Distance Meters", rightDistanceMeters);
+        ShuffleboardControl.addToDevelopment("Current Gear", getGear() ? "High Gear":"Low Gear");
+        ShuffleboardControl.addToDevelopment("Angle Accumulation", navx.getRotation2d().getDegrees());
+        ShuffleboardControl.addToDevelopment("Angle", getAngle());
+        ShuffleboardControl.addToDevelopment("Left Distance Meters", leftDistanceMeters);
+        ShuffleboardControl.addToDevelopment("Right Distance Meters", rightDistanceMeters);
         int gear = 0;
         if(shifters.get() == Value.kForward) gear = 1;
         else if(shifters.get() == Value.kReverse) gear = -1;
         else if(shifters.get() == Value.kOff) gear = 0;
         SmartDashboard.putNumber("High Or Low", gear);
 
-        SmartDashboard.putNumber("X", getPose().getX());
-        SmartDashboard.putNumber("Y", getPose().getY());
+        ShuffleboardControl.addToDevelopment("X", getPose().getX());
+        ShuffleboardControl.addToDevelopment("Y", getPose().getY());
     }
 
     @Override

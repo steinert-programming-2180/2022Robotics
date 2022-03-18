@@ -10,30 +10,29 @@ import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
-    private CANSparkMax leftInt, rightInt;
+    private CANSparkMax leftSpark, rightSpark;
     private DoubleSolenoid solenoid;
 
     public Intake(){
-        leftInt = new CANSparkMax(IntakeConstants.leftIntakePort, MotorType.kBrushless);
-        rightInt = new CANSparkMax(IntakeConstants.rightIntakePort, MotorType.kBrushless);
+        leftSpark = new CANSparkMax(IntakeConstants.leftIntakePort, MotorType.kBrushless);
+        rightSpark = new CANSparkMax(IntakeConstants.rightIntakePort, MotorType.kBrushless);
+        leftSpark.follow(rightSpark);
+
         solenoid = new DoubleSolenoid(Constants.PneumaticHubPort, PneumaticsModuleType.REVPH, 1, 3);
         solenoid.set(Value.kForward);
     }
 
     public void intakeStop(){
-        leftInt.set(0);
-        rightInt.set(0);
+        rightSpark.set(0);
     }
 
     public void intakeSpin(){ 
-        leftInt.set(-1);
-        rightInt.set(-1);
+        rightSpark.set(-1);
     }
 
     public void intakeReverse(){      
-        leftInt.set(1);
-        rightInt.set(1);
-    }
+        rightSpark.set(1);
+   }
 
     public void extendOrRetract(){
         if(solenoid.get() == Value.kForward) retractIntake();

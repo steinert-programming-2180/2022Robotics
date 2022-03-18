@@ -276,6 +276,9 @@ public class RobotContainer {
       case 3:
         command = getThreeBallAuto(precommands, followBallPath, followGoalRightPath, new RaiseArm(arm), followSecondBall, followGoalFromSecondBall);
         break;
+      case 4:
+        command = new FollowTrajectory(goToBall, drivetrain);
+        break;
       default:
         command = new ExampleCommand(emptySubsystem);
         break;

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.ShuffleboardControl;
 import frc.robot.Constants.ConveyorConstants;
 import frc.robot.Constants.ConveyorConstants.ConveyorSection;
 
@@ -72,8 +73,9 @@ public class Conveyor extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("Entrance", getBeamBreakStatus(ConveyorSection.ENTRANCE));
-    SmartDashboard.putBoolean("Exit", getBeamBreakStatus(ConveyorSection.EXIT));
+    ShuffleboardControl.addToDevelopment("Entrance", getBeamBreakStatus(ConveyorSection.ENTRANCE));
+    ShuffleboardControl.addToDevelopment("Exit", getBeamBreakStatus(ConveyorSection.EXIT));
+    
     SmartDashboard.putBoolean("Conveyor Empty?", isConveyorEmpty());
   }
 

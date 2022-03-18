@@ -29,9 +29,9 @@ public final class Constants {
         public static final int rightArmRaiserPort = 14;
 
         public static final int lowerLimitSwitchPort = 0;
-        public static final int topLimitSwitchPort = 2;
+        public static final int potentiometerPort = 0;
 
-        public static final double armSpeed = 0.3;
+        public static final double armSpeed = 0.2;
 
         public static final int maxEncoderVal = 85;
     }
@@ -67,8 +67,8 @@ public final class Constants {
     }
 
     public static final class AutonomousConstants {
-        public static final String[] autonomousOptions = {"None", "Zone 1 - 2", "Zone 2 - 2", "Zone 2 - 3"};
-        public static final int defaultAutonomous = 1; // This is the index of the default auto
+        public static final String[] autonomousOptions = {"None", "Zone 1 - 2", "Zone 2 - 2", "Zone 2 - 3", "Drive Out"};
+        public static final int defaultAutonomous = 2; // This is the index of the default auto
         
         // Times are in SECONDS
         public static final double shooterTime = 2;
