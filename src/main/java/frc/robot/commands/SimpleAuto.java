@@ -17,7 +17,7 @@ public class SimpleAuto extends SequentialCommandGroup {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 
   // ConveyorCommand conveyorCommand, TimedDrive timedDrive
-  public SimpleAuto(RaiseArm raiseArm, ShooterCommand shooterCommand, ConveyorCommand conveyorCommand, TimedDrive timedDrive) {
+  public SimpleAuto(SetArm raiseArm, ShooterCommand shooterCommand, ConveyorCommand conveyorCommand, TimedDrive timedDrive) {
       TimedCommand timedShooter = new TimedCommand(shooterCommand, AutonomousConstants.shooterTime);
       TimedCommand timedConveyor = new TimedCommand(conveyorCommand, AutonomousConstants.conveyorTime);
       

@@ -32,8 +32,16 @@ public final class Constants {
         public static final int potentiometerPort = 0;
 
         public static final double armSpeed = 0.2;
+        public static final double maxPIDSpeed = 0.4;
 
         public static final int maxEncoderVal = 85;
+        
+        public static final double goalPotentiometerValue = 2500;
+        
+        public static final double kP = 0.002;
+        public static final double kI = 0;
+        public static final double kD = 0.0002;
+        public static final double potentiometerTolerance = 10;
     }
 
     public static final class ConveyorConstants{

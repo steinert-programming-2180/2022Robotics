@@ -4,47 +4,49 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
-public class RaiseArm extends CommandBase {
+public class SetArm extends CommandBase {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final Arm arm;
+    private final double targetAngle;
+
+    public SetArm(Arm arm){
+        this(arm, ArmConstants.goalPotentiometerValue);
+    }
 
     /**
-     * Creates a new ExampleCommand.
-     *
-     * @param subsystem The subsystem used by this command.
+     * Note: targetAngle is the target value of the potientometer, NOT the actual angle.
      */
-    public RaiseArm(Arm arm) {
+    public SetArm(Arm arm, double targetAngle) {
         this.arm = arm;
-        // Use addRequirements() here to declare subsystem dependencies.
+        this.targetAngle = targetAngle;
+
         addRequirements(arm);
     }
 
-    // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         arm.initialize();
+        arm.setSetpoint(targetAngle);
     }
 
-    // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        arm.raiseArm();
+        arm.usePID();
     }
 
-    // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
         arm.stopArm();
     }
 
-    // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return arm.hasReachedUpperLimit();
+        return arm.atSetpoint() || arm.hasReachedUpperLimit();
     }
 }

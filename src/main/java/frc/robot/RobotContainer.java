@@ -40,7 +40,7 @@ import frc.robot.commands.IntakeReverse;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.TimedDrive;
 import frc.robot.commands.LowerArm;
-import frc.robot.commands.RaiseArm;
+import frc.robot.commands.SetArm;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.Constants.AutonomousConstants;
@@ -87,7 +87,7 @@ public class RobotContainer {
   private final ShooterCommand shooterCommand = new ShooterCommand(shooter);
 
   private final LowerArm lowerArm = new LowerArm(arm);
-  private final RaiseArm raiseArm = new RaiseArm(arm);  
+  private final SetArm setArm = new SetArm(arm);  
 
   // Emergency autonomous. not actual autonomous unfortunately
   TrajectoryConfig trajectoryConfig = new TrajectoryConfig(1, 1);
@@ -197,14 +197,14 @@ public class RobotContainer {
     bButton.whileHeld(conveyorCommand);
     yButton.whenPressed(() -> intake.extendOrRetract());
 
-    startButton.whenPressed(raiseArm).whenPressed(shooterCommand);
+    startButton.whenPressed(setArm).whenPressed(shooterCommand);
     backButton.whenPressed(lowerArm).cancelWhenPressed(shooterCommand);
 
     leftStick.whenPressed(intakeReverse);
     rightStick.whenPressed(conveyorBackwardCommand);
 
-    leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArm).cancelWhenPressed(lowerArm);
-    rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArm).cancelWhenPressed(lowerArm);
+    leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(setArm).cancelWhenPressed(lowerArm);
+    rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(setArm).cancelWhenPressed(lowerArm);
 
     // Driver:
     highGearButton.whenPressed(() -> drivetrain.highGear());
@@ -268,13 +268,13 @@ public class RobotContainer {
         command = new ExampleCommand(emptySubsystem);
         break;
       case 1:
-        command = getTwoBallAuto(true, precommands, followBallPath, followGoalLeftPath, followGoalRightPath, new RaiseArm(arm));
+        command = getTwoBallAuto(true, precommands, followBallPath, followGoalLeftPath, followGoalRightPath, new SetArm(arm));
         break;
       case 2:
-        command = getTwoBallAuto(false, precommands, followBallPath, followGoalLeftPath, followGoalRightPath, new RaiseArm(arm));
+        command = getTwoBallAuto(false, precommands, followBallPath, followGoalLeftPath, followGoalRightPath, new SetArm(arm));
         break;
       case 3:
-        command = getThreeBallAuto(precommands, followBallPath, followGoalRightPath, new RaiseArm(arm), followSecondBall, followGoalFromSecondBall);
+        command = getThreeBallAuto(precommands, followBallPath, followGoalRightPath, new SetArm(arm), followSecondBall, followGoalFromSecondBall);
         break;
       case 4:
         command = new FollowTrajectory(goToBall, drivetrain);
@@ -303,7 +303,7 @@ public class RobotContainer {
       .andThen(() -> drivetrain.resetSensors())
       .andThen((new LowerArm(arm)).alongWith(followSecondBall).alongWith(new IntakeCommand(intake, conveyor, false))
       .andThen(() -> drivetrain.resetSensors())
-      .andThen( backToGoal.alongWith(new RaiseArm(arm)) )
+      .andThen( backToGoal.alongWith(new SetArm(arm)) )
       .andThen(new WaitCommand(0.5))
       .andThen(new TimedCommand(new ConveyorCommand(conveyor), 1))
       )
