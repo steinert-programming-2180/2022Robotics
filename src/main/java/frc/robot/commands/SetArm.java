@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import frc.robot.ShuffleboardControl;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -37,7 +38,6 @@ public class SetArm extends CommandBase {
 
     @Override
     public void execute() {
-        arm.usePID();
     }
 
     @Override
@@ -47,6 +47,6 @@ public class SetArm extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return arm.atSetpoint() || arm.hasReachedUpperLimit();
+        return ( arm.atSetpoint() ) || arm.hasReachedUpperLimit();
     }
 }

@@ -30,13 +30,15 @@ public class Arm extends SubsystemBase {
     final double maxPotentiometerValue = 2682;
     final double minimumPotentiometerValue = 1340;
 
+    boolean usePIDState = false;
+
     PIDController pidController = new PIDController(ArmConstants.kP, ArmConstants.kI, ArmConstants.kD);
 
     public Arm() {
         leftArmRaiser = new CANSparkMax(ArmConstants.leftArmRaiserPort, MotorType.kBrushless);
         rightArmRaiser = new CANSparkMax(ArmConstants.rightArmRaiserPort, MotorType.kBrushless);
 
-        setArmToBrake();
+        setArmToCoast();
         pidController.setSetpoint(minimumPotentiometerValue);
         pidController.setTolerance(ArmConstants.potentiometerTolerance);
 
@@ -102,13 +104,33 @@ public class Arm extends SubsystemBase {
         return potentiometer.getValue() >= maxPotentiometerValue;
     }
 
+    public double getPotentiometerValue(){
+        return potentiometer.getValue();
+    }
+
+    public double getSetpoint(){
+        return pidController.getSetpoint();
+    }
+
     public void stopArm() {
         leftArmRaiser.set(0);
     }
 
     @Override
     public void periodic() {
-        usePID();
+        ShuffleboardControl.addToDevelopment("Is In PID Mode", usePIDState);
+        if(usePIDState){
+            usePID();
+        } else {
+            double error = getPotentiometerValue() - getSetpoint();
+            if(Math.abs(error) > ArmConstants.pidCutoff){
+                boolean isGoingUp = error < 0;
+
+                moveArm(isGoingUp ? ArmConstants.armSpeed : -ArmConstants.armSpeed);
+            } else {
+                usePIDState = true;
+            }
+        }
 
         ShuffleboardControl.addToDevelopment("Error", pidController.getPositionError());
         ShuffleboardControl.addToDevelopment("Lower Limit Switch", lowerLimitSwitch.get());
@@ -119,6 +141,7 @@ public class Arm extends SubsystemBase {
     public void simulationPeriodic() {
         // This method will be called once per scheduler run during simulation
     }
+    
     public void initialize() {
         double initialPotentiometerValue = potentiometer.getValue();
         setSetpoint(initialPotentiometerValue);

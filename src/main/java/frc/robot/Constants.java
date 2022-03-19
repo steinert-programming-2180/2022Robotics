@@ -14,7 +14,7 @@ package frc.robot;
  */
 public final class Constants {
     public final class ShooterConstants{
-        public static final double shooterRPM = 1500;
+        public static final double shooterRPM = 1575;
 
         public static final int bottomFlywheelPort = 12;
         public static final int topFlywheelPort = 11;
@@ -31,16 +31,17 @@ public final class Constants {
         public static final int lowerLimitSwitchPort = 0;
         public static final int potentiometerPort = 0;
 
-        public static final double armSpeed = 0.2;
+        public static final double armSpeed = 0.4;
         public static final double maxPIDSpeed = 0.4;
+        public static final double pidCutoff = 50; // number where PID takes control
 
         public static final int maxEncoderVal = 85;
         
-        public static final double goalPotentiometerValue = 2500;
+        public static final double goalPotentiometerValue = 2475;
         
-        public static final double kP = 0.002;
+        public static final double kP = 0.0015;
         public static final double kI = 0;
-        public static final double kD = 0.0002;
+        public static final double kD = 0;
         public static final double potentiometerTolerance = 10;
     }
 

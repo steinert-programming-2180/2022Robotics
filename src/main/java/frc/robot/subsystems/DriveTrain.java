@@ -176,8 +176,6 @@ public class Drivetrain extends SubsystemBase {
         double leftMetersPerSecond = rpmToVelocity( leftEncoder.getVelocity() );
         double rightMetersPerSecond = rpmToVelocity( righEncoder.getVelocity() );
 
-        ShuffleboardControl.addToDevelopment("Left Speed", leftMetersPerSecond);
-        ShuffleboardControl.addToDevelopment("Right Speed", rightMetersPerSecond);
         return new DifferentialDriveWheelSpeeds(leftMetersPerSecond, rightMetersPerSecond);
     }
 
@@ -191,10 +189,7 @@ public class Drivetrain extends SubsystemBase {
         odometry.update(Rotation2d.fromDegrees(navx.getAngle()), leftDistanceMeters, rightDistanceMeters);
 
         ShuffleboardControl.addToDevelopment("Current Gear", getGear() ? "High Gear":"Low Gear");
-        ShuffleboardControl.addToDevelopment("Angle Accumulation", navx.getRotation2d().getDegrees());
-        ShuffleboardControl.addToDevelopment("Angle", getAngle());
-        ShuffleboardControl.addToDevelopment("Left Distance Meters", leftDistanceMeters);
-        ShuffleboardControl.addToDevelopment("Right Distance Meters", rightDistanceMeters);
+        
         int gear = 0;
         if(shifters.get() == Value.kForward) gear = 1;
         else if(shifters.get() == Value.kReverse) gear = -1;
