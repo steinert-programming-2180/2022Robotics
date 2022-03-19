@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.LimelightConstants;
-import frc.robot.commands.limelight.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -22,18 +21,13 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Limelight m_limelight = new Limelight();
+  private final Limelight limelight = new Limelight();
 
-  private final LimelightPeriodic m_limeperiodic = new LimelightPeriodic(m_limelight);
-  private final SwapLights m_swapLights = new SwapLights();
-  private final SwapCamera m_swapCamera = new SwapCamera();
- 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-    m_limelight.setDefaultCommand(m_limeperiodic);
   }
 
   /**
@@ -48,8 +42,8 @@ public class RobotContainer {
     JoystickButton swapCamButton = new JoystickButton(joy, LimelightConstants.swapCameraButtonPort);
     JoystickButton swapLightsButton = new JoystickButton(joy, LimelightConstants.swapLightsButtonPort);
 
-    swapLightsButton.whenPressed(m_swapLights);
-    swapCamButton.whenPressed(m_swapCamera);
+    swapLightsButton.whenPressed(() -> limelight.swapLights());
+    swapCamButton.whenPressed(() -> limelight.swapCamera());
   }
 
   /**

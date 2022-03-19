@@ -6,42 +6,34 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.Constants;
 import frc.robot.Constants.*;
+import frc.robot.utils.RollingAverage;
 
 // I would like to preface this by saying that it is almost 11 PM when writing this documentation
 
 public class Limelight extends SubsystemBase{
 
     // Gets our Limelight NetworkTable, api located here: https://docs.limelightvision.io/en/latest/networktables_api.html
-    private static NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
+    private NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
 
-    private static NetworkTableEntry tx = limelight.getEntry("tx");
-    private static NetworkTableEntry ty = limelight.getEntry("ty");
-    private static NetworkTableEntry ta = limelight.getEntry("ta");
-    private static NetworkTableEntry tv = limelight.getEntry("tv");
+    private NetworkTableEntry tx = limelight.getEntry("tx");
+    private NetworkTableEntry ty = limelight.getEntry("ty");
+    private NetworkTableEntry ta = limelight.getEntry("ta");
+    private NetworkTableEntry tv = limelight.getEntry("tv");
 
-    private static NetworkTableEntry camMode = limelight.getEntry("camMode");
-    private static NetworkTableEntry ledMode = limelight.getEntry("ledMode");
-    private static NetworkTableEntry pipeline = limelight.getEntry("pipeline");
+    private NetworkTableEntry camMode = limelight.getEntry("camMode");
+    private NetworkTableEntry ledMode = limelight.getEntry("ledMode");
+    private NetworkTableEntry pipeline = limelight.getEntry("pipeline");
+
+    private RollingAverage avgDist = new RollingAverage(5);
 
     /**
      * Limelight class for command usage, non-static usage pretty much entirely depricated.
     */
-    public Limelight () {
-        // Gets our Limelight NetworkTable, api located here: https://docs.limelightvision.io/en/latest/networktables_api.html
-    
-        limelight = NetworkTableInstance.getDefault().getTable("limelight");
+    public Limelight () {}
 
-        // Gets the NetworkTableEntries for x angle from center, y angle from center,
-        // Area of contour, and number of valid targets, respectively
-        tx = limelight.getEntry("tx");
-        ty = limelight.getEntry("ty");
-        ta = limelight.getEntry("ta");
-        tv = limelight.getEntry("tv");
-
-        // Gets the NetworkTableEntries for cameraMode, ledMode, and pipelineNumber, respectively
-        camMode = limelight.getEntry("camMode");
-        ledMode = limelight.getEntry("ledMode");
-        pipeline = limelight.getEntry("pipeline");
+    @Override
+    public void periodic() {
+        putItems();
     }
 
     /**
@@ -114,7 +106,7 @@ public class Limelight extends SubsystemBase{
      * 
      * @return True if we are tracking, false otherwise
      */
-    public static boolean isTracking() {
+    public boolean isTracking() {
         return (getCameraMode() == 0) && (getLightsMode() == 0);
     }
 
@@ -146,7 +138,8 @@ public class Limelight extends SubsystemBase{
 
         // If this distance is positive, i.e. didn't trigger a failsafe, put it to SmartDashboard
         if(dist >=0) {
-            SmartDashboard.putNumber("Distance (inches)", dist);     
+            avgDist.add(dist);
+            SmartDashboard.putNumber("Distance (inches)", avgDist.getAverage());     
         }   
     }
 
@@ -156,7 +149,7 @@ public class Limelight extends SubsystemBase{
      * 
      * @param pipeline The pipeline we wish to use
      */
-    public static void setPipeline(double mode) {
+    public void setPipeline(double mode) {
         pipeline.setNumber(mode);
     }
 
@@ -165,7 +158,7 @@ public class Limelight extends SubsystemBase{
      * 
      * @return The pipeline in use right now
      */
-    public static double getPipeline() {
+    public double getPipeline() {
         return (double) pipeline.getNumber(0);
     }
 
@@ -176,7 +169,7 @@ public class Limelight extends SubsystemBase{
      * 
      * @param mode The camera mode we wish to use
      */
-    public static void setCameraMode(double mode) {
+    public void setCameraMode(double mode) {
         camMode.setNumber(mode);
     }
 
@@ -185,7 +178,7 @@ public class Limelight extends SubsystemBase{
      * 
      * @return The current camera mode
      */
-    public static double getCameraMode() {
+    public double getCameraMode() {
         return (double) camMode.getNumber(0);
     }
 
@@ -198,7 +191,7 @@ public class Limelight extends SubsystemBase{
      * 
      * @param mode The mode of the LED we want to use
      */
-    public static void setLightsMode(double mode) {
+    public void setLightsMode(double mode) {
         ledMode.setNumber(mode);
     }
 
@@ -211,7 +204,7 @@ public class Limelight extends SubsystemBase{
      * 2 = force blink,
      * 3 = force on
      */
-    public static double getLightsMode() {
+    public double getLightsMode() {
         return (double) ledMode.getNumber(0);
     }
 
@@ -220,14 +213,14 @@ public class Limelight extends SubsystemBase{
      * 
      * @return The NetworkTable for the limelight, API found here {@link https://docs.limelightvision.io/en/latest/networktables_api.html}
      */
-    public static NetworkTable getLimelightTable() {
+    public NetworkTable getLimelightTable() {
         return limelight;
     }
 
     /**
      * Swaps the LED Status between 0 = pipeline and 1 = force off.
      */
-    public static void swapLights() {
+    public void swapLights() {
         // The ? statement handles the if our current LED status is not 0 or 1
         setLightsMode(1 - (getLightsMode() < 2 ? getLightsMode() : 1));
     }
@@ -235,7 +228,7 @@ public class Limelight extends SubsystemBase{
     /**
      * Swaps the Camera Status between 0 = pipeline camera and 1 = drive camera
      */
-    public static void swapCamera() {
+    public void swapCamera() {
         setCameraMode(1 - getCameraMode());
     }
 }
