@@ -77,9 +77,9 @@ public class Conveyor extends SubsystemBase {
 
   @Override
   public void periodic() {
-    ShuffleboardControl.addToDevelopment("Entrance", getBeamBreakStatus(ConveyorSection.ENTRANCE));
-    ShuffleboardControl.addToDevelopment("Exit", getBeamBreakStatus(ConveyorSection.EXIT));
+    SmartDashboard.putBoolean("Entrance", getBeamBreakStatus(ConveyorSection.ENTRANCE));
+    SmartDashboard.putBoolean("Exit", getBeamBreakStatus(ConveyorSection.EXIT));
     
-    SmartDashboard.putBoolean("Conveyor Empty?", isConveyorEmpty());
+    // SmartDashboard.putBoolean("Conveyor Empty?", isConveyorEmpty());
   }
 }

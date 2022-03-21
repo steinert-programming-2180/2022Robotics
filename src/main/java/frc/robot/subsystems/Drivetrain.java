@@ -122,7 +122,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void drive(double leftSpeed, double rightSpeed) {
-        drive.tankDrive(leftSpeed, rightSpeed);
+        drive.tankDrive(leftSpeed, rightSpeed, getGear());
     }
 
     public void driveByVoltage(double leftVoltage, double rightVoltage) {
@@ -190,11 +190,7 @@ public class Drivetrain extends SubsystemBase {
 
         ShuffleboardControl.addToDevelopment("Current Gear", getGear() ? "High Gear":"Low Gear");
         
-        int gear = 0;
-        if(shifters.get() == Value.kForward) gear = 1;
-        else if(shifters.get() == Value.kReverse) gear = -1;
-        else if(shifters.get() == Value.kOff) gear = 0;
-        SmartDashboard.putNumber("High Or Low", gear);
+        SmartDashboard.putBoolean("High Gear?", getGear());
 
         ShuffleboardControl.addToDevelopment("X", getPose().getX());
         ShuffleboardControl.addToDevelopment("Y", getPose().getY());

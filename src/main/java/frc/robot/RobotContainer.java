@@ -183,8 +183,8 @@ public class RobotContainer {
     startButton.whenPressed(raiseArm).whenPressed(shooterCommand);
     backButton.whenPressed(lowerArm).cancelWhenPressed(shooterCommand);
 
-    leftStick.whenPressed(intakeReverse);
-    rightStick.whenPressed(conveyorBackwardCommand);
+    leftStick.whileHeld(intakeReverse);
+    rightStick.whileHeld(conveyorBackwardCommand);
 
     leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArm).cancelWhenPressed(lowerArm);
     rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArm).cancelWhenPressed(lowerArm);

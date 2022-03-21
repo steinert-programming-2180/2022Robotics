@@ -33,7 +33,7 @@ public final class Constants {
 
         public static final double armSpeed = 0.2;
 
-        public static final int maxEncoderVal = 85;
+        public static final int maxEncoderVal = 73;
     }
 
     public static final class ConveyorConstants{
