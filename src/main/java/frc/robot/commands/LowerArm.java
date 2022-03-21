@@ -20,13 +20,11 @@ public class LowerArm extends CommandBase {
     }
 
     @Override
-    public void initialize() {
-        arm.setSetpoint(1346);
-    }
+    public void initialize() {}
 
     @Override
     public void execute() {
-        arm.usePID();
+        arm.lowerArm();
     }
 
     @Override

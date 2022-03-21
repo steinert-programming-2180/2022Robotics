@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -21,33 +22,29 @@ public class Arm extends SubsystemBase {
     /** Creates a new ExampleSubsystem. */
     CANSparkMax leftArmRaiser;
     CANSparkMax rightArmRaiser;
+    RelativeEncoder armEncoder;
 
     DigitalInput lowerLimitSwitch;
 
     AnalogInput potentiometer;
-
-    final double maxPotentiometerValue = 2682;
-    final double minimumPotentiometerValue = 1340;
-
-    boolean usePIDState = false;
-
-    PIDController pidController = new PIDController(ArmConstants.kP, ArmConstants.kI, ArmConstants.kD);
+    double maxEncoderVal = ArmConstants.maxEncoderVal;
 
     public Arm() {
         leftArmRaiser = new CANSparkMax(ArmConstants.leftArmRaiserPort, MotorType.kBrushless);
         rightArmRaiser = new CANSparkMax(ArmConstants.rightArmRaiserPort, MotorType.kBrushless);
-
-        setArmToCoast();
-        pidController.setSetpoint(minimumPotentiometerValue);
-        pidController.setTolerance(ArmConstants.potentiometerTolerance);
-
         rightArmRaiser.follow(leftArmRaiser, true);
+
+        armEncoder = rightArmRaiser.getEncoder();
+        setArmToCoast();
+
+        SmartDashboard.putNumber("Max Encoder Val", maxEncoderVal);
+
         potentiometer = new AnalogInput(ArmConstants.potentiometerPort);
 
         lowerLimitSwitch = new DigitalInput(ArmConstants.lowerLimitSwitchPort);
-
-        SmartDashboard.putNumber("Setpoint", pidController.getSetpoint());
     }
+
+    public void initialize(){}
 
     void setArmToBrake(){
         leftArmRaiser.setIdleMode(IdleMode.kBrake);
@@ -57,20 +54,6 @@ public class Arm extends SubsystemBase {
     void setArmToCoast(){
         leftArmRaiser.setIdleMode(IdleMode.kCoast);
         rightArmRaiser.setIdleMode(IdleMode.kCoast);
-    }
-    
-    /**
-     * If the setpoint is out of the range [1340, 2682], sets it to max or min
-     */
-    public void setSetpoint(double setpoint){
-        setpoint = Math.max(setpoint, minimumPotentiometerValue);
-        setpoint = Math.min(setpoint, maxPotentiometerValue);
-
-        pidController.setSetpoint(setpoint);
-    }
-
-    public boolean atSetpoint(){
-        return pidController.atSetpoint();
     }
 
     public void raiseArm(){
@@ -89,26 +72,16 @@ public class Arm extends SubsystemBase {
         else leftArmRaiser.set(speed);
     }
 
-    public void usePID(){
-        double rawPIDValue = pidController.calculate(potentiometer.getValue());
-        double adjustedPIDValue = MathUtil.clamp(rawPIDValue, -ArmConstants.maxPIDSpeed, ArmConstants.maxPIDSpeed);
-        moveArm(adjustedPIDValue);
-    }
-
     public boolean hasReachedLowerLimit(){
         return !lowerLimitSwitch.get();
     }
 
     public boolean hasReachedUpperLimit(){
-        return potentiometer.getValue() >= maxPotentiometerValue;
+        return getEncoderValue() >= maxEncoderVal;
     }
 
-    public double getPotentiometerValue(){
-        return potentiometer.getValue();
-    }
-
-    public double getSetpoint(){
-        return pidController.getSetpoint();
+    public double getEncoderValue(){
+        return armEncoder.getPosition();
     }
 
     public void stopArm() {
@@ -117,32 +90,16 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        ShuffleboardControl.addToDevelopment("Is In PID Mode", usePIDState);
-        if(usePIDState){
-            usePID();
-        } else {
-            double error = getPotentiometerValue() - getSetpoint();
-            if(Math.abs(error) > ArmConstants.pidCutoff){
-                boolean isGoingUp = error < 0;
+        if(hasReachedLowerLimit()) armEncoder.setPosition(0);
 
-                moveArm(isGoingUp ? ArmConstants.armSpeed : -ArmConstants.armSpeed);
-            } else {
-                usePIDState = true;
-            }
-        }
-
-        ShuffleboardControl.addToDevelopment("Error", pidController.getPositionError());
+        maxEncoderVal = SmartDashboard.getNumber("Max Encoder Val", 60);
         ShuffleboardControl.addToDevelopment("Lower Limit Switch", lowerLimitSwitch.get());
+        ShuffleboardControl.addToDevelopment("Arm Encoder", armEncoder.getPosition());
         ShuffleboardControl.addToDevelopment("Pot Value", potentiometer.getValue());
     }
 
     @Override
     public void simulationPeriodic() {
         // This method will be called once per scheduler run during simulation
-    }
-    
-    public void initialize() {
-        double initialPotentiometerValue = potentiometer.getValue();
-        setSetpoint(initialPotentiometerValue);
     }
 }
