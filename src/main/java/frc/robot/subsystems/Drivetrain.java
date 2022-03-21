@@ -45,7 +45,7 @@ public class Drivetrain extends SubsystemBase {
     boolean inHighGear = true;
     
     RelativeEncoder leftEncoder;
-    RelativeEncoder righEncoder;
+    RelativeEncoder rightEncoder;
 
     DoubleSolenoid shifters;
 
@@ -64,7 +64,7 @@ public class Drivetrain extends SubsystemBase {
 
         navx = new AHRS(Port.kMXP);
         leftEncoder = leftMotors[0].getEncoder();
-        righEncoder = rightMotors[0].getEncoder();
+        rightEncoder = rightMotors[0].getEncoder();
         odometry = new DifferentialDriveOdometry(navx.getRotation2d());
         resetSensors();
 
@@ -75,7 +75,7 @@ public class Drivetrain extends SubsystemBase {
     public void resetSensors(){
         navx.reset();
         leftEncoder.setPosition(0);
-        righEncoder.setPosition(0);
+        rightEncoder.setPosition(0);
         resetOdometry(new Pose2d());
     }
 
@@ -174,7 +174,7 @@ public class Drivetrain extends SubsystemBase {
     // TODO: get actual meters per second
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
         double leftMetersPerSecond = rpmToVelocity( leftEncoder.getVelocity() );
-        double rightMetersPerSecond = rpmToVelocity( righEncoder.getVelocity() );
+        double rightMetersPerSecond = rpmToVelocity( rightEncoder.getVelocity() );
 
         return new DifferentialDriveWheelSpeeds(leftMetersPerSecond, rightMetersPerSecond);
     }
@@ -185,7 +185,7 @@ public class Drivetrain extends SubsystemBase {
         // This method will be called once per scheduler run
         getWheelSpeeds();
         double leftDistanceMeters = leftEncoder.getPosition() / getCurrentGearRatio() * getWheelCircumference() ;
-        double rightDistanceMeters = righEncoder.getPosition() / getCurrentGearRatio() * getWheelCircumference() ;
+        double rightDistanceMeters = rightEncoder.getPosition() / getCurrentGearRatio() * getWheelCircumference() ;
         odometry.update(Rotation2d.fromDegrees(navx.getAngle()), leftDistanceMeters, rightDistanceMeters);
 
         ShuffleboardControl.addToDevelopment("Current Gear", getGear() ? "High Gear":"Low Gear");
@@ -198,10 +198,5 @@ public class Drivetrain extends SubsystemBase {
 
         ShuffleboardControl.addToDevelopment("X", getPose().getX());
         ShuffleboardControl.addToDevelopment("Y", getPose().getY());
-    }
-
-    @Override
-    public void simulationPeriodic() {
-        // This method will be called once per scheduler run during simulation
     }
 }

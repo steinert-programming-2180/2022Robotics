@@ -90,7 +90,7 @@ public final class Constants {
 
     public static double inchesToMeters(double inches) { return inches * 0.0254; }
     
-    // EVERYTHING IS IN METERS!!!
+    // EVERYTHING IS IN METERS PER SECONDS!!!
     public static final class DriveConstants{
         public static final double autonomousSpeed = 0.7;
 

@@ -4,11 +4,9 @@
 
 package frc.robot.commands;
 
-import frc.robot.ShuffleboardControl;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.ExampleSubsystem;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
 public class SetArm extends CommandBase {

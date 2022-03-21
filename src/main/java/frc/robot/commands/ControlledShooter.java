@@ -29,7 +29,7 @@ public class ControlledShooter extends CommandBase {
   public void execute() {
     shooter.shoot();
     if(System.currentTimeMillis() - startTime >= delay)
-    conveyor.convey();
+      conveyor.convey();
   }
 
   @Override

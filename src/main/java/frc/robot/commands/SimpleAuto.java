@@ -4,13 +4,8 @@
 
 package frc.robot.commands;
 
-import frc.robot.Constants.AutonomousConstants;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.ExampleSubsystem;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.AutonomousConstants;
 
 /** An example command that uses an example subsystem. */
 public class SimpleAuto extends SequentialCommandGroup {

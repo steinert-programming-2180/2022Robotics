@@ -35,9 +35,17 @@ public class Intake extends SubsystemBase {
    }
 
     public void extendOrRetract(){
-        if(solenoid.get() == Value.kForward) retractIntake();
-        else if(solenoid.get() == Value.kReverse) extendIntake();
-        else extendIntake();
+        switch (solenoid.get()) {
+            case kForward:
+                retractIntake();
+                break;
+            case kReverse:
+                extendIntake();
+                break;
+            default:
+                extendIntake();
+                break;
+        }
     }
 
     public void extendIntake(){

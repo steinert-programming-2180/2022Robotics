@@ -4,59 +4,41 @@
 
 package frc.robot;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.trajectory.TrajectoryUtil;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.commands.DefaultDrive;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.FollowTrajectory;
-import frc.robot.commands.Turn;
-import frc.robot.Constants.IO;
-import frc.robot.commands.SimpleAuto;
-import frc.robot.commands.TimedCommand;
-import frc.robot.commands.ConveyorBackwardCommand;
-import frc.robot.commands.ConveyorCommand;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.IntakeReverse;
-import frc.robot.commands.ShooterCommand;
-import frc.robot.commands.TimedDrive;
-import frc.robot.commands.LowerArm;
-import frc.robot.commands.SetArm;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Conveyor;
-import frc.robot.Constants.AutonomousConstants;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.commands.DefaultDrive;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.IO;
+import frc.robot.commands.ConveyorBackwardCommand;
+import frc.robot.commands.ConveyorCommand;
+import frc.robot.commands.DefaultDrive;
+import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.FollowTrajectory;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.IntakeReverse;
+import frc.robot.commands.LowerArm;
+import frc.robot.commands.SetArm;
+import frc.robot.commands.ShooterCommand;
+import frc.robot.commands.TimedCommand;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Conveyor;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -69,7 +51,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
   private ExampleSubsystem emptySubsystem = new ExampleSubsystem();
-  private ExampleCommand emptyCommand = new ExampleCommand(emptySubsystem);
 
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
@@ -245,9 +226,6 @@ public class RobotContainer {
     CommandBase precommands = new ParallelCommandGroup(new LowerArm(arm), new TimedCommand(new IntakeCommand(intake, conveyor), 3));
     
     switch(ShuffleboardControl.getAutonomousMode()){
-      case 0:
-        autonomousCommand = new ExampleCommand(emptySubsystem);
-        break;
       case 1:
         autonomousCommand = getTwoBallAuto(true, precommands, followBallPath, followGoalLeftPath, followGoalRightPath, new SetArm(arm));
         break;
