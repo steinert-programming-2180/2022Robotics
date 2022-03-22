@@ -223,7 +223,7 @@ public class RobotContainer {
     RamseteCommand followGoalRightPath = new FollowTrajectory(goBackToGoal2, drivetrain); // goest to hub when we are on the right
     RamseteCommand followSecondBall = new FollowTrajectory(goToSecondBall, drivetrain);
     RamseteCommand followGoalFromSecondBall = new FollowTrajectory(goBackToGoalFromSecondBall, drivetrain);
-    CommandBase precommands = new ParallelCommandGroup(new LowerArm(arm), new TimedCommand(new IntakeCommand(intake, conveyor), 3));
+    CommandBase precommands = new ParallelCommandGroup(new LowerArm(arm), new TimedCommand(new IntakeCommand(intake, conveyor), 2));
     
     switch(ShuffleboardControl.getAutonomousMode()){
       case 1:
@@ -253,8 +253,8 @@ public class RobotContainer {
       precommands.alongWith(followBallPath)
       .andThen(() -> drivetrain.resetSensors())
       .andThen(goToGoal.alongWith(raiseArm))
-      .andThen(new WaitCommand(0.5))
-      .andThen(new TimedCommand(new ConveyorCommand(conveyor), 1))
+      .andThen(new WaitCommand(0.25))
+      .andThen(new TimedCommand(new ConveyorCommand(conveyor), 0.75))
       .andThen(() -> drivetrain.resetSensors())
       .andThen((new LowerArm(arm)).alongWith(followSecondBall).alongWith(new IntakeCommand(intake, conveyor, false))
       .andThen(() -> drivetrain.resetSensors())
