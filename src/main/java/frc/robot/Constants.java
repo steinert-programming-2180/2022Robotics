@@ -31,7 +31,8 @@ public final class Constants {
         public static final int lowerLimitSwitchPort = 0;
         public static final int potentiometerPort = 0;
 
-        public static final double armSpeed = 0.22;
+        public static final double upSpeed = 0.22;
+        public static final double downSpeed = -0.4;
 
         public static final int targetEncoderValue = 73;
         public static final int maxEncoderVal = 73;

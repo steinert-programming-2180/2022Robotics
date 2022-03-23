@@ -59,11 +59,11 @@ public class Arm extends SubsystemBase {
     }
 
     public void raiseArm(){
-        moveArm(ArmConstants.armSpeed);
+        moveArm(ArmConstants.upSpeed);
     }
 
     public void lowerArm(){
-        moveArm(-0.4);
+        moveArm(ArmConstants.downSpeed);
     }
 
     public void moveArm(double speed){
