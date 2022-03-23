@@ -97,6 +97,12 @@ public class RobotContainer {
     backwardConfig.setReversed(false);
     trajectoryConfig.setReversed(true);
 
+    generateTrajectories();
+
+    drivetrain.setDefaultCommand(driveCommand);
+  }
+
+  void generateTrajectories(){
     goToBall = TrajectoryGenerator.generateTrajectory(
       new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
       List.of(),
@@ -139,8 +145,6 @@ public class RobotContainer {
       new Pose2d(-1.2, 1.1, Rotation2d.fromDegrees(180)),
       trajectoryConfig
     );
-
-    drivetrain.setDefaultCommand(driveCommand);
   }
 
   /**
@@ -180,7 +184,8 @@ public class RobotContainer {
     bButton.whileHeld(conveyorCommand);
     yButton.whenPressed(() -> intake.extendOrRetract());
 
-    startButton.whenPressed(raiseArm).whenPressed(shooterCommand);
+    // startButton.whenPressed(raiseArm).whenPressed(shooterCommand);
+    startButton.whenPressed(raiseArm);
     backButton.whenPressed(lowerArm).cancelWhenPressed(shooterCommand);
 
     leftStick.whileHeld(intakeReverse);
@@ -259,8 +264,8 @@ public class RobotContainer {
       .andThen((new LowerArm(arm)).alongWith(followSecondBall).alongWith(new IntakeCommand(intake, conveyor, false))
       .andThen(() -> drivetrain.resetSensors())
       .andThen( backToGoal.alongWith(new RaiseArm(arm)) )
-      .andThen(new WaitCommand(0.5))
-      .andThen(new TimedCommand(new ConveyorCommand(conveyor), 1))
+      .andThen(new WaitCommand(0.25))
+      .andThen(new TimedCommand(new ConveyorCommand(conveyor), 0.75))
       )
     )
     .alongWith(new TimedCommand(new ShooterCommand(shooter), 15));

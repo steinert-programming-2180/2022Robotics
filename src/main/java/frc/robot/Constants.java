@@ -33,6 +33,7 @@ public final class Constants {
 
         public static final double armSpeed = 0.22;
 
+        public static final int targetEncoderValue = 73;
         public static final int maxEncoderVal = 73;
     }
 

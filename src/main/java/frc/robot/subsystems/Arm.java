@@ -28,6 +28,7 @@ public class Arm extends SubsystemBase {
 
     AnalogInput potentiometer;
     double maxEncoderVal = ArmConstants.maxEncoderVal;
+    double goalValue = 0;
 
     public Arm() {
         leftArmRaiser = new CANSparkMax(ArmConstants.leftArmRaiserPort, MotorType.kBrushless);
@@ -35,9 +36,10 @@ public class Arm extends SubsystemBase {
         rightArmRaiser.follow(leftArmRaiser, true);
 
         armEncoder = rightArmRaiser.getEncoder();
-        setArmToCoast();
+        setArmToBrake();
 
         SmartDashboard.putNumber("Max Encoder Val", maxEncoderVal);
+        SmartDashboard.putNumber("Goal Value", 0);
 
         potentiometer = new AnalogInput(ArmConstants.potentiometerPort);
 
@@ -88,11 +90,17 @@ public class Arm extends SubsystemBase {
         leftArmRaiser.set(0);
     }
 
+    public double getGoal(){
+        return goalValue;
+    }
+
     @Override
     public void periodic() {
         if(hasReachedLowerLimit()) armEncoder.setPosition(0);
 
         maxEncoderVal = SmartDashboard.getNumber("Max Encoder Val", 60);
+        goalValue = SmartDashboard.getNumber("Goal Value", 0);
+
         ShuffleboardControl.addToDevelopment("Lower Limit Switch", lowerLimitSwitch.get());
         ShuffleboardControl.addToDevelopment("Arm Encoder", armEncoder.getPosition());
         ShuffleboardControl.addToDevelopment("Pot Value", potentiometer.getValue());
