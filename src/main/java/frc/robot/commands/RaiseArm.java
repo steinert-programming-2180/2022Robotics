@@ -25,7 +25,7 @@ public class RaiseArm extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // targetEncoderValue = arm.getGoal();
+    targetEncoderValue = arm.getGoal();
 
     if(shouldBeSlow() && isArmUnderGoal()) {
       arm.moveArm(0.2);

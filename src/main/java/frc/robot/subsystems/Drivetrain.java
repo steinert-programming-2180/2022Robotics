@@ -122,9 +122,9 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void drive(double leftSpeed, double rightSpeed) {
-        drive.tankDrive(leftSpeed, rightSpeed, getGear());
+        drive.tankDrive(leftSpeed, rightSpeed, true);
     }
-
+    
     public void driveByVoltage(double leftVoltage, double rightVoltage) {
         leftMotorGroup.setVoltage(leftVoltage);
         rightMotorGroup.setVoltage(rightVoltage);

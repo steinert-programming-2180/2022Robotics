@@ -14,7 +14,8 @@ package frc.robot;
  */
 public final class Constants {
     public final class ShooterConstants{
-        public static final double shooterRPM = 1750;
+        public static final double shooterRPM = 1725;
+        public static final double maxRPM = 5000;
 
         public static final int bottomFlywheelPort = 12;
         public static final int topFlywheelPort = 11;
@@ -34,8 +35,8 @@ public final class Constants {
         public static final double upSpeed = 0.22;
         public static final double downSpeed = -0.4;
 
-        public static final int targetEncoderValue = 73;
-        public static final int maxEncoderVal = 73;
+        public static final int targetEncoderValue = 68;
+        public static final int maxEncoderVal = 85;
     }
 
     public static final class ConveyorConstants{
@@ -69,7 +70,7 @@ public final class Constants {
     }
 
     public static final class AutonomousConstants {
-        public static final String[] autonomousOptions = {"None", "Zone 1 - 2", "Zone 2 - 2", "Zone 2 - 3", "Drive Out"};
+        public static final String[] autonomousOptions = {"None", "Zone 1 - 2", "Zone 2 - 2", "Zone 2 - 3", "Drive Out", "1 Ball", "Attack!"};
         public static final int defaultAutonomous = 2; // This is the index of the default auto
         
         // Times are in SECONDS
