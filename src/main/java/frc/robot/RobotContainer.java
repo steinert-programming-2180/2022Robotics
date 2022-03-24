@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IO;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.ConveyorBackwardCommand;
 import frc.robot.commands.ConveyorCommand;
 import frc.robot.commands.DefaultDrive;
@@ -137,7 +138,7 @@ public class RobotContainer {
     goBackToGoalFromSecondBall = TrajectoryGenerator.generateTrajectory(
       new Pose2d(), 
       List.of(), 
-      new Pose2d(1.8, 0.3, Rotation2d.fromDegrees(-45)), 
+      new Pose2d(1.7, 0.3, Rotation2d.fromDegrees(-45)), 
       backwardConfig
     );
     leftTeleopPosition = TrajectoryGenerator.generateTrajectory(
@@ -254,7 +255,7 @@ public class RobotContainer {
         autonomousCommand = getOneBallAuto(precommands, new RaiseArm(arm), new LowerArm(arm), followTwoMeters);
         break;
       case 6:
-        autonomousCommand = knockOutBallDirectlyInFront(precommands, new ShooterCommand(shooter));
+        autonomousCommand = knockOutBallDirectlyInFront(precommands, new ShooterCommand(shooter, ShooterConstants.attackBallRPM));
         break;
       default:
         autonomousCommand = new ExampleCommand(emptySubsystem);
@@ -305,7 +306,7 @@ public class RobotContainer {
       .andThen(() -> drivetrain.resetSensors())
       .andThen(getRidOfOpponentBall)
     )
-    .alongWith(new TimedCommand(new ShooterCommand(shooter), 6.5));
+    .alongWith(new TimedCommand(new ShooterCommand(shooter), 10));
   }
 
   private CommandBase getOneBallAuto(CommandBase precommands, RaiseArm raiseArm, LowerArm lowerArm, CommandBase followTwoMeters){
