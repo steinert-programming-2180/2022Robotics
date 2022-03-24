@@ -40,14 +40,15 @@ public class Shooter extends SubsystemBase {
     topFlywheel.setIdleMode(IdleMode.kCoast);
   }
 
-  public void setGoalRPM(double rpm){ goalRPM = rpm / 60; }
-
-  public void shoot() {
-    shoot(goalRPM);
+  public double convertRPMToRPS(double rpm){
+    return rpm / 60;
   }
+  public void setGoalRPM(double rpm){ goalRPM = convertRPMToRPS(rpm); }
+  public void shoot() { shoot(goalRPM); }
 
   public void shoot(double rpm) {
-    double calculatedSpeed = feedforward.calculate(rpm);
+    double rps = convertRPMToRPS(rpm);
+    double calculatedSpeed = feedforward.calculate(rps);
 
     bottomFlywheel.setVoltage(calculatedSpeed);
     topFlywheel.setVoltage(calculatedSpeed);
