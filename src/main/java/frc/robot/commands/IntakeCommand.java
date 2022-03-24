@@ -18,6 +18,8 @@ public class IntakeCommand extends CommandBase {
     boolean isExitFull;
     boolean isEntranceFull;
 
+    boolean twoBall = true;
+
     /**
      * Creates a new ExampleCommand.
      *
@@ -32,6 +34,11 @@ public class IntakeCommand extends CommandBase {
         addRequirements(conveyor);
     }
 
+    public IntakeCommand(Intake intake, Conveyor conveyor, boolean twoBall) {
+        this(intake, conveyor);
+        this.twoBall = twoBall;
+    }
+
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
@@ -40,8 +47,10 @@ public class IntakeCommand extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        isExitFull = conveyor.getBeamBreakStatus(ConveyorSection.EXIT);
-        isEntranceFull = conveyor.getBeamBreakStatus(ConveyorSection.ENTRANCE);
+        intake.extendIntake();
+        
+        isExitFull = isExitFull();
+        isEntranceFull = isEntranceFull();
 
         if(isExitFull && isEntranceFull) {
             intake.intakeStop();
@@ -62,6 +71,14 @@ public class IntakeCommand extends CommandBase {
         }
     }
 
+    boolean isExitFull(){
+        return conveyor.getBeamBreakStatus(ConveyorSection.EXIT);
+    }
+
+    boolean isEntranceFull(){
+        return conveyor.getBeamBreakStatus(ConveyorSection.ENTRANCE);
+    }
+
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
@@ -72,6 +89,8 @@ public class IntakeCommand extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        if(twoBall)
+            return isExitFull() && isEntranceFull();
+        return isExitFull();    
     }
 }

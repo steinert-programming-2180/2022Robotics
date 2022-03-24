@@ -1,18 +1,22 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -22,7 +26,9 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.ShuffleboardControl;
 import frc.robot.Constants.DriveConstants;
+
 public class Drivetrain extends SubsystemBase {
     AHRS navx;
 
@@ -32,7 +38,6 @@ public class Drivetrain extends SubsystemBase {
     MotorControllerGroup rightMotorGroup;
 
     DifferentialDrive drive;
-    Compressor compressor;
 
     CANSparkMax[] leftMotors;
     CANSparkMax[] rightMotors;
@@ -40,7 +45,7 @@ public class Drivetrain extends SubsystemBase {
     boolean inHighGear = true;
     
     RelativeEncoder leftEncoder;
-    RelativeEncoder righEncoder;
+    RelativeEncoder rightEncoder;
 
     DoubleSolenoid shifters;
 
@@ -51,19 +56,31 @@ public class Drivetrain extends SubsystemBase {
         rightMotorGroup = new MotorControllerGroup(rightMotors);
 
         // Invert to drive propery
-        leftMotorGroup.setInverted(false);
-        rightMotorGroup.setInverted(true);
+        // leftMotorGroup.setInverted(true);
+        // rightMotorGroup.setInverted(true);
 
         // Create the Differential Drive to drive the robot
         drive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
 
         navx = new AHRS(Port.kMXP);
-        odometry = new DifferentialDriveOdometry(navx.getRotation2d());
         leftEncoder = leftMotors[0].getEncoder();
-        righEncoder = rightMotors[0].getEncoder();
+        rightEncoder = rightMotors[0].getEncoder();
+        odometry = new DifferentialDriveOdometry(navx.getRotation2d());
+        resetSensors();
 
         shifters = new DoubleSolenoid(Constants.PneumaticHubPort, PneumaticsModuleType.REVPH, DriveConstants.highGearSolenoid, DriveConstants.lowGearSolenoid);
         inHighGear = getGear();
+    }
+
+    public void resetSensors(){
+        navx.reset();
+        leftEncoder.setPosition(0);
+        rightEncoder.setPosition(0);
+        resetOdometry(new Pose2d());
+    }
+
+    public double getAngle(){
+        return navx.getYaw();
     }
 
     // True if high; False if low;
@@ -72,7 +89,8 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getCurrentGearRatio(){
-        return getGear() ? DriveConstants.highGearRatio : DriveConstants.lowGearRatio;
+        // return getGear() ? DriveConstants.highGearRatio : DriveConstants.lowGearRatio;
+        return DriveConstants.lowGearRatio;
     }
 
     public double rpmToVelocity(double rpm){
@@ -91,22 +109,46 @@ public class Drivetrain extends SubsystemBase {
         rightMotors = new CANSparkMax[amountOfRightMotors];
 
         // Make Left Sparks from the ports
-        for (int i = 0; i < amountOfLeftMotors; i++)
+        for (int i = 0; i < DriveConstants.leftMotorPorts.length; i++){
             leftMotors[i] = new CANSparkMax(DriveConstants.leftMotorPorts[i], MotorType.kBrushless);
+            leftMotors[i].setInverted(false);
+        }
 
         // Make Right Sparks from the ports
-        for (int i = 0; i < amountOfRightMotors; i++)
+        for (int i = 0; i < amountOfRightMotors; i++){
             rightMotors[i] = new CANSparkMax(DriveConstants.rightMotorPorts[i], MotorType.kBrushless);
+            rightMotors[i].setInverted(true);
+        }
     }
 
     public void drive(double leftSpeed, double rightSpeed) {
-        drive.tankDrive(leftSpeed, rightSpeed);
+        drive.tankDrive(leftSpeed, rightSpeed, true);
     }
-
+    
     public void driveByVoltage(double leftVoltage, double rightVoltage) {
         leftMotorGroup.setVoltage(leftVoltage);
         rightMotorGroup.setVoltage(rightVoltage);
         drive.feed();
+    }
+
+    public void setMotorsToCoast() {
+        for(CANSparkMax i : leftMotors){
+            i.setIdleMode(IdleMode.kCoast);
+        }
+
+        for(CANSparkMax i : rightMotors){
+            i.setIdleMode(IdleMode.kCoast);
+        }
+    }
+
+    public void setMotorsToBrake() {
+        for(CANSparkMax i : leftMotors){
+            i.setIdleMode(IdleMode.kBrake);
+        }
+        
+        for(CANSparkMax i : rightMotors){
+            i.setIdleMode(IdleMode.kBrake);
+        }
     }
 
     public void highGear() {
@@ -124,11 +166,16 @@ public class Drivetrain extends SubsystemBase {
     public Pose2d getPose() {
         return odometry.getPoseMeters();
     }
+
+    public void resetOdometry(Pose2d pose){
+        odometry.resetPosition(pose, navx.getRotation2d());
+    }
     
     // TODO: get actual meters per second
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
         double leftMetersPerSecond = rpmToVelocity( leftEncoder.getVelocity() );
-        double rightMetersPerSecond = rpmToVelocity( righEncoder.getVelocity() );
+        double rightMetersPerSecond = rpmToVelocity( rightEncoder.getVelocity() );
+
         return new DifferentialDriveWheelSpeeds(leftMetersPerSecond, rightMetersPerSecond);
     }
 
@@ -136,15 +183,16 @@ public class Drivetrain extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
+        getWheelSpeeds();
         double leftDistanceMeters = leftEncoder.getPosition() / getCurrentGearRatio() * getWheelCircumference() ;
-        double rightDistanceMeters = righEncoder.getPosition() / getCurrentGearRatio() * getWheelCircumference() ;
-        odometry.update(navx.getRotation2d(), leftDistanceMeters, rightDistanceMeters);
+        double rightDistanceMeters = rightEncoder.getPosition() / getCurrentGearRatio() * getWheelCircumference() ;
+        odometry.update(Rotation2d.fromDegrees(navx.getAngle()), leftDistanceMeters, rightDistanceMeters);
 
-        SmartDashboard.putString("Current Gear", getGear() ? "High Gear":"Low Gear");
-    }
+        ShuffleboardControl.addToDevelopment("Current Gear", getGear() ? "High Gear":"Low Gear");
+        
+        SmartDashboard.putBoolean("High Gear?", getGear());
 
-    @Override
-    public void simulationPeriodic() {
-        // This method will be called once per scheduler run during simulation
+        ShuffleboardControl.addToDevelopment("X", getPose().getX());
+        ShuffleboardControl.addToDevelopment("Y", getPose().getY());
     }
 }

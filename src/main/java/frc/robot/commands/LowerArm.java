@@ -13,37 +13,25 @@ public class LowerArm extends CommandBase {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final Arm arm;
 
-    /**
-     * Creates a new ExampleCommand.
-     *
-     * @param subsystem The subsystem used by this command.
-     */
     public LowerArm(Arm arm) {
         this.arm = arm;
-        // Use addRequirements() here to declare subsystem dependencies.
+
         addRequirements(arm);
     }
 
-    // Called when the command is initially scheduled.
     @Override
-    public void initialize() {
-        arm.initialize();
-    }
+    public void initialize() {}
 
-    // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         arm.lowerArm();
     }
 
-    // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
         arm.stopArm();
-        arm.resetReferencePoint();
     }
 
-    // Returns true when the command should end.
     @Override
     public boolean isFinished() {
         return arm.hasReachedLowerLimit();

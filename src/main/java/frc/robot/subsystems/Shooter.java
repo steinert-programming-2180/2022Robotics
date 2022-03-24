@@ -2,11 +2,18 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.ShuffleboardControl;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.ShooterCommand;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
@@ -14,25 +21,37 @@ public class Shooter extends SubsystemBase {
   public RelativeEncoder bottomEncoder;
   public CANSparkMax topFlywheel;
   public RelativeEncoder topEncoder;
+  SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ShooterConstants.kS, ShooterConstants.kV, ShooterConstants.kA);
+  double goalRPM = ShooterConstants.shooterRPM;
 
   public Shooter() {
     bottomFlywheel = new CANSparkMax(ShooterConstants.bottomFlywheelPort, MotorType.kBrushless);
     topFlywheel = new CANSparkMax(ShooterConstants.topFlywheelPort, MotorType.kBrushless);
+    
     bottomEncoder = bottomFlywheel.getEncoder();
     topEncoder = topFlywheel.getEncoder();
-    SmartDashboard.putNumber("Shooter Speed", ShooterConstants.shooterSpeed);
 
+    SmartDashboard.putNumber("Goal RPM", goalRPM);
+    setMotorsToCoast();
   }
 
-  // meters per second
-  public void shootAtSpeed(double speed){
-    bottomEncoder.getVelocity();
+  void setMotorsToCoast(){
+    bottomFlywheel.setIdleMode(IdleMode.kCoast);
+    topFlywheel.setIdleMode(IdleMode.kCoast);
   }
 
-  public void shoot() {
-    double shooterSpeed = SmartDashboard.getNumber("Shooter Speed", ShooterConstants.shooterSpeed);
-    bottomFlywheel.set(shooterSpeed);
-    topFlywheel.set(shooterSpeed);
+  public double convertRPMToRPS(double rpm){
+    return rpm / 60;
+  }
+  public void setGoalRPM(double rpm){ goalRPM = convertRPMToRPS(rpm); }
+  public void shoot() { shoot(goalRPM); }
+
+  public void shoot(double rpm) {
+    double rps = convertRPMToRPS(rpm);
+    double calculatedSpeed = feedforward.calculate(rps);
+
+    bottomFlywheel.setVoltage(calculatedSpeed);
+    topFlywheel.setVoltage(calculatedSpeed);
   }
 
   public void stopShooting() {
@@ -42,8 +61,10 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Low RPM", bottomEncoder.getVelocity());
-    SmartDashboard.putNumber("High RPM", topEncoder.getVelocity());
+    setGoalRPM( SmartDashboard.getNumber("Goal RPM", ShooterConstants.shooterRPM) );
+
+    ShuffleboardControl.addToDevelopment("Low RPM", bottomEncoder.getVelocity());
+    ShuffleboardControl.addToDevelopment("High RPM", topEncoder.getVelocity());
   }
 
   @Override

@@ -14,13 +14,12 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 /**
@@ -64,18 +63,15 @@ public class Robot extends TimedRobot {
 
     sensor = new DigitalInput(9);
 
-    compressor = new Compressor(PneumaticsModuleType.REVPH);
-
     powerDistributionHub = new PowerDistribution(12, ModuleType.kRev);
     pneumaticsHub = new PneumaticHub(20);
 
     powerDistributionHub.clearStickyFaults();
     pneumaticsHub.clearStickyFaults();
 
-    ShuffleboardControl.initializeAutonomousChooser();
+    compressor = new Compressor(PneumaticsModuleType.REVPH);
 
-    // leftControl = new File("/home/lvuser/leftStick.txt");
-    // rightControl = new File("/home/lvuser/rightStick.txt");
+    ShuffleboardControl.initializeAutonomousChooser();
   }
 
   /**
@@ -105,6 +101,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // m_robotContainer.setDrivetrainMotorsToCoast();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -127,52 +124,22 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    
+    m_robotContainer.setDrivetrainMotorsToCoast();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    compressor.enableDigital();
-    SmartDashboard.putBoolean("sensor", sensor.get());
   }
 
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-
-    // try {
-    //   leftRecord = new FileWriter(leftControl);
-    //   rightRecord = new FileWriter(rightControl);
-
-      
-    // } catch (IOException e) {
-    //   e.printStackTrace();
-    // }
-
   }
 
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-
-    // leftValue = leftJoystick.getY();
-    // rightValue = rightJoystick.getY();
-
-    // leftString = String.valueOf(leftValue + "\n");
-    // rightString = String.valueOf(rightValue + "\n");
-
-
-    // try {
-    //   leftRecord.append(leftString);
-    //   leftRecord.flush();
-
-    //   rightRecord.append(rightString);
-    //   rightRecord.flush();
-    // } catch (IOException e) {
-
-
-    // }
   }
 }

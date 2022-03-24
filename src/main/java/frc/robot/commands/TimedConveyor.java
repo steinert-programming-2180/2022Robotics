@@ -4,9 +4,8 @@
 
 package frc.robot.commands;
 
-import frc.robot.Constants.ConveyorConstants;
-import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ConveyorConstants;
 
 /** An example command that uses an example subsystem. */
 public class TimedConveyor extends CommandBase {

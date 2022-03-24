@@ -1,50 +1,62 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands;
 
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.ExampleSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ArmConstants;
+import frc.robot.subsystems.Arm;
 
-/** An example command that uses an example subsystem. */
 public class RaiseArm extends CommandBase {
-    @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-    private final Arm arm;
+  Arm arm;
+  double targetEncoderValue = ArmConstants.targetEncoderValue;
+  double slowSpeedTakeOver = 15; // is in encoder value
 
-    /**
-     * Creates a new ExampleCommand.
-     *
-     * @param subsystem The subsystem used by this command.
-     */
-    public RaiseArm(Arm arm) {
-        this.arm = arm;
-        // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(arm);
-    }
+  public RaiseArm(Arm arm) {
+    this.arm = arm;
+  }
 
-    // Called when the command is initially scheduled.
-    @Override
-    public void initialize() {
-        arm.initialize();
-    }
+  public RaiseArm(Arm arm, double targetEncoderValue){
+    this.targetEncoderValue = targetEncoderValue;
+  }
 
-    // Called every time the scheduler runs while the command is scheduled.
-    @Override
-    public void execute() {
-        arm.raiseArm();
-    }
+  @Override
+  public void initialize() {
+  }
 
-    // Called once the command ends or is interrupted.
-    @Override
-    public void end(boolean interrupted) {
-        arm.stopArm();
-    }
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    targetEncoderValue = arm.getGoal();
 
-    // Returns true when the command should end.
-    @Override
-    public boolean isFinished() {
-        return arm.hasReachedUpperLimit();
+    if(shouldBeSlow() && isArmUnderGoal()) {
+      arm.moveArm(0.2);
+    } else if(isArmUnderGoal()){
+      arm.moveArm(0.4);
+    } else {
+      arm.moveArm(0);
     }
+  }
+
+  boolean isArmUnderGoal(){
+    return arm.getEncoderValue() - targetEncoderValue < 0;
+  }
+
+  boolean isArmOverGoal(){
+    return arm.getEncoderValue() - targetEncoderValue > 0;
+  }
+
+  boolean shouldBeSlow(){
+    return Math.abs(arm.getEncoderValue() - targetEncoderValue) < slowSpeedTakeOver;
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    arm.moveArm(0);
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return arm.getEncoderValue() >= targetEncoderValue;
+  }
 }

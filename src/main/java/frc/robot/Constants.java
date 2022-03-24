@@ -14,10 +14,16 @@ package frc.robot;
  */
 public final class Constants {
     public final class ShooterConstants{
-        public static final double shooterSpeed = 0.2;
+        public static final double shooterRPM = 1725;
+        public static final double attackBallRPM = 3000;
+        public static final double maxRPM = 5000;
 
         public static final int bottomFlywheelPort = 12;
         public static final int topFlywheelPort = 11;
+
+        public static final double kS = 0.17096;
+        public static final double kV = 0.12577;
+        public static final double kA = 0.0086187;
     }
 
     public final class ArmConstants{
@@ -25,9 +31,13 @@ public final class Constants {
         public static final int rightArmRaiserPort = 14;
 
         public static final int lowerLimitSwitchPort = 0;
-        public static final int topLimitSwitchPort = 2;
+        public static final int potentiometerPort = 0;
 
-        public static final double armSpeed = 0.3;
+        public static final double upSpeed = 0.22;
+        public static final double downSpeed = -0.4;
+
+        public static final int targetEncoderValue = 68;
+        public static final int maxEncoderVal = 85;
     }
 
     public static final class ConveyorConstants{
@@ -61,8 +71,8 @@ public final class Constants {
     }
 
     public static final class AutonomousConstants {
-        public static final String[] autonomousOptions = {"None", "Drive Backward", "Simple Auto"};
-        public static final int defaultAutonomous = 1; // This is the index of the default auto
+        public static final String[] autonomousOptions = {"None", "Zone 1 - 2", "Zone 2 - 2", "Zone 2 - 3", "Drive Out", "1 Ball", "Attack!"};
+        public static final int defaultAutonomous = 2; // This is the index of the default auto
         
         // Times are in SECONDS
         public static final double shooterTime = 2;
@@ -75,7 +85,7 @@ public final class Constants {
 
     public static double inchesToMeters(double inches) { return inches * 0.0254; }
     
-    // EVERYTHING IS IN METERS!!!
+    // EVERYTHING IS IN METERS PER SECONDS!!!
     public static final class DriveConstants{
         public static final double autonomousSpeed = 0.7;
 
@@ -88,29 +98,19 @@ public final class Constants {
         public static final int highGearSolenoid = 2;
         public static final int lowGearSolenoid = 0;
 
-        public static final double kP = 23.741;
+        // PID for velocity
+        public static final double kP = 1.3935;
         public static final double kI = 0;
-        public static final double kD = 0.6788;
+        public static final double kD = 0;
 
-        public static final double kS = 0.13112;
-        public static final double kV = 0.12103;
-        public static final double kA = 0.012125;
+        public static final double kS = 0.17341;
+        public static final double kV = 2.1344;
+        public static final double kA = 0.31494;
 
-        // These are for velocity
-        public static final double leftKp = 0;
-        public static final double leftKi = 0;
-        public static final double leftKd = 0;
-
-        public static final double rightKp = 0;
-        public static final double rightKi = 0;
-        public static final double rightKd = 0;
-
-        public static final double b = 0;
-        public static final double zeta = 0;
-
+        public static final double trackWidth = 0.6477;
+        public static final double lowGearRatio = 12.03;
+        public static final double highGearRatio = 5.56;
         public static final double wheelDiameter = inchesToMeters(4);
-        public static final double trackWidth = 0.60516;
-        public static final double highGearRatio = 5.56/1.0;
-        public static final double lowGearRatio = 12.03/1.0;
+           
     }
 }

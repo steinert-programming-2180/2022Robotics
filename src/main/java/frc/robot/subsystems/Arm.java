@@ -6,58 +6,71 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.ShuffleboardControl;
 
 public class Arm extends SubsystemBase {
     /** Creates a new ExampleSubsystem. */
     CANSparkMax leftArmRaiser;
     CANSparkMax rightArmRaiser;
+    RelativeEncoder armEncoder;
 
     DigitalInput lowerLimitSwitch;
-    DigitalInput topLimitSwitch;
 
-    RelativeEncoder leftEncoder;
-    RelativeEncoder rightEncoder; //used;
-    //distance of 60
-
-    double referencePoint = 0;
+    AnalogInput potentiometer;
+    double maxEncoderVal = ArmConstants.maxEncoderVal;
+    double goalValue = ArmConstants.targetEncoderValue;
 
     public Arm() {
         leftArmRaiser = new CANSparkMax(ArmConstants.leftArmRaiserPort, MotorType.kBrushless);
         rightArmRaiser = new CANSparkMax(ArmConstants.rightArmRaiserPort, MotorType.kBrushless);
         rightArmRaiser.follow(leftArmRaiser, true);
 
-        leftEncoder = leftArmRaiser.getEncoder();
-        rightEncoder = rightArmRaiser.getEncoder();
+        armEncoder = rightArmRaiser.getEncoder();
+        setArmToBrake();
+
+        SmartDashboard.putNumber("Goal Value", goalValue);
+
+        potentiometer = new AnalogInput(ArmConstants.potentiometerPort);
 
         lowerLimitSwitch = new DigitalInput(ArmConstants.lowerLimitSwitchPort);
-        //topLimitSwitch = new DigitalInput(ArmConstants.topLimitSwitchPort);
     }
 
-    public void resetReferencePoint(){
-        rightEncoder.setPosition(0);
+    public void initialize(){}
+
+    void setArmToBrake(){
+        leftArmRaiser.setIdleMode(IdleMode.kBrake);
+        rightArmRaiser.setIdleMode(IdleMode.kBrake);
+    }
+
+    void setArmToCoast(){
+        leftArmRaiser.setIdleMode(IdleMode.kCoast);
+        rightArmRaiser.setIdleMode(IdleMode.kCoast);
     }
 
     public void raiseArm(){
-        if(hasReachedUpperLimit()){
-            stopArm();
-            return;
-        }
-        leftArmRaiser.set(ArmConstants.armSpeed);
+        moveArm(ArmConstants.upSpeed);
     }
 
     public void lowerArm(){
-        // When triggered, lower limit switch is false
-        if(hasReachedLowerLimit()) {
-            stopArm();
-            return;
-        }
-        leftArmRaiser.set(-ArmConstants.armSpeed);
+        moveArm(ArmConstants.downSpeed);
+    }
+
+    public void moveArm(double speed){
+        boolean isTryingToExceedMaximum = hasReachedUpperLimit() && speed > 0;
+        boolean isTryingToExceedMinimum = hasReachedLowerLimit() && speed < 0;
+
+        if(isTryingToExceedMaximum || isTryingToExceedMinimum) stopArm();
+        else leftArmRaiser.set(speed);
     }
 
     public boolean hasReachedLowerLimit(){
@@ -65,25 +78,35 @@ public class Arm extends SubsystemBase {
     }
 
     public boolean hasReachedUpperLimit(){
-        return rightEncoder.getPosition() >= referencePoint + 60;
+        return getEncoderValue() >= maxEncoderVal;
+    }
+
+    public double getEncoderValue(){
+        return armEncoder.getPosition();
     }
 
     public void stopArm() {
         leftArmRaiser.set(0);
     }
 
+    public double getGoal(){
+        return goalValue;
+    }
+
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run
-        SmartDashboard.putBoolean("Lower Limit Switch", lowerLimitSwitch.get());
-        SmartDashboard.putNumber("Arm Encoder", rightEncoder.getPosition());
+        if(hasReachedLowerLimit()) armEncoder.setPosition(0);
 
+        goalValue = SmartDashboard.getNumber("Goal Value", goalValue);
+
+        ShuffleboardControl.addToDevelopment("Lower Limit Switch", lowerLimitSwitch.get());
+        ShuffleboardControl.addToDevelopment("Arm Encoder", armEncoder.getPosition());
+        ShuffleboardControl.addToDevelopment("Pot Value", potentiometer.getValue());
+        ShuffleboardControl.addToDevelopment("Left Voltage", leftArmRaiser.getBusVoltage());
     }
 
     @Override
     public void simulationPeriodic() {
         // This method will be called once per scheduler run during simulation
-    }
-    public void initialize() {
     }
 }

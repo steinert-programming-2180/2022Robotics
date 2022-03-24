@@ -5,9 +5,9 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.ShuffleboardControl;
 import frc.robot.Constants.ConveyorConstants;
 import frc.robot.Constants.ConveyorConstants.ConveyorSection;
 
@@ -19,6 +19,7 @@ public class Conveyor extends SubsystemBase {
   DigitalInput entranceBeamBreak;
   DigitalInput exitBeamBreak;
 
+  // Initializes the conveyer and sensors 
   public Conveyor() {
     entranceConveyor = new CANSparkMax(ConveyorConstants.entranceConveyorPort, MotorType.kBrushless);
     exitConveyor = new CANSparkMax(ConveyorConstants.exitConveyorPort, MotorType.kBrushless);
@@ -35,9 +36,11 @@ public class Conveyor extends SubsystemBase {
     convey(ConveyorSection.EXIT);
   }
 
-  public void reverseConvey() {
-    reverseConvey(ConveyorSection.ENTRANCE);
-    reverseConvey(ConveyorSection.EXIT);
+  public void convey(ConveyorSection section){
+    if(section == ConveyorSection.ENTRANCE) 
+      entranceConveyor.set(-ConveyorConstants.conveyorSpeed);
+    else
+      exitConveyor.set(ConveyorConstants.conveyorSpeed);
   }
 
   public void stopConveyor() {
@@ -45,14 +48,16 @@ public class Conveyor extends SubsystemBase {
     stopConveyor(ConveyorSection.EXIT);
   }
 
-  public void convey(ConveyorSection section){
-    if(section == ConveyorSection.ENTRANCE) entranceConveyor.set(-ConveyorConstants.conveyorSpeed);
-    else exitConveyor.set(ConveyorConstants.conveyorSpeed);
+  public void reverseConvey() {
+    reverseConvey(ConveyorSection.ENTRANCE);
+    reverseConvey(ConveyorSection.EXIT);
   }
 
   public void reverseConvey(ConveyorSection section) {
-    if(section == ConveyorSection.ENTRANCE) entranceConveyor.set(ConveyorConstants.conveyorSpeed);
-    else exitConveyor.set(-ConveyorConstants.conveyorSpeed);
+    if(section == ConveyorSection.ENTRANCE) 
+      entranceConveyor.set(ConveyorConstants.conveyorSpeed);
+    else 
+      exitConveyor.set(-ConveyorConstants.conveyorSpeed);
   }
 
   public void stopConveyor(ConveyorSection section) {
@@ -61,15 +66,20 @@ public class Conveyor extends SubsystemBase {
   }
 
   public boolean getBeamBreakStatus(ConveyorSection section){
-    return (section == ConveyorSection.ENTRANCE) ? !entranceBeamBreak.get() : exitBeamBreak.get();
+    return section == ConveyorSection.ENTRANCE ? !entranceBeamBreak.get() : exitBeamBreak.get();
+  }
+
+  public boolean isConveyorEmpty(){
+    boolean hasEntranceBall = getBeamBreakStatus(ConveyorSection.ENTRANCE);
+    boolean hasExitBall = getBeamBreakStatus(ConveyorSection.EXIT);
+    return !(hasEntranceBall || hasExitBall);
   }
 
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("Entrance", getBeamBreakStatus(ConveyorSection.ENTRANCE));
     SmartDashboard.putBoolean("Exit", getBeamBreakStatus(ConveyorSection.EXIT));
+    
+    // SmartDashboard.putBoolean("Conveyor Empty?", isConveyorEmpty());
   }
-
-  @Override
-  public void simulationPeriodic() {}
 }
