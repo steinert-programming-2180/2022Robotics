@@ -34,6 +34,6 @@ public class LowerArm extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return arm.hasReachedLowerLimit();
+        return arm.hasReachedLowerLimit() || arm.getArmCurrent() > 30;
     }
 }

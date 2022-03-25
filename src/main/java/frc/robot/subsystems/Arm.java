@@ -93,6 +93,8 @@ public class Arm extends SubsystemBase {
         return goalValue;
     }
 
+    public double getArmCurrent(){return leftArmRaiser.getOutputCurrent();}
+
     @Override
     public void periodic() {
         if(hasReachedLowerLimit()) armEncoder.setPosition(0);
@@ -102,7 +104,7 @@ public class Arm extends SubsystemBase {
         ShuffleboardControl.addToDevelopment("Lower Limit Switch", lowerLimitSwitch.get());
         ShuffleboardControl.addToDevelopment("Arm Encoder", armEncoder.getPosition());
         ShuffleboardControl.addToDevelopment("Pot Value", potentiometer.getValue());
-        ShuffleboardControl.addToDevelopment("Left Voltage", leftArmRaiser.getBusVoltage());
+        ShuffleboardControl.addToDevelopment("Left Current", getArmCurrent());
     }
 
     @Override
