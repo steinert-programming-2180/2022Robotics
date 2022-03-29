@@ -4,13 +4,11 @@
 
 package frc.robot.commands;
 
-import frc.robot.Constants;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IO;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.ExampleSubsystem;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
 public class DefaultDrive extends CommandBase {
