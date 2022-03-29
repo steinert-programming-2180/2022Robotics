@@ -47,6 +47,11 @@ public class Conveyor extends SubsystemBase {
     stopConveyor(ConveyorSection.EXIT);
   }
 
+  public void stopConveyor(ConveyorSection section) {
+    if(section == ConveyorSection.ENTRANCE) entranceConveyor.set(0);
+    else exitConveyor.set(0);
+  }
+
   public void conveyorReverse() {
     conveyorReverse(ConveyorSection.ENTRANCE);
     conveyorReverse(ConveyorSection.EXIT);
@@ -57,11 +62,6 @@ public class Conveyor extends SubsystemBase {
       entranceConveyor.set(ConveyorConstants.conveyorSpeed);
     else 
       exitConveyor.set(-ConveyorConstants.conveyorSpeed);
-  }
-
-  public void stopConveyor(ConveyorSection section) {
-    if(section == ConveyorSection.ENTRANCE) entranceConveyor.set(0);
-    else exitConveyor.set(0);
   }
 
   public boolean getBeamBreakStatus(ConveyorSection section){
