@@ -3,11 +3,11 @@ package frc.robot.commands;
 import frc.robot.subsystems.Conveyor;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class ConveyorBackwardCommand extends CommandBase {
+public class ConveyorReverse extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private Conveyor conveyor;
   
-  public ConveyorBackwardCommand(Conveyor conveyor) {
+  public ConveyorReverse(Conveyor conveyor) {
     this.conveyor = conveyor;
     addRequirements(conveyor);
   }
