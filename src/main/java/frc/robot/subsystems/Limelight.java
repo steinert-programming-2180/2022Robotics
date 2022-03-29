@@ -221,7 +221,7 @@ public class Limelight extends SubsystemBase{
      * Swaps the LED Status between 0 = pipeline and 1 = force off.
      */
     public void swapLights() {
-        // The ? statement handles the if our current LED status is not 0 or 1
+        // The ? statement handles the "if our current LED status is not 0 or 1"
         setLightsMode(1 - (getLightsMode() < 2 ? getLightsMode() : 1));
     }
 
