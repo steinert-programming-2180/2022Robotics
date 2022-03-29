@@ -47,12 +47,12 @@ public class Conveyor extends SubsystemBase {
     stopConveyor(ConveyorSection.EXIT);
   }
 
-  public void reverseConvey() {
-    reverseConvey(ConveyorSection.ENTRANCE);
-    reverseConvey(ConveyorSection.EXIT);
+  public void conveyorReverse() {
+    conveyorReverse(ConveyorSection.ENTRANCE);
+    conveyorReverse(ConveyorSection.EXIT);
   }
 
-  public void reverseConvey(ConveyorSection section) {
+  public void conveyorReverse(ConveyorSection section) {
     if(section == ConveyorSection.ENTRANCE) 
       entranceConveyor.set(ConveyorConstants.conveyorSpeed);
     else 

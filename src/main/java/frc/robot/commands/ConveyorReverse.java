@@ -14,12 +14,12 @@ public class ConveyorReverse extends CommandBase {
 
   @Override
   public void initialize() {
-    conveyor.reverseConvey();
+    conveyor.conveyorReverse();
   }
 
   @Override
   public void execute() {
-    conveyor.reverseConvey();
+    conveyor.conveyorReverse();
   }
 
   @Override
