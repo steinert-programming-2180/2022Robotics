@@ -4,9 +4,8 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Intake;
 
 /** An example command that uses an example subsystem. */
 public class IntakeReverse extends CommandBase {

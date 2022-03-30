@@ -7,7 +7,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.ShuffleboardControl;
 import frc.robot.Constants.ConveyorConstants;
 import frc.robot.Constants.ConveyorConstants.ConveyorSection;
 
@@ -48,21 +47,21 @@ public class Conveyor extends SubsystemBase {
     stopConveyor(ConveyorSection.EXIT);
   }
 
-  public void reverseConvey() {
-    reverseConvey(ConveyorSection.ENTRANCE);
-    reverseConvey(ConveyorSection.EXIT);
+  public void stopConveyor(ConveyorSection section) {
+    if(section == ConveyorSection.ENTRANCE) entranceConveyor.set(0);
+    else exitConveyor.set(0);
   }
 
-  public void reverseConvey(ConveyorSection section) {
+  public void conveyorReverse() {
+    conveyorReverse(ConveyorSection.ENTRANCE);
+    conveyorReverse(ConveyorSection.EXIT);
+  }
+
+  public void conveyorReverse(ConveyorSection section) {
     if(section == ConveyorSection.ENTRANCE) 
       entranceConveyor.set(ConveyorConstants.conveyorSpeed);
     else 
       exitConveyor.set(-ConveyorConstants.conveyorSpeed);
-  }
-
-  public void stopConveyor(ConveyorSection section) {
-    if(section == ConveyorSection.ENTRANCE) entranceConveyor.set(0);
-    else exitConveyor.set(0);
   }
 
   public boolean getBeamBreakStatus(ConveyorSection section){

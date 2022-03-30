@@ -5,12 +5,10 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.RelativeEncoder;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -93,6 +91,8 @@ public class Arm extends SubsystemBase {
         return goalValue;
     }
 
+    public double getArmCurrent(){return leftArmRaiser.getOutputCurrent();}
+
     @Override
     public void periodic() {
         if(hasReachedLowerLimit()) armEncoder.setPosition(0);
@@ -102,7 +102,7 @@ public class Arm extends SubsystemBase {
         ShuffleboardControl.addToDevelopment("Lower Limit Switch", lowerLimitSwitch.get());
         ShuffleboardControl.addToDevelopment("Arm Encoder", armEncoder.getPosition());
         ShuffleboardControl.addToDevelopment("Pot Value", potentiometer.getValue());
-        ShuffleboardControl.addToDevelopment("Left Voltage", leftArmRaiser.getBusVoltage());
+        ShuffleboardControl.addToDevelopment("Left Current", getArmCurrent());
     }
 
     @Override

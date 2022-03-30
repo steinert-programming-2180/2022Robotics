@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IO;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.commands.ConveyorBackwardCommand;
+import frc.robot.commands.ConveyorReverse;
 import frc.robot.commands.ConveyorCommand;
 import frc.robot.commands.DefaultDrive;
 import frc.robot.commands.ExampleCommand;
@@ -65,7 +65,7 @@ public class RobotContainer {
   private final IntakeCommand intakeCommand = new IntakeCommand(intake, conveyor);
   private final IntakeReverse intakeReverse = new IntakeReverse(intake);
   private final ConveyorCommand conveyorCommand = new ConveyorCommand(conveyor);
-  private final ConveyorBackwardCommand conveyorBackwardCommand = new ConveyorBackwardCommand(conveyor);
+  private final ConveyorReverse ConveyorReverse = new ConveyorReverse(conveyor);
   private final ShooterCommand shooterCommand = new ShooterCommand(shooter);
 
   private final LowerArm lowerArm = new LowerArm(arm);
@@ -196,7 +196,7 @@ public class RobotContainer {
     backButton.whenPressed(lowerArm).cancelWhenPressed(shooterCommand);
 
     leftStick.whileHeld(intakeReverse);
-    rightStick.whileHeld(conveyorBackwardCommand);
+    rightStick.whileHeld(ConveyorReverse);
 
     leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArm).cancelWhenPressed(lowerArm);
     rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArm).cancelWhenPressed(lowerArm);

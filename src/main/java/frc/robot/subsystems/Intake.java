@@ -16,7 +16,7 @@ public class Intake extends SubsystemBase {
     public Intake(){
         leftSpark = new CANSparkMax(IntakeConstants.leftIntakePort, MotorType.kBrushless);
         rightSpark = new CANSparkMax(IntakeConstants.rightIntakePort, MotorType.kBrushless);
-        leftSpark.follow(rightSpark);
+        leftSpark.follow(rightSpark, true);
 
         solenoid = new DoubleSolenoid(Constants.PneumaticHubPort, PneumaticsModuleType.REVPH, 1, 3);
         solenoid.set(Value.kForward);
@@ -36,12 +36,10 @@ public class Intake extends SubsystemBase {
 
     public void extendOrRetract(){
         switch (solenoid.get()) {
-            case kForward:
-                retractIntake();
-                break;
             case kReverse:
                 extendIntake();
                 break;
+            case kForward:
             default:
                 extendIntake();
                 break;
