@@ -78,7 +78,7 @@ public class Limelight extends SubsystemBase{
      * 
      * @return Distance from target, in meters because we are scientists first and Americans second.
      */
-    public double getStraightDifference() {
+    public double getStraightDistance() {
         
         // If no valid target, return -1
         if(!hasTarget()) {
