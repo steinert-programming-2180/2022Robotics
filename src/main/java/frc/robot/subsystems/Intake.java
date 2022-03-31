@@ -41,7 +41,7 @@ public class Intake extends SubsystemBase {
                 break;
             case kForward:
             default:
-                extendIntake();
+                retractIntake();
                 break;
         }
     }
