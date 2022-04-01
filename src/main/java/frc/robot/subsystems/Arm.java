@@ -24,7 +24,7 @@ public class Arm extends SubsystemBase {
 
     DigitalInput lowerLimitSwitch;
 
-    AnalogInput potentiometer;
+    // AnalogInput potentiometer;
     double maxEncoderVal = ArmConstants.maxEncoderVal;
     double goalValue = ArmConstants.atGoalEncoderGoal;
 
@@ -99,7 +99,7 @@ public class Arm extends SubsystemBase {
 
         ShuffleboardControl.addToDevelopment("Lower Limit Switch", lowerLimitSwitch.get());
         ShuffleboardControl.addToDevelopment("Arm Encoder", armEncoder.getPosition());
-        ShuffleboardControl.addToDevelopment("Pot Value", potentiometer.getValue());
+        // ShuffleboardControl.addToDevelopment("Pot Value", potentiometer.getValue());
         ShuffleboardControl.addToDevelopment("Left Current", getArmCurrent());
     }
 
