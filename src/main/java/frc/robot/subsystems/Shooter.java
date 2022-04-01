@@ -43,7 +43,7 @@ public class Shooter extends SubsystemBase {
   public void shoot() { shoot(goalRPM); }
 
   public void shoot(double rpm) {
-    double rps = convertRPMToRPS(goalRPM);
+    double rps = convertRPMToRPS(rpm);
     double calculatedSpeed = feedforward.calculate(rps);
 
     bottomFlywheel.setVoltage(calculatedSpeed);

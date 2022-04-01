@@ -11,9 +11,11 @@ public class RaiseArm extends CommandBase {
 
   public RaiseArm(Arm arm) {
     this.arm = arm;
+    addRequirements(arm);
   }
 
   public RaiseArm(Arm arm, double targetEncoderValue){
+    this(arm);
     this.targetEncoderValue = targetEncoderValue;
   }
 

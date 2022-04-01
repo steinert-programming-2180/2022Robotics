@@ -80,6 +80,8 @@ public class RobotContainer {
   private final ShooterCommand shooterCommandMidTarmac = new ShooterCommand(shooter, ShooterConstants.midTarmacRPM);
   private final RaiseArm raiseArmMidTarmac = new RaiseArm(arm, ArmConstants.midTarmacEncoderGoal);
 
+  private final ShooterCommand noShoot = new ShooterCommand(shooter, 0);
+
   // Emergency autonomous. not actual autonomous unfortunately
   TrajectoryConfig trajectoryConfig = new TrajectoryConfig(1, 1);
   TrajectoryConfig backwardConfig = new TrajectoryConfig(1, 1);
@@ -197,16 +199,21 @@ public class RobotContainer {
     yButton.whenPressed(() -> intake.extendOrRetract());
 
     startButton.whenPressed(raiseArmAtHub).whenPressed(shooterCommand);
-    backButton.whenPressed(lowerArm).cancelWhenPressed(shooterCommand);
+    backButton.whenPressed(lowerArm).whenPressed(noShoot);
 
     leftStick.whileHeld(intakeReverse);
     rightStick.whileHeld(ConveyorReverse);
 
     leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub).cancelWhenPressed(lowerArm);
     rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub).cancelWhenPressed(lowerArm);
-
+ 
+    // DO NOT UNCOMMENT
     // upDPad.whenPressed(() -> intake.extendIntake());
     // downDPad.whenPressed(() -> intake.retractIntake());
+
+    upDPad.whenPressed(shooterCommand).whenPressed(raiseArmAtHub);
+    downDPad.whenPressed(shooterCommandMidTarmac).whenPressed(raiseArmMidTarmac);
+
     // Driver:
     highGearButton.whenPressed(() -> drivetrain.highGear());
     lowGearButton.whenPressed(() -> drivetrain.lowGear());
