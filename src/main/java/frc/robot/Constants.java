@@ -42,7 +42,7 @@ public final class Constants {
         public static final double atGoalEncoderGoal = 68;
         public static final double midTarmacEncoderGoal = 63;
 
-        public final int[] encoderVals = {atGoalEncoderGoal, midTarmacEncoderGoal};
+        public final double[] encoderVals = {atGoalEncoderGoal, midTarmacEncoderGoal};
 
 
         public static final int maxEncoderVal = 85;
