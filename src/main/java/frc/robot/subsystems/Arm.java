@@ -89,6 +89,10 @@ public class Arm extends SubsystemBase {
         return goalValue;
     }
 
+    public double getChainStrechedFactor(){
+        return SmartDashboard.getNumber("Streched Chain Factor", 0);
+    }
+
     public double getArmCurrent(){return leftArmRaiser.getOutputCurrent();}
 
     @Override
