@@ -14,11 +14,13 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IO;
@@ -40,6 +42,9 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.utils.DPadButton;
+import frc.robot.utils.DPadButton.Direction;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -178,6 +183,9 @@ public class RobotContainer {
     JoystickButton leftStick = new JoystickButton(xbox, XboxController.Button.kLeftStick.value);
     JoystickButton rightStick = new JoystickButton(xbox, XboxController.Button.kRightStick.value);
 
+    DPadButton upDPad = new DPadButton(xbox, Direction.UP);
+    DPadButton downDPad = new DPadButton(xbox, Direction.DOWN);
+
     // Operator:
     aButton.whileHeld(intakeCommand);
     xButton.whileHeld(shooterCommand);
@@ -193,6 +201,8 @@ public class RobotContainer {
     leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArm).cancelWhenPressed(lowerArm);
     rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArm).cancelWhenPressed(lowerArm);
 
+    // upDPad.whenPressed(() -> intake.extendIntake());
+    // downDPad.whenPressed(() -> intake.retractIntake());
     // Driver:
     highGearButton.whenPressed(() -> drivetrain.highGear());
     lowGearButton.whenPressed(() -> drivetrain.lowGear());
