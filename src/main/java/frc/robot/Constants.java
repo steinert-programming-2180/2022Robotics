@@ -14,12 +14,14 @@ package frc.robot;
  */
 public final class Constants {
     public final class ShooterConstants{
-        public static final double shooterRPM = 1725;
-        public static final double attackBallRPM = 3000;
         public static final double maxRPM = 5000;
-
         public static final int bottomFlywheelPort = 12;
         public static final int topFlywheelPort = 11;
+
+        public static final double atGoalRPM = 1725;
+        public static final double midTarmacRPM = 2000;
+
+        public static final double attackBallRPM = 3000;
 
         public static final double kS = 0.17096;
         public static final double kV = 0.12577;
@@ -31,12 +33,14 @@ public final class Constants {
         public static final int rightArmRaiserPort = 14;
 
         public static final int lowerLimitSwitchPort = 0;
-        public static final int potentiometerPort = 0;
 
         public static final double upSpeed = 0.22;
         public static final double downSpeed = -0.4;
 
-        public static final int targetEncoderValue = 68;
+        public static final int stretchedChainConstant = 0;
+        public static final int atGoalEncoderGoal = 68 + stretchedChainConstant;
+        public static final int midTarmacEncoderGoal = 63 + stretchedChainConstant;
+
         public static final int maxEncoderVal = 85;
     }
 

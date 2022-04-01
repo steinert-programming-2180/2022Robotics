@@ -18,7 +18,7 @@ public class Shooter extends SubsystemBase {
   public CANSparkMax topFlywheel;
   public RelativeEncoder topEncoder;
   SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ShooterConstants.kS, ShooterConstants.kV, ShooterConstants.kA);
-  double goalRPM = ShooterConstants.shooterRPM;
+  double goalRPM = ShooterConstants.atGoalRPM;
 
   public Shooter() {
     bottomFlywheel = new CANSparkMax(ShooterConstants.bottomFlywheelPort, MotorType.kBrushless);
@@ -43,7 +43,7 @@ public class Shooter extends SubsystemBase {
   public void shoot() { shoot(goalRPM); }
 
   public void shoot(double rpm) {
-    double rps = convertRPMToRPS(rpm);
+    double rps = convertRPMToRPS(goalRPM);
     double calculatedSpeed = feedforward.calculate(rps);
 
     bottomFlywheel.setVoltage(calculatedSpeed);
@@ -57,7 +57,7 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    setGoalRPM( SmartDashboard.getNumber("Goal RPM", ShooterConstants.shooterRPM) );
+    setGoalRPM( SmartDashboard.getNumber("Goal RPM", ShooterConstants.atGoalRPM) );
 
     ShuffleboardControl.addToDevelopment("Low RPM", bottomEncoder.getVelocity());
     ShuffleboardControl.addToDevelopment("High RPM", topEncoder.getVelocity());

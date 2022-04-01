@@ -26,7 +26,7 @@ public class Arm extends SubsystemBase {
 
     AnalogInput potentiometer;
     double maxEncoderVal = ArmConstants.maxEncoderVal;
-    double goalValue = ArmConstants.targetEncoderValue;
+    double goalValue = ArmConstants.atGoalEncoderGoal;
 
     public Arm() {
         leftArmRaiser = new CANSparkMax(ArmConstants.leftArmRaiserPort, MotorType.kBrushless);

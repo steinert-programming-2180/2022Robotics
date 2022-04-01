@@ -6,7 +6,7 @@ import frc.robot.subsystems.Arm;
 
 public class RaiseArm extends CommandBase {
   Arm arm;
-  double targetEncoderValue = ArmConstants.targetEncoderValue;
+  double targetEncoderValue = ArmConstants.atGoalEncoderGoal;
   double slowSpeedTakeOver = 15; // is in encoder value
 
   public RaiseArm(Arm arm) {
