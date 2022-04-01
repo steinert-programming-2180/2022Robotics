@@ -10,10 +10,11 @@ public class RaiseArm extends CommandBase {
   double slowSpeedTakeOver = 15; // is in encoder value
 
   public RaiseArm(Arm arm) {
-    this.arm = arm;
+    this(arm, ArmConstants.atGoalEncoderGoal);
   }
 
   public RaiseArm(Arm arm, double targetEncoderValue){
+    this.arm = arm;
     this.targetEncoderValue = targetEncoderValue;
   }
 
