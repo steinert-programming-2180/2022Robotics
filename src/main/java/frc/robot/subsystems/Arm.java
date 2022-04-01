@@ -38,8 +38,6 @@ public class Arm extends SubsystemBase {
 
         SmartDashboard.putNumber("Goal Value", goalValue);
 
-        potentiometer = new AnalogInput(ArmConstants.potentiometerPort);
-
         lowerLimitSwitch = new DigitalInput(ArmConstants.lowerLimitSwitchPort);
     }
 
