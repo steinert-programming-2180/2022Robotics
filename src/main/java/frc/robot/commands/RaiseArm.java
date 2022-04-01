@@ -54,6 +54,6 @@ public class RaiseArm extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return arm.getEncoderValue() >= targetEncoderValue;
+    return arm.getEncoderValue() + arm.getChainStrechedFactor() >= targetEncoderValue;
   }
 }

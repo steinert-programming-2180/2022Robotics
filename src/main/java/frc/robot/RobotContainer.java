@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IO;
 import frc.robot.Constants.ShooterConstants;
@@ -69,7 +70,10 @@ public class RobotContainer {
   private final ShooterCommand shooterCommand = new ShooterCommand(shooter);
 
   private final LowerArm lowerArm = new LowerArm(arm);
-  private final RaiseArm raiseArm = new RaiseArm(arm);  
+  private final RaiseArm raiseArmAtHub = new RaiseArm(arm);
+
+  private final ShooterCommand shooterCommandMidTarmac = new ShooterCommand(shooter, ShooterConstants.midTarmacRPM);
+  private final RaiseArm raiseArmMidTarmac = new RaiseArm(arm, ArmConstants.midTarmacEncoderGoal);
 
   // Emergency autonomous. not actual autonomous unfortunately
   TrajectoryConfig trajectoryConfig = new TrajectoryConfig(1, 1);
@@ -184,14 +188,14 @@ public class RobotContainer {
     bButton.whileHeld(conveyorCommand);
     yButton.whenPressed(() -> intake.extendOrRetract());
 
-    startButton.whenPressed(raiseArm).whenPressed(shooterCommand);
+    startButton.whenPressed(raiseArmAtHub).whenPressed(shooterCommand);
     backButton.whenPressed(lowerArm).cancelWhenPressed(shooterCommand);
 
     leftStick.whileHeld(intakeReverse);
     rightStick.whileHeld(ConveyorReverse);
 
-    leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArm).cancelWhenPressed(lowerArm);
-    rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArm).cancelWhenPressed(lowerArm);
+    leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub).cancelWhenPressed(lowerArm);
+    rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub).cancelWhenPressed(lowerArm);
 
     // Driver:
     highGearButton.whenPressed(() -> drivetrain.highGear());

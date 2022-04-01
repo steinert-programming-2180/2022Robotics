@@ -39,7 +39,7 @@ public class Shooter extends SubsystemBase {
   public double convertRPMToRPS(double rpm){
     return rpm / 60;
   }
-  public void setGoalRPM(double rpm){ goalRPM = convertRPMToRPS(rpm); }
+  public void setGoalRPM(double rpm){ goalRPM = rpm; }
   public void shoot() { shoot(goalRPM); }
 
   public void shoot(double rpm) {
