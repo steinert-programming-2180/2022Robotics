@@ -21,6 +21,8 @@ public final class Constants {
         public static final double atGoalRPM = 1725;
         public static final double midTarmacRPM = 2000;
 
+        public final double[] RPMS = {1725, 2000};
+
         public static final double attackBallRPM = 3000;
 
         public static final double kS = 0.17096;
@@ -40,6 +42,9 @@ public final class Constants {
         public static final int stretchedChainConstant = 0;
         public static final int atGoalEncoderGoal = 68 + stretchedChainConstant;
         public static final int midTarmacEncoderGoal = 63 + stretchedChainConstant;
+
+        public final int[] encoderVals = {atGoalEncoderGoal, midTarmacEncoderGoal};
+
 
         public static final int maxEncoderVal = 85;
     }
