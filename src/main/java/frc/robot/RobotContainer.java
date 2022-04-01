@@ -155,14 +155,6 @@ public class RobotContainer {
     );
   }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be
-   * created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
-   * it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
   private void configureButtonBindings() {
     Joystick leftJoystick = new Joystick(IO.leftJoystickPort);
     Joystick rightJoystick = new Joystick(IO.rightJoystickPort);
@@ -216,13 +208,7 @@ public class RobotContainer {
     drivetrain.setMotorsToCoast();
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-
-   // NOTE: autonomous is inverted. Battery is front. Left is positive. Right is negative.
+  // NOTE: autonomous is inverted. Battery is front. Left is positive. Right is negative.
   public Command getAutonomousCommand() {
     drivetrain.resetSensors();
     drivetrain.highGear();

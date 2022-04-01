@@ -6,10 +6,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class ShooterCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private Shooter shooter;
-  double goalRPM = ShooterConstants.shooterRPM;
+  double goalRPM = ShooterConstants.atGoalRPM;
 
   public ShooterCommand(Shooter shooter){
-    this(shooter, ShooterConstants.shooterRPM);
+    this(shooter, ShooterConstants.atGoalRPM);
   }
   
   public ShooterCommand(Shooter shooter, double goalRPM) {
