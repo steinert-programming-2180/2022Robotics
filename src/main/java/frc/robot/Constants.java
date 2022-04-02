@@ -5,23 +5,25 @@
 package frc.robot;
 
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
+ * The Constants class provides a convenient place for teams to hold robot-wide
+ * numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants
+ * should be declared
  * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * <p>
+ * It is advised to statically import this class (or one of its inner classes)
+ * wherever the
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final class ShooterConstants{
+    public static final class ShooterConstants {
         public static final double maxRPM = 5000;
         public static final int bottomFlywheelPort = 12;
         public static final int topFlywheelPort = 11;
 
         public static final double atGoalRPM = 1725;
         public static final double midTarmacRPM = 2100;
-
-        public final double[] RPMS = {1725, 2000};
 
         public static final double attackBallRPM = 3000;
 
@@ -30,7 +32,7 @@ public final class Constants {
         public static final double kA = 0.0086187;
     }
 
-    public static final class ArmConstants{
+    public static final class ArmConstants {
         public static final int leftArmRaiserPort = 13;
         public static final int rightArmRaiserPort = 14;
 
@@ -42,12 +44,10 @@ public final class Constants {
         public static final double atGoalEncoderGoal = 68;
         public static final double midTarmacEncoderGoal = 65;
 
-        public final double[] encoderVals = {atGoalEncoderGoal, midTarmacEncoderGoal};
-
         public static final int maxEncoderVal = 85;
     }
 
-    public static final class ConveyorConstants{
+    public static final class ConveyorConstants {
         public static final double autonomousTime = 3; // in SECONDS
         public static final double conveyorSpeed = 1;
 
@@ -63,7 +63,7 @@ public final class Constants {
         }
     }
 
-    public final class IntakeConstants{
+    public final class IntakeConstants {
         public static final int leftIntakePort = 8;
         public static final int rightIntakePort = 7;
 
@@ -71,16 +71,17 @@ public final class Constants {
         public static final int retractSolenoid = 3;
     }
 
-    public final class IO{
+    public final class IO {
         public static final int xboxPort = 0;
         public static final int leftJoystickPort = 1;
         public static final int rightJoystickPort = 2;
     }
 
     public static final class AutonomousConstants {
-        public static final String[] autonomousOptions = {"None", "Zone 1 - 2", "Zone 2 - 2", "Zone 2 - 3", "Drive Out", "1 Ball", "Attack!"};
+        public static final String[] autonomousOptions = { "None", "Zone 1 - 2", "Zone 2 - 2", "Zone 2 - 3",
+                "Drive Out", "1 Ball", "Attack!" };
         public static final int defaultAutonomous = 3; // This is the index of the default auto
-        
+
         // Times are in SECONDS
         public static final double shooterTime = 2;
         public static final double conveyorTime = 2;
@@ -90,17 +91,19 @@ public final class Constants {
     public static final int PneumaticHubPort = 20;
     public static final int PowerDistributionPort = 22;
 
-    public static double inchesToMeters(double inches) { return inches * 0.0254; }
-    
+    public static double inchesToMeters(double inches) {
+        return inches * 0.0254;
+    }
+
     // EVERYTHING IS IN METERS PER SECONDS!!!
-    public static final class DriveConstants{
+    public static final class DriveConstants {
         public static final double autonomousSpeed = 0.7;
 
         public static final double initialSpeedLimit = 0.7;
         public static final double secondSpeedLimit = 0.8;
 
-        public static final int[] leftMotorPorts = {1, 2, 3};
-        public static final int[] rightMotorPorts = {4, 5, 6};
+        public static final int[] leftMotorPorts = { 1, 2, 3 };
+        public static final int[] rightMotorPorts = { 4, 5, 6 };
 
         public static final int highGearSolenoid = 2;
         public static final int lowGearSolenoid = 0;
@@ -118,6 +121,22 @@ public final class Constants {
         public static final double lowGearRatio = 12.03;
         public static final double highGearRatio = 5.56;
         public static final double wheelDiameter = inchesToMeters(4);
-           
+
+    }
+
+    public static final class ClimberConstants {
+        public static final int leftClimberPort = 15;
+        public static final int rightClimberPort = 16;
+
+        public static final double climbSpeed = 0.2;
+
+        public static final int extendSolenoid = 5;
+        public static final int retractSolenoid = 6;
+
+        public static enum ClimberSide {
+            LEFT,
+            RIGHT
+        }
+
     }
 }
