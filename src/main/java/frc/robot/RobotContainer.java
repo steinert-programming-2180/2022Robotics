@@ -68,7 +68,7 @@ public class RobotContainer {
   private final IntakeCommand intakeCommand = new IntakeCommand(intake, conveyor);
   private final IntakeReverse intakeReverse = new IntakeReverse(intake);
   private final ConveyorCommand conveyorCommand = new ConveyorCommand(conveyor);
-  private final ConveyorReverse ConveyorReverse = new ConveyorReverse(conveyor);
+  private final ConveyorReverse conveyorReverse = new ConveyorReverse(conveyor);
   private final ShooterCommand shooterCommand = new ShooterCommand(shooter);
 
   private final LowerArm lowerArm = new LowerArm(arm);
@@ -190,7 +190,7 @@ public class RobotContainer {
     DPadButton downDPad = new DPadButton(xbox, Direction.DOWN);
 
     // Operator:
-    aButton.whileHeld(intakeCommand);
+    aButton.whileHeld(intakeCommand).whenReleased(new TimedCommand(conveyorReverse, 0.1));
     xButton.whileHeld(shooterCommand);
     bButton.whileHeld(conveyorCommand);
     yButton.whenPressed(() -> intake.extendOrRetract());
@@ -199,7 +199,7 @@ public class RobotContainer {
     backButton.whenPressed(lowerArm).whenPressed(noShoot);
 
     leftStick.whileHeld(intakeReverse);
-    rightStick.whileHeld(ConveyorReverse);
+    rightStick.whileHeld(conveyorReverse);
 
     leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub).cancelWhenPressed(lowerArm);
     rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub).cancelWhenPressed(lowerArm);
