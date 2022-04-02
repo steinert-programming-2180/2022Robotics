@@ -20,13 +20,13 @@ public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
 
   private CANSparkMax leftSpark, rightSpark;
-  private DoubleSolenoid solenoid;
+  private DoubleSolenoid lockingSolenoid; // this solenoid will lock and/or unlock the climber
 
   public Climber() {
     leftSpark = new CANSparkMax(ClimberConstants.leftClimberPort, MotorType.kBrushless);
     rightSpark = new CANSparkMax(ClimberConstants.rightClimberPort, MotorType.kBrushless);
 
-    solenoid = new DoubleSolenoid(Constants.PneumaticHubPort, PneumaticsModuleType.REVPH,
+    lockingSolenoid = new DoubleSolenoid(Constants.PneumaticHubPort, PneumaticsModuleType.REVPH,
         ClimberConstants.extendSolenoid, ClimberConstants.retractSolenoid);
 
     leftSpark.setInverted(false);
@@ -43,7 +43,8 @@ public class Climber extends SubsystemBase {
   }
 
   public void lower(ClimberSide side) {
-    (side == ClimberSide.LEFT ? leftSpark : rightSpark).set(-ClimberConstants.climbSpeed);
+    CANSparkMax choosenSpark = (side == ClimberSide.LEFT) ? leftSpark : rightSpark;
+    choosenSpark.set(-ClimberConstants.climbSpeed);
   }
 
   public void lower() {
@@ -51,22 +52,22 @@ public class Climber extends SubsystemBase {
     lower(ClimberSide.RIGHT);
   }
 
-  public void extend() {
-    solenoid.set(Value.kForward);
+  public void lockPosition() {
+    lockingSolenoid.set(Value.kForward);
   }
 
-  public void retract() {
-    solenoid.set(Value.kReverse);
+  public void unlockPosition() {
+    lockingSolenoid.set(Value.kReverse);
   }
 
-  public void toggleSolenoid() {
-    switch (solenoid.get()) {
+  public void toggleLock() {
+    switch (lockingSolenoid.get()) {
       case kForward:
-        solenoid.set(Value.kReverse);
+        lockingSolenoid.set(Value.kReverse);
         break;
       case kReverse:
       default:
-        solenoid.set(Value.kForward);
+        lockingSolenoid.set(Value.kForward);
         break;
     }
   }
