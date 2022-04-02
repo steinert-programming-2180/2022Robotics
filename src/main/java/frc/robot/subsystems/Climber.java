@@ -41,9 +41,10 @@ public class Climber extends SubsystemBase {
     raise(ClimberSide.LEFT);
     raise(ClimberSide.RIGHT);
   }
-
+  
+  private CANSparkMax choosenSpark; // this is here so we can avoid a warning
   public void lower(ClimberSide side) {
-    CANSparkMax choosenSpark = (side == ClimberSide.LEFT) ? leftSpark : rightSpark;
+    choosenSpark = (side == ClimberSide.LEFT) ? leftSpark : rightSpark;
     choosenSpark.set(-ClimberConstants.climbSpeed);
   }
 
