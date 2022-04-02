@@ -1,4 +1,5 @@
 package frc.robot.subsystems;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -13,28 +14,29 @@ public class Intake extends SubsystemBase {
     private CANSparkMax leftSpark, rightSpark;
     private DoubleSolenoid solenoid;
 
-    public Intake(){
+    public Intake() {
         leftSpark = new CANSparkMax(IntakeConstants.leftIntakePort, MotorType.kBrushless);
         rightSpark = new CANSparkMax(IntakeConstants.rightIntakePort, MotorType.kBrushless);
         leftSpark.follow(rightSpark, true);
 
-        solenoid = new DoubleSolenoid(Constants.PneumaticHubPort, PneumaticsModuleType.REVPH, 1, 3);
+        solenoid = new DoubleSolenoid(Constants.PneumaticHubPort, PneumaticsModuleType.REVPH,
+                IntakeConstants.extendSolenoid, IntakeConstants.retractSolenoid);
         solenoid.set(Value.kForward);
     }
 
-    public void intakeStop(){
+    public void intakeStop() {
         rightSpark.set(0);
     }
 
-    public void intakeSpin(){ 
+    public void intakeSpin() {
         rightSpark.set(-1);
     }
 
-    public void intakeReverse(){      
+    public void intakeReverse() {
         rightSpark.set(1);
-   }
+    }
 
-    public void extendOrRetract(){
+    public void extendOrRetract() {
         switch (solenoid.get()) {
             case kReverse:
                 extendIntake();
@@ -46,11 +48,11 @@ public class Intake extends SubsystemBase {
         }
     }
 
-    public void extendIntake(){
+    public void extendIntake() {
         solenoid.set(Value.kForward);
     }
 
-    public void retractIntake(){
+    public void retractIntake() {
         solenoid.set(Value.kReverse);
     }
 }
