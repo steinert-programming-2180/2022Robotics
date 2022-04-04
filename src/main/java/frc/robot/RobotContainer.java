@@ -45,7 +45,6 @@ import frc.robot.utils.AxisTrigger;
 import frc.robot.utils.DPadButton;
 import frc.robot.utils.DPadButton.Direction;
 
-
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a
@@ -115,7 +114,6 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(driveCommand);
   }
 
-
   private void configureButtonBindings() {
     Joystick leftJoystick = new Joystick(IO.leftJoystickPort);
     Joystick rightJoystick = new Joystick(IO.rightJoystickPort);
@@ -157,9 +155,11 @@ public class RobotContainer {
     leftStick.whileHeld(intakeReverse);
     rightStick.whileHeld(conveyorReverse);
 
-    leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub).cancelWhenPressed(lowerArm);
-    rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub).cancelWhenPressed(lowerArm);
- 
+    leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub)
+        .cancelWhenPressed(lowerArm);
+    rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub)
+        .cancelWhenPressed(lowerArm);
+
     upDPad.whenPressed(shooterCommand).whenPressed(raiseArmAtHub);
     downDPad.whenPressed(shooterCommandMidTarmac).whenPressed(raiseArmMidTarmac);
 
@@ -168,43 +168,52 @@ public class RobotContainer {
     // Driver:
     highGearButton.whenPressed(() -> drivetrain.highGear());
     lowGearButton.whenPressed(() -> drivetrain.lowGear());
-    leftDriveTrigger.or(rightDriveTrigger).whenActive(() -> driveCommand.setSpeedLimit(DriveConstants.secondSpeedLimit)).whenInactive(() -> driveCommand.resetSpeedLimit());
-    leftDriveTrigger.and(rightDriveTrigger).whenActive(() -> driveCommand.removeSpeedLimit()).whenInactive(() -> driveCommand.resetSpeedLimit());
+    leftDriveTrigger.or(rightDriveTrigger).whenActive(() -> driveCommand.setSpeedLimit(DriveConstants.secondSpeedLimit))
+        .whenInactive(() -> driveCommand.resetSpeedLimit());
+    leftDriveTrigger.and(rightDriveTrigger).whenActive(() -> driveCommand.removeSpeedLimit())
+        .whenInactive(() -> driveCommand.resetSpeedLimit());
   }
 
-  public void setDrivetrainMotorsToBrake(){
+  public void setDrivetrainMotorsToBrake() {
     drivetrain.setMotorsToBrake();
   }
 
-  public void setDrivetrainMotorsToCoast(){
+  public void setDrivetrainMotorsToCoast() {
     drivetrain.setMotorsToCoast();
   }
 
-  // NOTE: autonomous is inverted. Battery is front. Left is positive. Right is negative.
+  // NOTE: autonomous is inverted. Battery is front. Left is positive. Right is
+  // negative.
   public Command getAutonomousCommand() {
     drivetrain.resetSensors();
     drivetrain.highGear();
 
     CommandBase autonomousCommand;
 
-    // https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/creating-following-trajectory.html?highlight=ramsetecommand#creating-the-ramsetecommand 
+    // https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/creating-following-trajectory.html?highlight=ramsetecommand#creating-the-ramsetecommand
     RamseteCommand followBallPath = new FollowTrajectory(goToBall, drivetrain);
-    RamseteCommand followGoalLeftPath = new FollowTrajectory(goBackToGoal, drivetrain); // goes to hub when we are on the left
-    RamseteCommand followGoalRightPath = new FollowTrajectory(goBackToGoal2, drivetrain); // goest to hub when we are on the right
+    RamseteCommand followGoalLeftPath = new FollowTrajectory(goBackToGoal, drivetrain); // goes to hub when we are on
+                                                                                        // the left
+    RamseteCommand followGoalRightPath = new FollowTrajectory(goBackToGoal2, drivetrain); // goest to hub when we are on
+                                                                                          // the right
     RamseteCommand followSecondBall = new FollowTrajectory(goToSecondBall, drivetrain);
     RamseteCommand followGoalFromSecondBall = new FollowTrajectory(goBackToGoalFromSecondBall, drivetrain);
     RamseteCommand followTwoMeters = new FollowTrajectory(goForwardTwoMeters, drivetrain);
-    CommandBase precommands = new ParallelCommandGroup(new LowerArm(arm), new TimedCommand(new IntakeCommand(intake, conveyor), 2));
-    
-    switch(ShuffleboardControl.getAutonomousMode()){
+    CommandBase precommands = new ParallelCommandGroup(new LowerArm(arm),
+        new TimedCommand(new IntakeCommand(intake, conveyor), 2));
+
+    switch (ShuffleboardControl.getAutonomousMode()) {
       case 1:
-        autonomousCommand = getTwoBallAuto(true, precommands, followBallPath, followGoalLeftPath, followGoalRightPath, new RaiseArm(arm));
+        autonomousCommand = getTwoBallAuto(true, precommands, followBallPath, followGoalLeftPath, followGoalRightPath,
+            new RaiseArm(arm));
         break;
       case 2:
-        autonomousCommand = getTwoBallAuto(false, precommands, followBallPath, followGoalLeftPath, followGoalRightPath, new RaiseArm(arm));
+        autonomousCommand = getTwoBallAuto(false, precommands, followBallPath, followGoalLeftPath, followGoalRightPath,
+            new RaiseArm(arm));
         break;
       case 3:
-        autonomousCommand = getThreeBallAuto(precommands, followBallPath, followGoalRightPath, new RaiseArm(arm), followSecondBall, followGoalFromSecondBall);
+        autonomousCommand = getThreeBallAuto(precommands, followBallPath, followGoalRightPath, new RaiseArm(arm),
+            followSecondBall, followGoalFromSecondBall);
         break;
       case 4:
         autonomousCommand = new FollowTrajectory(goToBall, drivetrain);
@@ -213,7 +222,8 @@ public class RobotContainer {
         autonomousCommand = getOneBallAuto(precommands, new RaiseArm(arm), new LowerArm(arm), followTwoMeters);
         break;
       case 6:
-        autonomousCommand = knockOutBallDirectlyInFront(precommands, new ShooterCommand(shooter, ShooterConstants.attackBallRPM));
+        autonomousCommand = knockOutBallDirectlyInFront(precommands,
+            new ShooterCommand(shooter, ShooterConstants.attackBallRPM));
         break;
       default:
         autonomousCommand = new ExampleCommand(emptySubsystem);
@@ -223,112 +233,98 @@ public class RobotContainer {
     return autonomousCommand;
   }
 
-  private CommandBase knockOutBallDirectlyInFront(CommandBase precommands, ShooterCommand shooterCommand){
-    return 
-      precommands
+  private CommandBase knockOutBallDirectlyInFront(CommandBase precommands, ShooterCommand shooterCommand) {
+    return precommands
         .andThen(new ConveyorCommand(conveyor))
-      .alongWith(shooterCommand);
+        .alongWith(shooterCommand);
   }
 
-  private CommandBase getThreeBallAuto(CommandBase precommands, CommandBase followBallPath, CommandBase followGoalRightPath, CommandBase raiseArm, CommandBase followSecondBall, CommandBase backToGoal){
+  private CommandBase getThreeBallAuto(CommandBase precommands, CommandBase followBallPath,
+      CommandBase followGoalRightPath, CommandBase raiseArm, CommandBase followSecondBall, CommandBase backToGoal) {
     CommandBase goToGoal = followGoalRightPath;
 
-    return (
-      precommands.alongWith(followBallPath)
-      .andThen(() -> drivetrain.resetSensors())
-      .andThen(goToGoal.alongWith(raiseArm))
-      .andThen(new WaitCommand(0.25))
-      .andThen(new TimedCommand(new ConveyorCommand(conveyor), 0.75))
-      .andThen(() -> drivetrain.resetSensors())
-      .andThen((new LowerArm(arm)).alongWith(followSecondBall).alongWith(new IntakeCommand(intake, conveyor, false))
-      .andThen(() -> drivetrain.resetSensors())
-      .andThen( backToGoal.alongWith(new RaiseArm(arm)) )
-      .andThen(new WaitCommand(0.25))
-      .andThen(new TimedCommand(new ConveyorCommand(conveyor), 0.75))
-      )
-    )
-    .alongWith(new TimedCommand(new ShooterCommand(shooter), 15));
+    return (precommands.alongWith(followBallPath)
+        .andThen(() -> drivetrain.resetSensors())
+        .andThen(goToGoal.alongWith(raiseArm))
+        .andThen(new WaitCommand(0.25))
+        .andThen(new TimedCommand(new ConveyorCommand(conveyor), 0.75))
+        .andThen(() -> drivetrain.resetSensors())
+        .andThen((new LowerArm(arm)).alongWith(followSecondBall).alongWith(new IntakeCommand(intake, conveyor, false))
+            .andThen(() -> drivetrain.resetSensors())
+            .andThen(backToGoal.alongWith(new RaiseArm(arm)))
+            .andThen(new WaitCommand(0.25))
+            .andThen(new TimedCommand(new ConveyorCommand(conveyor), 0.75))))
+        .alongWith(new TimedCommand(new ShooterCommand(shooter), 15));
   }
 
-  private CommandBase getTwoBallAuto(boolean isLeft, CommandBase precommands, CommandBase followBallPath, CommandBase followGoalLeftPath, CommandBase followGoalRightPath, CommandBase raiseArm){
+  private CommandBase getTwoBallAuto(boolean isLeft, CommandBase precommands, CommandBase followBallPath,
+      CommandBase followGoalLeftPath, CommandBase followGoalRightPath, CommandBase raiseArm) {
     CommandBase goToGoal = isLeft ? followGoalLeftPath : followGoalRightPath;
-    CommandBase getRidOfOpponentBall = ( new FollowTrajectory( isLeft ? leftTeleopPosition:rightTeleopPosition , drivetrain) ).alongWith(new LowerArm(arm)).alongWith(new IntakeReverse(intake));
+    CommandBase getRidOfOpponentBall = (new FollowTrajectory(isLeft ? leftTeleopPosition : rightTeleopPosition,
+        drivetrain)).alongWith(new LowerArm(arm)).alongWith(new IntakeReverse(intake));
 
-
-    return (
-      precommands.alongWith(followBallPath)
-      .andThen(() -> drivetrain.resetSensors())
-      .andThen(goToGoal.alongWith(raiseArm))
-      .andThen(new WaitCommand(0.5))
-      .andThen(new TimedCommand(new ConveyorCommand(conveyor), 1))
-      .andThen(() -> drivetrain.resetSensors())
-      .andThen(getRidOfOpponentBall)
-    )
-    .alongWith(new TimedCommand(new ShooterCommand(shooter), 10));
+    return (precommands.alongWith(followBallPath)
+        .andThen(() -> drivetrain.resetSensors())
+        .andThen(goToGoal.alongWith(raiseArm))
+        .andThen(new WaitCommand(0.5))
+        .andThen(new TimedCommand(new ConveyorCommand(conveyor), 1))
+        .andThen(() -> drivetrain.resetSensors())
+        .andThen(getRidOfOpponentBall))
+        .alongWith(new TimedCommand(new ShooterCommand(shooter), 10));
   }
 
-  private CommandBase getOneBallAuto(CommandBase precommands, RaiseArm raiseArm, LowerArm lowerArm, CommandBase followTwoMeters){
-    return (
-      precommands
-      .andThen(raiseArm)
-      .andThen(new WaitCommand(0.5))
-      .andThen(new TimedCommand(new ConveyorCommand(conveyor), 1))
-      .andThen(() -> drivetrain.resetSensors())
-      .andThen(
-        lowerArm.alongWith(followTwoMeters)
-      )
-    )
-    .alongWith(new TimedCommand(new ShooterCommand(shooter), 6.5));
+  private CommandBase getOneBallAuto(CommandBase precommands, RaiseArm raiseArm, LowerArm lowerArm,
+      CommandBase followTwoMeters) {
+    return (precommands
+        .andThen(raiseArm)
+        .andThen(new WaitCommand(0.5))
+        .andThen(new TimedCommand(new ConveyorCommand(conveyor), 1))
+        .andThen(() -> drivetrain.resetSensors())
+        .andThen(
+            lowerArm.alongWith(followTwoMeters)))
+        .alongWith(new TimedCommand(new ShooterCommand(shooter), 6.5));
   }
-  
-  void generateTrajectories(){
+
+  void generateTrajectories() {
     goToBall = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-      List.of(),
-      new Pose2d(-1, 0, Rotation2d.fromDegrees(0)),
-      trajectoryConfig
-    );
+        new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+        List.of(),
+        new Pose2d(-1, 0, Rotation2d.fromDegrees(0)),
+        trajectoryConfig);
     goForwardTwoMeters = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-      List.of(),
-      new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), 
-      trajectoryConfig
-    );
-    goBackToGoal =  TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-      List.of(),
-      new Pose2d(1.7, -0.35, Rotation2d.fromDegrees(-45)),
-      backwardConfig
-    );
+        new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+        List.of(),
+        new Pose2d(-2, 0, Rotation2d.fromDegrees(0)),
+        trajectoryConfig);
+    goBackToGoal = TrajectoryGenerator.generateTrajectory(
+        new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+        List.of(),
+        new Pose2d(1.7, -0.35, Rotation2d.fromDegrees(-45)),
+        backwardConfig);
     goBackToGoal2 = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-      List.of(),
-      new Pose2d(1.7, 0.3, Rotation2d.fromDegrees(22.5)), 
-      backwardConfig
-    );
+        new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+        List.of(),
+        new Pose2d(1.7, 0.3, Rotation2d.fromDegrees(22.5)),
+        backwardConfig);
     goToSecondBall = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 
-      List.of(), 
-      new Pose2d(-1.2, -1.5, Rotation2d.fromDegrees(22.5)), 
-      trajectoryConfig
-    );
+        new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+        List.of(),
+        new Pose2d(-1.2, -1.5, Rotation2d.fromDegrees(22.5)),
+        trajectoryConfig);
     goBackToGoalFromSecondBall = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(), 
-      List.of(), 
-      new Pose2d(1.7, 0.3, Rotation2d.fromDegrees(-45)), 
-      backwardConfig
-    );
+        new Pose2d(),
+        List.of(),
+        new Pose2d(1.7, 0.3, Rotation2d.fromDegrees(-45)),
+        backwardConfig);
     leftTeleopPosition = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(), 
-      List.of(), 
-      new Pose2d(-1.2, -1.1, Rotation2d.fromDegrees(180)),
-      trajectoryConfig
-    );
+        new Pose2d(),
+        List.of(),
+        new Pose2d(-1.2, -1.1, Rotation2d.fromDegrees(180)),
+        trajectoryConfig);
     rightTeleopPosition = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(), 
-      List.of(), 
-      new Pose2d(-1.2, 1.1, Rotation2d.fromDegrees(180)),
-      trajectoryConfig
-    );
+        new Pose2d(),
+        List.of(),
+        new Pose2d(-1.2, 1.1, Rotation2d.fromDegrees(180)),
+        trajectoryConfig);
   }
 }
