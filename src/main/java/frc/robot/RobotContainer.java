@@ -35,11 +35,13 @@ import frc.robot.commands.RaiseArm;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.TimedCommand;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Conveyor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.utils.AxisTrigger;
 import frc.robot.utils.DPadButton;
 import frc.robot.utils.DPadButton.Direction;
 
@@ -64,6 +66,7 @@ public class RobotContainer {
   private final Conveyor conveyor = new Conveyor();
   private final Shooter shooter = new Shooter();
   private final Arm arm = new Arm();
+  private final Climber climber = new Climber();
 
   private final IntakeCommand intakeCommand = new IntakeCommand(intake, conveyor);
   private final IntakeReverse intakeReverse = new IntakeReverse(intake);
@@ -112,56 +115,6 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(driveCommand);
   }
 
-  void generateTrajectories(){
-    goToBall = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-      List.of(),
-      new Pose2d(-1, 0, Rotation2d.fromDegrees(0)),
-      trajectoryConfig
-    );
-    goForwardTwoMeters = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-      List.of(),
-      new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), 
-      trajectoryConfig
-    );
-    goBackToGoal =  TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-      List.of(),
-      new Pose2d(1.7, -0.35, Rotation2d.fromDegrees(-45)),
-      backwardConfig
-    );
-    goBackToGoal2 = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-      List.of(),
-      new Pose2d(1.7, 0.3, Rotation2d.fromDegrees(22.5)), 
-      backwardConfig
-    );
-    goToSecondBall = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 
-      List.of(), 
-      new Pose2d(-1.2, -1.5, Rotation2d.fromDegrees(22.5)), 
-      trajectoryConfig
-    );
-    goBackToGoalFromSecondBall = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(), 
-      List.of(), 
-      new Pose2d(1.7, 0.3, Rotation2d.fromDegrees(-45)), 
-      backwardConfig
-    );
-    leftTeleopPosition = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(), 
-      List.of(), 
-      new Pose2d(-1.2, -1.1, Rotation2d.fromDegrees(180)),
-      trajectoryConfig
-    );
-    rightTeleopPosition = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(), 
-      List.of(), 
-      new Pose2d(-1.2, 1.1, Rotation2d.fromDegrees(180)),
-      trajectoryConfig
-    );
-  }
 
   private void configureButtonBindings() {
     Joystick leftJoystick = new Joystick(IO.leftJoystickPort);
@@ -171,8 +124,8 @@ public class RobotContainer {
     // Initialize the joystick buttons
     JoystickButton lowGearButton = new JoystickButton(leftJoystick, 3);
     JoystickButton highGearButton = new JoystickButton(rightJoystick, 3);
-    JoystickButton leftTrigger = new JoystickButton(leftJoystick, Joystick.ButtonType.kTrigger.value);
-    JoystickButton rightTrigger = new JoystickButton(rightJoystick, Joystick.ButtonType.kTrigger.value);
+    JoystickButton leftDriveTrigger = new JoystickButton(leftJoystick, Joystick.ButtonType.kTrigger.value);
+    JoystickButton rightDriveTrigger = new JoystickButton(rightJoystick, Joystick.ButtonType.kTrigger.value);
 
     // Initialize the xbox buttons
     JoystickButton aButton = new JoystickButton(xbox, XboxController.Button.kA.value);
@@ -185,6 +138,9 @@ public class RobotContainer {
     JoystickButton startButton = new JoystickButton(xbox, XboxController.Button.kStart.value);
     JoystickButton leftStick = new JoystickButton(xbox, XboxController.Button.kLeftStick.value);
     JoystickButton rightStick = new JoystickButton(xbox, XboxController.Button.kRightStick.value);
+
+    AxisTrigger leftTrigger = new AxisTrigger(xbox, 2, 0.8);
+    AxisTrigger rightTrigger = new AxisTrigger(xbox, 3, 0.8);
 
     DPadButton upDPad = new DPadButton(xbox, Direction.UP);
     DPadButton downDPad = new DPadButton(xbox, Direction.DOWN);
@@ -204,18 +160,16 @@ public class RobotContainer {
     leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub).cancelWhenPressed(lowerArm);
     rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub).cancelWhenPressed(lowerArm);
  
-    // DO NOT UNCOMMENT
-    // upDPad.whenPressed(() -> intake.extendIntake());
-    // downDPad.whenPressed(() -> intake.retractIntake());
-
     upDPad.whenPressed(shooterCommand).whenPressed(raiseArmAtHub);
     downDPad.whenPressed(shooterCommandMidTarmac).whenPressed(raiseArmMidTarmac);
 
+    rightTrigger.whileHeld(() -> climber.raise());
+    leftTrigger.whileHeld(() -> climber.lower());
     // Driver:
     highGearButton.whenPressed(() -> drivetrain.highGear());
     lowGearButton.whenPressed(() -> drivetrain.lowGear());
-    leftTrigger.or(rightTrigger).whenActive(() -> driveCommand.setSpeedLimit(DriveConstants.secondSpeedLimit)).whenInactive(() -> driveCommand.resetSpeedLimit());
-    leftTrigger.and(rightTrigger).whenActive(() -> driveCommand.removeSpeedLimit()).whenInactive(() -> driveCommand.resetSpeedLimit());
+    leftDriveTrigger.or(rightDriveTrigger).whenActive(() -> driveCommand.setSpeedLimit(DriveConstants.secondSpeedLimit)).whenInactive(() -> driveCommand.resetSpeedLimit());
+    leftDriveTrigger.and(rightDriveTrigger).whenActive(() -> driveCommand.removeSpeedLimit()).whenInactive(() -> driveCommand.resetSpeedLimit());
   }
 
   public void setDrivetrainMotorsToBrake(){
@@ -325,5 +279,56 @@ public class RobotContainer {
       )
     )
     .alongWith(new TimedCommand(new ShooterCommand(shooter), 6.5));
+  }
+  
+  void generateTrajectories(){
+    goToBall = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+      List.of(),
+      new Pose2d(-1, 0, Rotation2d.fromDegrees(0)),
+      trajectoryConfig
+    );
+    goForwardTwoMeters = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+      List.of(),
+      new Pose2d(-2, 0, Rotation2d.fromDegrees(0)), 
+      trajectoryConfig
+    );
+    goBackToGoal =  TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+      List.of(),
+      new Pose2d(1.7, -0.35, Rotation2d.fromDegrees(-45)),
+      backwardConfig
+    );
+    goBackToGoal2 = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+      List.of(),
+      new Pose2d(1.7, 0.3, Rotation2d.fromDegrees(22.5)), 
+      backwardConfig
+    );
+    goToSecondBall = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 
+      List.of(), 
+      new Pose2d(-1.2, -1.5, Rotation2d.fromDegrees(22.5)), 
+      trajectoryConfig
+    );
+    goBackToGoalFromSecondBall = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(), 
+      List.of(), 
+      new Pose2d(1.7, 0.3, Rotation2d.fromDegrees(-45)), 
+      backwardConfig
+    );
+    leftTeleopPosition = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(), 
+      List.of(), 
+      new Pose2d(-1.2, -1.1, Rotation2d.fromDegrees(180)),
+      trajectoryConfig
+    );
+    rightTeleopPosition = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(), 
+      List.of(), 
+      new Pose2d(-1.2, 1.1, Rotation2d.fromDegrees(180)),
+      trajectoryConfig
+    );
   }
 }
