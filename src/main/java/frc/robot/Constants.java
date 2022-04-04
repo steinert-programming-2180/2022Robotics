@@ -128,7 +128,7 @@ public final class Constants {
         public static final int leftClimberPort = 15;
         public static final int rightClimberPort = 16;
 
-        public static final double climbSpeed = 0.6;
+        public static final double climbSpeed = 0.15;
 
         public static final int extendSolenoid = 4;
         public static final int retractSolenoid = 5;
