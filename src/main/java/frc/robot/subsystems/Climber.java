@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ClimberConstants;
-import frc.robot.Constants.ClimberConstants.ClimberSide;
 
 public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
@@ -51,7 +50,7 @@ public class Climber extends SubsystemBase {
     lockingSolenoid.set(Value.kReverse);
   }
 
-  public boolean isLocked(){
+  public boolean isLocked() {
     return lockingSolenoid.get() == Value.kForward;
   }
 
