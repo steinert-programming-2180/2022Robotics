@@ -155,16 +155,22 @@ public class RobotContainer {
     leftStick.whileHeld(intakeReverse);
     rightStick.whileHeld(conveyorReverse);
 
-    leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub)
-        .cancelWhenPressed(lowerArm);
-    rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub)
-        .cancelWhenPressed(lowerArm);
+    // leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub)
+        // .cancelWhenPressed(lowerArm);
+    // rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub)
+        // .cancelWhenPressed(lowerArm);
+
+    leftBumper.whenPressed(() -> climber.lockPosition());
+    rightBumper.whenPressed(() -> climber.unlockPosition());
 
     upDPad.whenPressed(shooterCommand).whenPressed(raiseArmAtHub);
     downDPad.whenPressed(shooterCommandMidTarmac).whenPressed(raiseArmMidTarmac);
 
     rightTrigger.whileHeld(() -> climber.raise());
     leftTrigger.whileHeld(() -> climber.lower());
+
+    rightTrigger.or(leftTrigger).whenActive(() -> climber.unlockPosition()).whenInactive(() -> climber.lockPosition());
+
     // Driver:
     highGearButton.whenPressed(() -> drivetrain.highGear());
     lowGearButton.whenPressed(() -> drivetrain.lowGear());
