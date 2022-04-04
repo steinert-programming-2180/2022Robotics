@@ -30,31 +30,17 @@ public class Climber extends SubsystemBase {
     lockingSolenoid = new DoubleSolenoid(Constants.PneumaticHubPort, PneumaticsModuleType.REVPH,
         ClimberConstants.extendSolenoid, ClimberConstants.retractSolenoid);
 
-    leftSpark.setInverted(false);
-    rightSpark.setInverted(false);
+    leftSpark.follow(rightSpark, true);
 
-    setToBrake();
-  }
-
-  public void raise(ClimberSide side) {
-    (side == ClimberSide.LEFT ? leftSpark : rightSpark).set(ClimberConstants.climbSpeed);
+    setSparksToBrake();
   }
 
   public void raise() {
-    raise(ClimberSide.LEFT);
-    raise(ClimberSide.RIGHT);
-  }
-
-  private CANSparkMax choosenSpark; // this is here so we can avoid a warning
-
-  public void lower(ClimberSide side) {
-    choosenSpark = (side == ClimberSide.LEFT) ? leftSpark : rightSpark;
-    choosenSpark.set(-ClimberConstants.climbSpeed);
+    rightSpark.set(ClimberConstants.climbSpeed);
   }
 
   public void lower() {
-    lower(ClimberSide.LEFT);
-    lower(ClimberSide.RIGHT);
+    rightSpark.set(-ClimberConstants.climbSpeed);
   }
 
   public void lockPosition() {
@@ -63,6 +49,10 @@ public class Climber extends SubsystemBase {
 
   public void unlockPosition() {
     lockingSolenoid.set(Value.kReverse);
+  }
+
+  public boolean isLocked(){
+    return lockingSolenoid.get() == Value.kForward;
   }
 
   public void toggleLock() {
@@ -77,13 +67,8 @@ public class Climber extends SubsystemBase {
     }
   }
 
-  public void setToBrake() {
+  public void setSparksToBrake() {
     leftSpark.setIdleMode(IdleMode.kBrake);
     rightSpark.setIdleMode(IdleMode.kBrake);
-  }
-
-  public void setToCoast() {
-    leftSpark.setIdleMode(IdleMode.kCoast);
-    rightSpark.setIdleMode(IdleMode.kCoast);
   }
 }
