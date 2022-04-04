@@ -6,6 +6,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -31,6 +32,8 @@ public class Climber extends SubsystemBase {
 
     leftSpark.setInverted(false);
     rightSpark.setInverted(false);
+
+    setToBrake();
   }
 
   public void raise(ClimberSide side) {
@@ -41,8 +44,9 @@ public class Climber extends SubsystemBase {
     raise(ClimberSide.LEFT);
     raise(ClimberSide.RIGHT);
   }
-  
+
   private CANSparkMax choosenSpark; // this is here so we can avoid a warning
+
   public void lower(ClimberSide side) {
     choosenSpark = (side == ClimberSide.LEFT) ? leftSpark : rightSpark;
     choosenSpark.set(-ClimberConstants.climbSpeed);
@@ -73,8 +77,13 @@ public class Climber extends SubsystemBase {
     }
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+  public void setToBrake() {
+    leftSpark.setIdleMode(IdleMode.kBrake);
+    rightSpark.setIdleMode(IdleMode.kBrake);
+  }
+
+  public void setToCoast() {
+    leftSpark.setIdleMode(IdleMode.kCoast);
+    rightSpark.setIdleMode(IdleMode.kCoast);
   }
 }
