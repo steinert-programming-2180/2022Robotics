@@ -133,10 +133,5 @@ public final class Constants {
         public static final int extendSolenoid = 4;
         public static final int retractSolenoid = 5;
 
-        public static enum ClimberSide {
-            LEFT,
-            RIGHT
-        }
-
     }
 }
