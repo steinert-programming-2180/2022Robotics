@@ -2,6 +2,8 @@ package frc.robot;
 
 import java.util.ArrayList;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -14,6 +16,10 @@ public final class ShuffleboardControl {
     private static SendableChooser<Integer> autoChooser = new SendableChooser<Integer>();
 
     private static ArrayList<NetworkTableEntry> developmentTabEntries = new ArrayList<NetworkTableEntry>();
+
+    public static void initializeCameraServer(){
+        CameraServer.startAutomaticCapture();
+    }
 
     public static void initializeAutonomousChooser(){
         String[] options = AutonomousConstants.autonomousOptions;
