@@ -155,13 +155,10 @@ public class RobotContainer {
     leftStick.whileHeld(intakeReverse);
     rightStick.whileHeld(conveyorReverse);
 
-    // leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub)
-        // .cancelWhenPressed(lowerArm);
-    // rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub)
-        // .cancelWhenPressed(lowerArm);
-
-    leftBumper.whenPressed(() -> climber.lockPosition());
-    rightBumper.whenPressed(() -> climber.unlockPosition());
+    leftBumper.whileHeld(() -> arm.lowerArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub)
+        .cancelWhenPressed(lowerArm);
+    rightBumper.whileHeld(() -> arm.raiseArm()).whenReleased(() -> arm.stopArm()).cancelWhenPressed(raiseArmAtHub)
+        .cancelWhenPressed(lowerArm);
 
     upDPad.whenPressed(shooterCommand).whenPressed(raiseArmAtHub);
     downDPad.whenPressed(shooterCommandMidTarmac).whenPressed(raiseArmMidTarmac);

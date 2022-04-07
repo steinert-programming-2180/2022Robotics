@@ -71,8 +71,12 @@ public class Climber extends SubsystemBase {
     rightSpark.setIdleMode(IdleMode.kBrake);
   }
 
+  public void stop() {
+    rightSpark.set(0);
+  }
+
   @Override
   public void periodic() {
-    rightSpark.set(0);
+    stop();
   }
 }
