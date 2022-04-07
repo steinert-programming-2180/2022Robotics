@@ -22,7 +22,7 @@ public class ConveyorCommand extends CommandBase {
   @Override
   public void execute() {
     // Delays 300 milliseconds so balls don't bounce
-    if(System.currentTimeMillis() - startTime < 500) {
+    if(System.currentTimeMillis() - startTime < 300) {
       conveyor.convey(ConveyorSection.EXIT);
     } else {
       conveyor.convey();
