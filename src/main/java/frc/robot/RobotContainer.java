@@ -228,6 +228,9 @@ public class RobotContainer {
         autonomousCommand = knockOutBallDirectlyInFront(precommands,
             new ShooterCommand(shooter, ShooterConstants.attackBallRPM));
         break;
+      case 7:
+        autonomousCommand = leftTwoBallAuto(precommands, followSecondBall, followGoalFromSecondBall);
+        break;
       default:
         autonomousCommand = new ExampleCommand(emptySubsystem);
         break;
@@ -257,6 +260,16 @@ public class RobotContainer {
             .andThen(backToGoal.alongWith(new RaiseArm(arm)))
             .andThen(new WaitCommand(0.25))
             .andThen(new TimedCommand(new ConveyorCommand(conveyor), 0.75))))
+        .alongWith(new TimedCommand(new ShooterCommand(shooter), 15));
+  }
+
+  private CommandBase leftTwoBallAuto(CommandBase precommands, CommandBase followSecondBall, CommandBase backToGoal) {
+
+    return (precommands.alongWith(followSecondBall).alongWith(new IntakeCommand(intake, conveyor, false))
+            .andThen(() -> drivetrain.resetSensors())
+            .andThen(backToGoal.alongWith(new RaiseArm(arm)))
+            .andThen(new WaitCommand(0.25))
+            .andThen(new TimedCommand(new ConveyorCommand(conveyor), 0.75)))
         .alongWith(new TimedCommand(new ShooterCommand(shooter), 15));
   }
 

@@ -41,7 +41,7 @@ public final class Constants {
         public static final double upSpeed = 0.22;
         public static final double downSpeed = -0.4;
 
-        public static final double atGoalEncoderGoal = 68;
+        public static final double atGoalEncoderGoal = 66;
         public static final double midTarmacEncoderGoal = 63; 
 
         public static final int maxEncoderVal = 85;
@@ -78,8 +78,8 @@ public final class Constants {
     }
 
     public static final class AutonomousConstants {
-        public static final String[] autonomousOptions = { "None", "Zone 1 - 2", "Zone 2 - 2", "Zone 2 - 3",
-                "Drive Out", "1 Ball", "Attack!" };
+        public static final String[] autonomousOptions = { "None", "Zone 1 - 2", "Zone 2 - 2 (Right)", "Zone 2 - 3",
+                "Drive Out", "1 Ball", "Attack!", "Zone 2 - 2 (Left)" };
         public static final int defaultAutonomous = 3; // This is the index of the default auto
 
         // Times are in SECONDS
