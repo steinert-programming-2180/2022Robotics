@@ -22,7 +22,7 @@ public final class Constants {
         public static final int bottomFlywheelPort = 12;
         public static final int topFlywheelPort = 11;
 
-        public static final double atGoalRPM = 1725;
+        public static final double atGoalRPM = 1775;
         public static final double midTarmacRPM = 2200;
 
         public static final double attackBallRPM = 3000;
@@ -41,7 +41,7 @@ public final class Constants {
         public static final double upSpeed = 0.22;
         public static final double downSpeed = -0.4;
 
-        public static final double atGoalEncoderGoal = 66;
+        public static final double atGoalEncoderGoal = 68;
         public static final double midTarmacEncoderGoal = 63; 
 
         public static final int maxEncoderVal = 85;

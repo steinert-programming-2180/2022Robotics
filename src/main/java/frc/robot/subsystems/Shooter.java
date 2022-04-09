@@ -28,7 +28,12 @@ public class Shooter extends SubsystemBase {
     topEncoder = topFlywheel.getEncoder();
 
     SmartDashboard.putNumber("Goal RPM", goalRPM);
-    setMotorsToCoast();
+    setMotorsToBrake();
+  }
+
+  void setMotorsToBrake(){
+    bottomFlywheel.setIdleMode(IdleMode.kBrake);
+    topFlywheel.setIdleMode(IdleMode.kBrake);
   }
 
   void setMotorsToCoast(){
