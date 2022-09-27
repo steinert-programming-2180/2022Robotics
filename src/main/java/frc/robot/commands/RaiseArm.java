@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
@@ -26,6 +27,7 @@ public class RaiseArm extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    SmartDashboard.putNumber("Arm Encoder", arm.getEncoderValue());
     if(shouldBeSlow() && isArmUnderGoal()) {
       arm.moveArm(0.2);
     } else if(isArmUnderGoal()){
