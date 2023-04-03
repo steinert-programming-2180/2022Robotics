@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.ShuffleboardControl;
 import frc.robot.Constants.ClimberConstants;
 
 public class Climber extends SubsystemBase {
@@ -35,11 +36,11 @@ public class Climber extends SubsystemBase {
   }
 
   public void raise() {
-    rightSpark.set(ClimberConstants.climbSpeed);
+    rightSpark.set(-ClimberConstants.climbSpeed);
   }
 
   public void lower() {
-    rightSpark.set(-ClimberConstants.climbSpeed);
+    rightSpark.set(ClimberConstants.climbSpeed);
   }
 
   public void lockPosition() {

@@ -22,7 +22,8 @@ public final class Constants {
         public static final int bottomFlywheelPort = 12;
         public static final int topFlywheelPort = 11;
 
-        public static final double atGoalRPM = 1725;
+        // Uses atGoalRPM by default, so change it for RPM changes
+        public static final double atGoalRPM = 710;
         public static final double midTarmacRPM = 2200;
 
         public static final double attackBallRPM = 3000;
@@ -41,7 +42,7 @@ public final class Constants {
         public static final double upSpeed = 0.22;
         public static final double downSpeed = -0.4;
 
-        public static final double atGoalEncoderGoal = 66;
+        public static final double atGoalEncoderGoal = 43.9;
         public static final double midTarmacEncoderGoal = 63; 
 
         public static final int maxEncoderVal = 85;
@@ -100,7 +101,7 @@ public final class Constants {
         public static final double autonomousSpeed = 0.7;
 
         public static final double initialSpeedLimit = 0.7;
-        public static final double secondSpeedLimit = 0.8;
+        public static final double secondSpeedLimit = 0.7;
 
         public static final int[] leftMotorPorts = { 1, 2, 3 };
         public static final int[] rightMotorPorts = { 4, 5, 6 };

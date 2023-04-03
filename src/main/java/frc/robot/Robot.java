@@ -69,7 +69,7 @@ public class Robot extends TimedRobot {
     powerDistributionHub.clearStickyFaults();
     pneumaticsHub.clearStickyFaults();
 
-    compressor = new Compressor(PneumaticsModuleType.REVPH);
+    compressor = new Compressor(20, PneumaticsModuleType.REVPH);
 
     ShuffleboardControl.initializeAutonomousChooser();
     ShuffleboardControl.initializeCameraServer();
