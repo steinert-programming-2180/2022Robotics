@@ -125,7 +125,7 @@ public class RobotContainer {
     JoystickButton leftDriveTrigger = new JoystickButton(leftJoystick, Joystick.ButtonType.kTrigger.value);
     JoystickButton rightDriveTrigger = new JoystickButton(rightJoystick, Joystick.ButtonType.kTrigger.value);
 
-    // Initialize the xbox buttons
+    // // Initialize the xbox buttons
     JoystickButton aButton = new JoystickButton(xbox, XboxController.Button.kA.value);
     JoystickButton bButton = new JoystickButton(xbox, XboxController.Button.kB.value);
     JoystickButton xButton = new JoystickButton(xbox, XboxController.Button.kX.value);

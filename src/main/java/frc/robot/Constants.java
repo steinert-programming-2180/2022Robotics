@@ -68,8 +68,8 @@ public final class Constants {
         public static final int leftIntakePort = 8;
         public static final int rightIntakePort = 7;
 
-        public static final int extendSolenoid = 1;
-        public static final int retractSolenoid = 3;
+        public static final int extendSolenoid = 10;
+        public static final int retractSolenoid = 8;
     }
 
     public final class IO {
